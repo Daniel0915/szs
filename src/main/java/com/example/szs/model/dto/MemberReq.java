@@ -1,4 +1,4 @@
-package com.example.szs.dto;
+package com.example.szs.model.dto;
 
 import com.example.szs.config.json.NullToEmptySerializer;
 import lombok.Builder;

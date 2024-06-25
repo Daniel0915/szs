@@ -1,7 +1,7 @@
 package com.example.szs.controller;
 
 
-import com.example.szs.dto.MemberReq;
+import com.example.szs.model.dto.MemberReq;
 import com.example.szs.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 // TODO : "szs" prefix 필요 (ex : /szs/signup)
 @RestController
-@RequestMapping("/szs/signup")
+@RequestMapping("/signup")
 @RequiredArgsConstructor
 @Slf4j
 public class SignUpController {

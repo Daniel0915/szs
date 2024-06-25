@@ -1,10 +1,11 @@
 package com.example.szs.service;
 
 import com.example.szs.domain.member.Member;
-import com.example.szs.dto.MemberReq;
+import com.example.szs.model.dto.MemberReq;
 import com.example.szs.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +19,12 @@ public class MemberService {
     @Transactional
     public String join(MemberReq memberReq) {
         validateDuplicateMember(memberReq.getUserId());
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String password = passwordEncoder.encode(memberReq.getPassword());
+
         Member member = memberRepository.save(Member.builder()
                                                     .userId(memberReq.getUserId())
-                                                    .password(memberReq.getPassword())
+                                                    .password(password)
                                                     .name(memberReq.getName())
                                                     .regNo(memberReq.getRegNo())
                                                     .build());

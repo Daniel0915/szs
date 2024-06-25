@@ -1,6 +1,6 @@
 package com.example.szs.domain.tax;
 
-import com.example.szs.eNum.IncomeDeductionType;
+import com.example.szs.model.eNum.IncomeDeductionType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

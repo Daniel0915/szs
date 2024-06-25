@@ -1,6 +1,7 @@
 package com.example.szs.domain.member;
 
 import com.example.szs.domain.tax.TaxInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ public class Member {
     // TODO : 암호화화여 DB 저장
 
     @Column(name = "password")
+    @JsonIgnore
     private String password;
 
     @Column(name = "name")

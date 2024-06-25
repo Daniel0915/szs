@@ -16,6 +16,9 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+#  mvc:
+#    servlet:
+#      path: /szs
 
 logging.level:
   org.hibernate.SQL: debug
@@ -27,6 +30,10 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
+rsa:
+  private-key: classpath:certs/private-key.pem
+  public-key: classpath:certs/public-key.pem
 
 scrap:
   url: https://codetest-v4.3o3.co.kr/scrap

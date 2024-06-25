@@ -1,4 +1,4 @@
-package com.example.szs.eNum;
+package com.example.szs.model.eNum;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

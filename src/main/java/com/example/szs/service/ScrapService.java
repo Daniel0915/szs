@@ -3,7 +3,7 @@ package com.example.szs.service;
 import com.example.szs.domain.member.Member;
 import com.example.szs.domain.tax.IncomeDeduction;
 import com.example.szs.domain.tax.TaxInfo;
-import com.example.szs.eNum.IncomeDeductionType;
+import com.example.szs.model.eNum.IncomeDeductionType;
 import com.example.szs.module.client.RestClient;
 import com.example.szs.repository.member.MemberRepository;
 import com.example.szs.repository.tax.IncomeDeductionRepository;
@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.time.YearMonth;
 import java.util.*;
 
 @Service
