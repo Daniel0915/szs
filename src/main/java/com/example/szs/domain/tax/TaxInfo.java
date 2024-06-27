@@ -1,5 +1,6 @@
 package com.example.szs.domain.tax;
 
+import com.example.szs.domain.embedded.Time;
 import com.example.szs.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,8 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO : toBuilder 넣을지 고민 -> builder 해도 jpa 영속성을 가지고 있지 않음.
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @Data
 @AllArgsConstructor
@@ -43,4 +43,15 @@ public class TaxInfo {
 
     @OneToMany(mappedBy = "taxInfo")
     private List<IncomeDeduction> incomeDeductionList = new ArrayList<>();
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "regDt", column = @Column(name = "reg_dt")),
+            @AttributeOverride(name = "modDt", column = @Column(name = "mod_dt"))
+    })
+    private Time time;
+
+
+
+
 }

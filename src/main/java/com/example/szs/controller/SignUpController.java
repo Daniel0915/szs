@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO : "szs" prefix 필요 (ex : /szs/signup)
 @RestController
 @RequestMapping("${apiPrefix}/signup")
 @RequiredArgsConstructor
@@ -28,9 +27,8 @@ public class SignUpController {
     public Map<String, Object> join(@RequestBody MemberReq memberReq) {
         try {
             Map<String, Object> result = new HashMap<>();
-            String userId = memberService.join(memberReq);
-            result.put("userId", userId);
-            return ResUtil.makeResponse(result, ResStatus.SUCCESS);
+            memberService.join(memberReq);
+            return ResUtil.makeResponse("", ResStatus.SUCCESS);
         } catch (Exception e) {
             return ResUtil.makeErrorResponse(e);
         }

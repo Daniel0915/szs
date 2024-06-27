@@ -1,5 +1,6 @@
 package com.example.szs.domain.member;
 
+import com.example.szs.domain.embedded.Time;
 import com.example.szs.domain.tax.TaxInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -15,6 +16,7 @@ import jakarta.persistence.Table;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 @Builder
 @Entity
@@ -29,7 +31,6 @@ public class Member {
 
     @Column(name = "user_id")
     private String userId;
-    // TODO : 암호화화여 DB 저장
 
     @Column(name = "password")
     @JsonIgnore
@@ -38,9 +39,13 @@ public class Member {
     @Column(name = "name")
     private String name;
 
-    // TODO : 암호화화여 DB 저장
     @Column(name = "reg_no")
     private String regNo;
 
-    // TODO : 임베디드 타입으로 -> reg_date, mod_data 추가
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "regDt", column = @Column(name = "reg_dt")),
+            @AttributeOverride(name = "modDt", column = @Column(name = "mod_dt"))
+    })
+    private Time time;
 }

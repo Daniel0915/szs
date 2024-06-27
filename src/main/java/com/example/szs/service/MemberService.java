@@ -1,5 +1,6 @@
 package com.example.szs.service;
 
+import com.example.szs.domain.embedded.Time;
 import com.example.szs.domain.member.Member;
 import com.example.szs.exception.CustomException;
 import com.example.szs.model.dto.MemberReq;
@@ -20,19 +21,19 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public String join(MemberReq memberReq) throws Exception {
+    public void join(MemberReq memberReq) throws Exception {
         validateDuplicateMember(memberReq.getUserId());
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String password = passwordEncoder.encode(memberReq.getPassword());
         String regNo = EncryptDecryptUtils.encrypt(memberReq.getRegNo());
 
-        Member member = memberRepository.save(Member.builder()
-                                                    .userId(memberReq.getUserId())
-                                                    .password(password)
-                                                    .name(memberReq.getName())
-                                                    .regNo(regNo)
-                                                    .build());
-        return member.getUserId();
+        memberRepository.save(Member.builder()
+                                    .userId(memberReq.getUserId())
+                                    .password(password)
+                                    .name(memberReq.getName())
+                                    .regNo(regNo)
+                                    .time(new Time())
+                                    .build());
     }
 
     private void validateDuplicateMember(String userId) throws Exception {

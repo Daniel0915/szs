@@ -60,7 +60,6 @@ public class SecurityConfig {
         return new ProviderManager(authProvider);
     }
 
-    // TODO : RSA key 생성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         List<String> permitAllPatterns = List.of(apiPrefix + "/login/**", apiPrefix + "/signup/**");

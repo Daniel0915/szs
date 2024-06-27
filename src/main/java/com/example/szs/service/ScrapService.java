@@ -1,5 +1,6 @@
 package com.example.szs.service;
 
+import com.example.szs.domain.embedded.Time;
 import com.example.szs.domain.member.Member;
 import com.example.szs.domain.tax.IncomeDeduction;
 import com.example.szs.domain.tax.TaxInfo;
@@ -60,18 +61,14 @@ public class ScrapService {
         // 세금 처리 년도
         int year = (Integer) creditCardIncomeDeduction.get("year");
 
-        TaxInfo taxInfo = taxInfoRepository.save(TaxInfo.builder()
-                                                        .member(member)
-                                                        .year(year)
-                                                        .totalInComeAmount(totalInComeAmount)
-                                                        .taxDeductionAmount(taxDeductionAmount)
-                                                        .build());
+        Optional<TaxInfo> findTaxInfo = taxInfoRepository.findByMemberAndYear(member, year);
 
-        List<IncomeDeduction> gugminIncomeDeductionListEntity = this.convetToGugminIncomeDeductionList(gugminIncomeDeductionList, taxInfo);
-        incomeDeductionRepository.saveAll(gugminIncomeDeductionListEntity);
+        if (!findTaxInfo.isPresent()) {
+            createTaxInfoAndIncomeDeduction(member, year, totalInComeAmount, taxDeductionAmount, gugminIncomeDeductionList, creditCardIncomeDeduction);
+            return;
+        }
 
-        List<IncomeDeduction> creditCardIncomeDeductionListEntity = this.convetToCreditCardIncomeDeductionList(creditCardIncomeDeduction, taxInfo);
-        incomeDeductionRepository.saveAll(creditCardIncomeDeductionListEntity);
+        updateTaxInfoAndIncomeDeduction(member, findTaxInfo.get(), year, totalInComeAmount, taxDeductionAmount, gugminIncomeDeductionList, creditCardIncomeDeduction);
     }
 
     private Map<String, Object> getScrapInfo(String name, String regNo) {
@@ -140,5 +137,40 @@ public class ScrapService {
         }
 
         return incomeDeductionList;
+    }
+
+    private void createTaxInfoAndIncomeDeduction(Member member, int year, BigDecimal totalInComeAmount, BigDecimal taxDeductionAmount, List<Map<String, Object>> gugminIncomeDeductionList, Map<String, Object> creditCardIncomeDeduction) throws ParseException {
+        TaxInfo taxInfo = taxInfoRepository.save(TaxInfo.builder()
+                                                        .member(member)
+                                                        .year(year)
+                                                        .totalInComeAmount(totalInComeAmount)
+                                                        .taxDeductionAmount(taxDeductionAmount)
+                                                        .time(new Time())
+                                                        .build());
+
+        createIncomeDeduction(gugminIncomeDeductionList, creditCardIncomeDeduction, taxInfo);
+    }
+    private void updateTaxInfoAndIncomeDeduction(Member member, TaxInfo taxInfo, int year, BigDecimal totalInComeAmount, BigDecimal taxDeductionAmount, List<Map<String, Object>> gugminIncomeDeductionList, Map<String, Object> creditCardIncomeDeduction) throws ParseException {
+        incomeDeductionRepository.deleteByTaxInfoSeq(member.getSeq());
+
+        TaxInfo updateTaxInfo = taxInfo.toBuilder()
+                                       .member(member)
+                                       .year(year)
+                                       .totalInComeAmount(totalInComeAmount)
+                                       .taxDeductionAmount(taxDeductionAmount)
+                                       .build();
+
+        updateTaxInfo.getTime().updateModDt();
+        taxInfoRepository.save(updateTaxInfo);
+
+        createIncomeDeduction(gugminIncomeDeductionList, creditCardIncomeDeduction, updateTaxInfo);
+    }
+
+    private void createIncomeDeduction(List<Map<String, Object>> gugminIncomeDeductionList, Map<String, Object> creditCardIncomeDeduction, TaxInfo taxInfo) throws ParseException {
+        List<IncomeDeduction> gugminIncomeDeductionListEntity = this.convetToGugminIncomeDeductionList(gugminIncomeDeductionList, taxInfo);
+        incomeDeductionRepository.saveAll(gugminIncomeDeductionListEntity);
+
+        List<IncomeDeduction> creditCardIncomeDeductionListEntity = this.convetToCreditCardIncomeDeductionList(creditCardIncomeDeduction, taxInfo);
+        incomeDeductionRepository.saveAll(creditCardIncomeDeductionListEntity);
     }
 }

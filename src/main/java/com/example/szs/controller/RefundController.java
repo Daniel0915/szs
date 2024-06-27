@@ -15,7 +15,6 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO : "szs" prefix 필요 (ex : /szs/signup)
 @RestController
 @RequestMapping("${apiPrefix}/refund")
 @RequiredArgsConstructor
