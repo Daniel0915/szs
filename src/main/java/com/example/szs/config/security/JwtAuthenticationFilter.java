@@ -1,13 +1,17 @@
 package com.example.szs.config.security;
 
+import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.module.jwt.JwtTokenProvider;
 import com.example.szs.service.auth.JpaMemberDetailService;
+import com.example.szs.utils.Response.ResUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +29,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final String[] permitAllArray;
+    private final String[] hasAuthArray;
     private final JpaMemberDetailService userDetailsService;
 
     @Override
@@ -37,27 +42,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.getTokenFromRequest(request);
 
         if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
+            String userId = jwtTokenProvider.getClaimUserId(token);
+
+            UserDetails userDetails;
             try {
-                Long memberSeq = jwtTokenProvider.getClaimMemberSeq(token);
-                String userId = jwtTokenProvider.getClaimUserId(token);
-
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
-
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+                userDetails = userDetailsService.loadUserByUsername(userId);
             } catch (Exception e) {
-                e.printStackTrace();
+                ResUtil.makeForbiddenResponse(response, ResStatus.ACCESS_KEY_ERROR);
+                return;
             }
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        filterChain.doFilter(request, response);
+        ResUtil.makeForbiddenResponse(response, ResStatus.ACCESS_KEY_EXPIRE);
     }
 
     private boolean isPermitAll(HttpServletRequest request) {
         String url = request.getRequestURI();
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         for (String pattern : permitAllArray) {
+            if (antPathMatcher.match(pattern, url)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isHasAuth(HttpServletRequest request) {
+        String url = request.getRequestURI();
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        for (String pattern : hasAuthArray) {
             if (antPathMatcher.match(pattern, url)) {
                 return true;
             }

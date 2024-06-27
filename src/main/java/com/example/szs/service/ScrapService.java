@@ -8,9 +8,11 @@ import com.example.szs.module.client.RestClient;
 import com.example.szs.repository.member.MemberRepository;
 import com.example.szs.repository.tax.IncomeDeductionRepository;
 import com.example.szs.repository.tax.TaxInfoRepository;
+import com.example.szs.utils.encryption.EncryptDecryptUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,23 +40,17 @@ public class ScrapService {
     private final TaxInfoRepository taxInfoRepository;
     private final IncomeDeductionRepository incomeDeductionRepository;
 
-    // TODO : saveAll(단건 + 한번에 transactional) 대신 insert bulk 적용
     @Transactional
-    public void insertScrapInfo(Long memberSeq) throws ParseException {
+    public void insertScrapInfo(Long memberSeq) throws Exception {
         // 외부 호출
         Member member = memberRepository.findById(memberSeq).get();
         String name = member.getName();
-        String regNo = member.getRegNo();
-
-        // TODO : 테스트 데이터라서 삭제해야함.
-//        String name = "동탁";
-//        String regNo = "921108-1582816";
+        String regNo = EncryptDecryptUtils.decrypt(member.getRegNo());
 
         Map<String, Object> scrapInfo = this.getScrapInfo(name, regNo);
 
         Map<String, Object> incomeDeduction = (Map<String, Object>) scrapInfo.get("소득공제");
 
-        // TODO : 금액 변경해주는 util 만들어야할 거 같음.
         BigDecimal totalInComeAmount = new BigDecimal((Integer) scrapInfo.get("종합소득금액"));
         BigDecimal taxDeductionAmount = new BigDecimal((Integer) incomeDeduction.get("세액공제"));
 
@@ -63,7 +59,6 @@ public class ScrapService {
         Map<String, Object> creditCardIncomeDeduction = (Map<String, Object>) incomeDeduction.get("신용카드소득공제");
         // 세금 처리 년도
         int year = (Integer) creditCardIncomeDeduction.get("year");
-
 
         TaxInfo taxInfo = taxInfoRepository.save(TaxInfo.builder()
                                                         .member(member)

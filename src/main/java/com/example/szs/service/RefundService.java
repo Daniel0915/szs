@@ -6,7 +6,7 @@ import com.example.szs.domain.tax.IncomeDeduction;
 import com.example.szs.domain.tax.TaxInfo;
 import com.example.szs.repository.member.MemberRepository;
 import com.example.szs.repository.tax.TaxInfoRepository;
-import com.example.szs.utils.TaxCalculator;
+import com.example.szs.utils.money.TaxCalculator;
 import com.example.szs.utils.money.TextChg;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;

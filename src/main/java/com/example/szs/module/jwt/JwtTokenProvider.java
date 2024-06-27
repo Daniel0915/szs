@@ -1,5 +1,7 @@
 package com.example.szs.module.jwt;
 
+import com.example.szs.exception.CustomException;
+import com.example.szs.model.eNum.ResStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,22 +30,15 @@ public class JwtTokenProvider {
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 
-    public String generateToken(Authentication authentication, Long memberSeq, String userId) {
+    public String generateToken(Authentication authentication, Long memberSeq, String userId) throws Exception {
         Instant now = Instant.now();
-
-        // 접근 범위 지정(JWT)
-        String scope = authentication.getAuthorities()
-                                     .stream()
-                                     .map(GrantedAuthority::getAuthority)
-                                     .collect(Collectors.joining(" "));
-
-
+        String scope = "USER";
         JwtClaimsSet claims = JwtClaimsSet.builder()
                                           .issuer("self")
                                           .issuedAt(now)
                                           .expiresAt(now.plus(Long.valueOf(accessTokenExpireTime), ChronoUnit.MILLIS)) // 현재 시각에서 6시간 후 만료
                                           .subject(authentication.getName())
-//                                          .claim("scope", scope)
+                                          .claim("scope", scope)
                                           .claim("memberSeq", memberSeq)
                                           .claim("userId", userId)
                                           .build();

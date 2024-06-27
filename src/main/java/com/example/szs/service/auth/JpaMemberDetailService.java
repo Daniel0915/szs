@@ -1,6 +1,7 @@
 package com.example.szs.service.auth;
 
 
+import com.example.szs.domain.member.Member;
 import com.example.szs.model.auth.AuthMember;
 import com.example.szs.repository.member.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +26,7 @@ public class JpaMemberDetailService implements UserDetailsService {
         AuthMember user = memberRepository
                 .findByUserId(username)
                 .map(AuthMember::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User name not found: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User name not found"));
         return user;
     }
 }

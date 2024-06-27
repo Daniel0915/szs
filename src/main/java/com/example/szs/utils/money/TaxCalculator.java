@@ -1,4 +1,4 @@
-package com.example.szs.utils;
+package com.example.szs.utils.money;
 
 import lombok.Getter;
 
