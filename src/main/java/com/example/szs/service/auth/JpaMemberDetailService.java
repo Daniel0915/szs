@@ -24,7 +24,6 @@ public class JpaMemberDetailService implements UserDetailsService {
                 .findByUserId(username)
                 .map(AuthMember::new)
                 .orElseThrow(() -> new UsernameNotFoundException("User name not found: " + username));
-
         return user;
     }
 }

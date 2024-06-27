@@ -4,15 +4,22 @@ import com.example.szs.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 
 @Getter
 @AllArgsConstructor
 public class AuthMember extends Member implements UserDetails {
     private final Member member;
+
+    public Long getMemberSeq() {
+        return member.getSeq();
+    }
 
     @Override
     public String getPassword() {
@@ -26,8 +33,7 @@ public class AuthMember extends Member implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

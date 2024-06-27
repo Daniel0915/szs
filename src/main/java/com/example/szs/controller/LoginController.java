@@ -2,9 +2,9 @@ package com.example.szs.controller;
 
 
 import com.example.szs.model.auth.AuthMember;
+import com.example.szs.model.dto.LoginReq;
 import com.example.szs.model.dto.MemberReq;
-import com.example.szs.service.MemberService;
-import com.example.szs.service.auth.AuthService;
+import com.example.szs.module.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,20 +26,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class LoginController {
-    private final MemberService memberService;
-    private final AuthService authService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
 
+
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody MemberReq memberReq) {
+    public ResponseEntity<?> login(@RequestBody LoginReq loginReq) {
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(memberReq.getUserId(), memberReq.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(loginReq.getUserId(), loginReq.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         AuthMember userDetails = (AuthMember) authentication.getPrincipal();
 
-        log.info("Token requested for user :{}", authentication.getAuthorities());
-        String token = authService.generateToken(authentication);
-        return ResponseEntity.ok(token);
+        String token = jwtTokenProvider.generateToken(authentication, userDetails.getMemberSeq(), userDetails.getUsername());
+        Map<String, String> result = new HashMap<>();
+        result.put("accessToken", token);
+        return ResponseEntity.ok(result);
     }
 }

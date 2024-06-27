@@ -1,6 +1,5 @@
-package com.example.szs;
+package com.example.szs.utils;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.math.BigDecimal;

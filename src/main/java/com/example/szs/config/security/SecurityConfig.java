@@ -1,5 +1,6 @@
 package com.example.szs.config.security;
 
+import com.example.szs.module.jwt.JwtTokenProvider;
 import com.example.szs.service.auth.JpaMemberDetailService;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -23,8 +24,14 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -36,8 +43,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                           .requestMatchers("/resources/**", "/static/**", "/h2-console/**")
-                           .requestMatchers("/swagger-resources/**","/swagger-ui/**", "/v3/api-docs/**");
+                           .requestMatchers("/3o3/**", "/swagger.html/**", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**")
+                           .requestMatchers("/resources/**", "/static/**", "/h2-console/**");
     }
 
     @Bean
@@ -48,31 +55,14 @@ public class SecurityConfig {
         return new ProviderManager(authProvider);
     }
 
-
-//    @Bean
-//    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http.authorizeHttpRequests((authorize) -> authorize
-//                    .requestMatchers("/admin/**").hasRole("USER")
-//
-//                    .requestMatchers("/login/**", "/signup/**", "/scrap/**").permitAll()
-//                    .anyRequest()
-//                    .denyAll()
-//            )
-////            .headers(headers -> headers
-////                    .frameOptions(frameOptions -> frameOptions.sameOrigin())
-////            )
-//            .formLogin(withDefaults()); // 기본 폼 로그인 설정
-//
-//        http.csrf((csrf) -> csrf.disable());
-//
-//
-//
-//        return http.build();
-//    }
-
     // TODO : RSA key 생성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+        List<String> permitAllPatterns = List.of("/login/**", "/signup/**");
+        String[] permitAllArray = permitAllPatterns.stream().toArray(String[]::new);
+
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtEncoder(), jwtDecoder());
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtTokenProvider, permitAllArray, userDetailsService);
 
         return http
                 .csrf(csrf -> {
@@ -80,19 +70,22 @@ public class SecurityConfig {
                 })
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/admin/**").hasRole("USER");
-                    auth.requestMatchers("/login/**", "/signup/**", "/scrap/**").permitAll();
+                    auth.requestMatchers(permitAllArray).permitAll();
+
+                    auth.requestMatchers("/scrap/**", "/refund/**").hasAuthority("SCOPE_USER");
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt((jwt) -> jwt.decoder(jwtDecoder())))
                 .userDetailsService(userDetailsService)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
 
     @Bean
     public JwtDecoder jwtDecoder() {
+        System.out.println("jwtDecoder");
         return NimbusJwtDecoder.withPublicKey(rsaKeyConfigProperties.publicKey()).build();
     }
 
@@ -108,36 +101,4 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
-
-
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//
-//        http
-//                .authorizeRequests()
-//                .antMatchers("/swagger-resources/**").permitAll()
-//                .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-//                .anyRequest().permitAll();
-//
-//        http
-//                .headers()
-//                .frameOptions()
-//                .sameOrigin();
-//
-//        http
-//                .httpBasic().disable()
-//                .csrf().disable()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .cors()
-//                .and()
-//                .formLogin().disable()
-//    }
-//
-//    @Bean
-//    public BCryptPasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 }

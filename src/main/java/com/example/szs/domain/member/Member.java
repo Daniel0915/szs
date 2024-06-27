@@ -41,8 +41,6 @@ public class Member {
     // TODO : 암호화화여 DB 저장
     @Column(name = "reg_no")
     private String regNo;
-    // TODO : 임베디드 타입으로 -> reg_date, mod_data 추가
 
-    @OneToMany(mappedBy = "member")
-    private List<TaxInfo> taxInfoList = new ArrayList<>();
+    // TODO : 임베디드 타입으로 -> reg_date, mod_data 추가
 }
