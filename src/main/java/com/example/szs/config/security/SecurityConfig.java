@@ -62,7 +62,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-        List<String> permitAllPatterns = List.of(apiPrefix + "/login/**", apiPrefix + "/signup/**");
+        List<String> permitAllPatterns = List.of(apiPrefix + "/login/**", apiPrefix + "/signup/**", "/marketing-mng/**");
         String[] permitAllArray = permitAllPatterns.stream().toArray(String[]::new);
 
         List<String> hasAuthPatterns = List.of(apiPrefix + "/scrap/**", apiPrefix + "/refund/**");

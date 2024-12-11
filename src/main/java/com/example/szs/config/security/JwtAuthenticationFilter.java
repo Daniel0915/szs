@@ -34,32 +34,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (isPermitAll(request)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String token = jwtTokenProvider.getTokenFromRequest(request);
-
-        if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
-            String userId = jwtTokenProvider.getClaimUserId(token);
-
-            UserDetails userDetails;
-            try {
-                userDetails = userDetailsService.loadUserByUsername(userId);
-            } catch (Exception e) {
-                ResUtil.makeForbiddenResponse(response, ResStatus.ACCESS_KEY_ERROR);
-                return;
-            }
-
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        ResUtil.makeForbiddenResponse(response, ResStatus.ACCESS_KEY_EXPIRE);
+        filterChain.doFilter(request, response);
+        return;
+//        if (isPermitAll(request)) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//
+//        String token = jwtTokenProvider.getTokenFromRequest(request);
+//
+//        if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
+//            String userId = jwtTokenProvider.getClaimUserId(token);
+//
+//            UserDetails userDetails;
+//            try {
+//                userDetails = userDetailsService.loadUserByUsername(userId);
+//            } catch (Exception e) {
+//                ResUtil.makeForbiddenResponse(response, ResStatus.ACCESS_KEY_ERROR);
+//                return;
+//            }
+//
+//            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//
+//        ResUtil.makeForbiddenResponse(response, ResStatus.ACCESS_KEY_EXPIRE);
     }
 
     private boolean isPermitAll(HttpServletRequest request) {
