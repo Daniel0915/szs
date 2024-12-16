@@ -17,7 +17,9 @@ spring:
         show_sql: true
         format_sql: true
 
-
+  devtools:
+    restart:
+      enabled: false
 
 logging.level:
   com.example.szs: debug
@@ -28,6 +30,7 @@ logging.level:
   org.hibernate.orm.jdbc.bind: trace
 
 server:
+  port: 8081
   servlet:
     encoding:
       charset: UTF-8
