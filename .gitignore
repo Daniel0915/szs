@@ -37,6 +37,7 @@ out/
 .vscode/
 
 ### certs ###
-/resources/certs/**
+src/main/resources/certs/**
 
-/resources/application.yml
+
+src/main/resources/application.yml
