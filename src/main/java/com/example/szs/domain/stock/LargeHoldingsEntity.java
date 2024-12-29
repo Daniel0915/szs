@@ -1,14 +1,12 @@
 package com.example.szs.domain.stock;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 @Builder(toBuilder = true)
 @Entity
@@ -16,15 +14,39 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "LARGE_HOLDINGS")
 @Getter
+@FieldNameConstants
 public class LargeHoldingsEntity {
-    @Id @GeneratedValue
-    Long rceptNo;
-    String corpCode;
-    String corpName;
-    String repror;
-    Long stkqy;
-    Long stkqyIrds;
-    String reportResn;
-    String rceptDt;
+    @Id
+    @Column(name = "rcept_no")
+    private String rceptNo; // 접수 번호
+
+    @Column(name = "corp_code")
+    private Long corpCode; // 회사코드
+
+    @Column(name = "corp_name")
+    private String corpName; // 회사명
+
+    @Column(name = "repror")
+    private String repror; // 보고자
+
+    @Column(name = "stkqy")
+    private Long stkqy; // 보유 주식수
+
+    @Column(name = "stkqy_irds")
+    Long stkqyIrds; // 보유주식 증감
+
+    @Column(name = "stkrt")
+    String stkrt; // 보유 비율
+
+    @Column(name = "stkrt_irds")
+    String stkrtIrds; // 보유 비율 증감
+
+    @Column(name = "report_resn")
+    String reportResn; // 보고 사유
+
+    @Column(name = "rcept_dt")
+    String rceptDt; // 접수 일자
+
+    @Column(name = "reg_dt")
     String regDt;
 }
