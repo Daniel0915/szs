@@ -2,6 +2,7 @@ package com.example.szs.model.dto;
 
 import com.example.szs.config.json.NullToEmptySerializer;
 import com.example.szs.domain.stock.LargeHoldingsEntity;
+import com.example.szs.utils.money.NumberUtils;
 import com.example.szs.utils.time.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
@@ -63,11 +64,13 @@ public class LHResponseDTO {
         for (LargeHolding largeHolding : this.list) {
             largeHoldingsEntityList.add(LargeHoldingsEntity.builder()
                                                            .rceptNo     (largeHolding.getRceptNo())
-                                                           .corpCode    (Long.valueOf(largeHolding.getCorpCode()))
+                                                           .corpCode    (NumberUtils.stringToLongConverter(largeHolding.getCorpCode()))
                                                            .corpName    (largeHolding.getCorpName())
                                                            .repror      (largeHolding.getRepror())
-                                                           .stkqy       (Long.valueOf(largeHolding.getStkqy()))
-                                                           .stkqyIrds   (Long.valueOf(largeHolding.getStkqyIrds()))
+                                                           .stkqy       (NumberUtils.stringToLongConverter(largeHolding.getStkqy()))
+                                                           .stkqyIrds   (NumberUtils.stringToLongConverter(largeHolding.getStkqyIrds()))
+                                                           .stkrt       (Float.valueOf(largeHolding.getStkrt()))
+                                                           .stkrtIrds   (Float.valueOf(largeHolding.getStkrtIrds()))
                                                            .reportResn  (largeHolding.getReportResn())
                                                            .rceptDt     (largeHolding.getRceptDt())
                                                            .regDt       (TimeUtil.nowTime("yyyyMMddHHmmss"))

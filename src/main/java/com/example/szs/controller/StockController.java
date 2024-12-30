@@ -1,7 +1,9 @@
 package com.example.szs.controller;
 
 import com.example.szs.model.dto.LHResponseDTO;
+import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.service.stock.LargeHoldingsService;
+import com.example.szs.utils.Response.ResUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +20,9 @@ import java.util.Map;
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
 
-    @GetMapping("/test")
-    public LHResponseDTO test() {
-//        largeHoldingsService.insertData();
-        return largeHoldingsService.insertData();
+    @GetMapping("/update")
+    public Map<String, Object> update() {
+        largeHoldingsService.insertData();
+        return ResUtil.makeResponse("", ResStatus.SUCCESS);
     }
 }

@@ -11,7 +11,7 @@ import lombok.experimental.FieldNameConstants;
 @Builder(toBuilder = true)
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Table(name = "LARGE_HOLDINGS")
 @Getter
 @FieldNameConstants
@@ -33,20 +33,20 @@ public class LargeHoldingsEntity {
     private Long stkqy; // 보유 주식수
 
     @Column(name = "stkqy_irds")
-    Long stkqyIrds; // 보유주식 증감
+    private Long stkqyIrds; // 보유주식 증감
 
     @Column(name = "stkrt")
-    String stkrt; // 보유 비율
+    private Float stkrt; // 보유 비율
 
     @Column(name = "stkrt_irds")
-    String stkrtIrds; // 보유 비율 증감
+    private Float stkrtIrds; // 보유 비율 증감
 
     @Column(name = "report_resn")
-    String reportResn; // 보고 사유
+    private String reportResn; // 보고 사유
 
     @Column(name = "rcept_dt")
-    String rceptDt; // 접수 일자
+    private String rceptDt; // 접수 일자
 
     @Column(name = "reg_dt")
-    String regDt;
+    private String regDt;
 }

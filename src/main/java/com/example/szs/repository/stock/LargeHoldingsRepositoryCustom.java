@@ -32,7 +32,7 @@ public class LargeHoldingsRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public <T> Optional<LargeHoldingsDTO> findLatestRecordBy(LargeHoldingsSearchCondition condition) {
+    public Optional<LargeHoldingsDTO> findLatestRecordBy(LargeHoldingsSearchCondition condition) {
         return Optional.ofNullable(queryFactory.selectFrom(largeHoldingsEntity)
                                                .where(
                                                        rceptNoEq    (condition.getRceptNo()),
