@@ -2,6 +2,7 @@ package com.example.szs.controller;
 
 import com.example.szs.model.dto.LHResponseDTO;
 import com.example.szs.model.eNum.ResStatus;
+import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
 import com.example.szs.utils.Response.ResUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,12 @@ import java.util.Map;
 @Slf4j
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
+    private final ExecOwnershipService execOwnershipService;
 
     @GetMapping("/update")
     public Map<String, Object> update() {
-        largeHoldingsService.insertData();
+        execOwnershipService.insertData();
+//        largeHoldingsService.insertData();
         return ResUtil.makeResponse("", ResStatus.SUCCESS);
     }
 }
