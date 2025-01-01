@@ -1,21 +1,17 @@
 package com.example.szs.service.stock;
 
 import com.example.szs.domain.stock.ExecOwnershipEntity;
-import com.example.szs.domain.stock.LargeHoldingsEntity;
 import com.example.szs.model.dto.EOResponseDTO;
 import com.example.szs.model.dto.ExecOwnershipDTO;
-import com.example.szs.model.dto.LHResponseDTO;
-import com.example.szs.model.dto.LargeHoldingsDTO;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
-import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import com.example.szs.repository.stock.ExecOwnershipRepository;
 import com.example.szs.repository.stock.ExecOwnershipRepositoryCustom;
-import com.example.szs.repository.stock.LargeHoldingsRepository;
-import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -31,6 +27,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
+@EnableScheduling
 public class ExecOwnershipService {
     @Value("${dart.uri.base}")
     private String baseUri;
@@ -49,6 +46,7 @@ public class ExecOwnershipService {
     private final ExecOwnershipRepositoryCustom execOwnershipRepositoryCustom;
 
     @Transactional
+    @Scheduled(cron = "0 0 9 * * ?")
     public void insertData() {
         WebClient webClient = WebClient.builder()
                                        .baseUrl(baseUri)

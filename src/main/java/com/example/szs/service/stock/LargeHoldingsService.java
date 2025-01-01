@@ -7,22 +7,27 @@ import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import com.example.szs.repository.stock.LargeHoldingsRepository;
 import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
+@EnableScheduling
 public class LargeHoldingsService {
     @Value("${dart.uri.base}")
     private String baseUri;
@@ -41,6 +46,7 @@ public class LargeHoldingsService {
     private final LargeHoldingsRepositoryCustom largeHoldingsRepositoryCustom;
 
     @Transactional
+    @Scheduled(cron = "0 0 9 * * ?")
     public void insertData() {
         WebClient webClient = WebClient.builder()
                                        .baseUrl(baseUri)

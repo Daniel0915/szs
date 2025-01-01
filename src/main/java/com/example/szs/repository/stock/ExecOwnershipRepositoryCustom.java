@@ -1,11 +1,8 @@
 package com.example.szs.repository.stock;
 
 import com.example.szs.domain.stock.QExecOwnershipEntity;
-import com.example.szs.domain.stock.QLargeHoldingsEntity;
 import com.example.szs.model.dto.ExecOwnershipDTO;
-import com.example.szs.model.dto.LargeHoldingsDTO;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
-import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
