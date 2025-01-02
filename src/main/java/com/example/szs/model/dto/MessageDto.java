@@ -1,6 +1,7 @@
 package com.example.szs.model.dto;
 
 import com.example.szs.config.json.NullToEmptySerializer;
+import com.example.szs.model.eNum.redis.ChannelType;
 import lombok.Getter;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,6 @@ public class MessageDto implements Serializable {
     private String message;
     // 메시지 발신자
     private String sender;
-    // 메세지 방 번호 || 타겟 Channel
-    private String roomId;
+    // channel
+    private ChannelType channelType;
 }

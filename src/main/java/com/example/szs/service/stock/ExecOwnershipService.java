@@ -3,7 +3,10 @@ package com.example.szs.service.stock;
 import com.example.szs.domain.stock.ExecOwnershipEntity;
 import com.example.szs.model.dto.EOResponseDTO;
 import com.example.szs.model.dto.ExecOwnershipDTO;
+import com.example.szs.model.dto.MessageDto;
+import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
+import com.example.szs.module.redis.RedisPubModule;
 import com.example.szs.repository.stock.ExecOwnershipRepository;
 import com.example.szs.repository.stock.ExecOwnershipRepositoryCustom;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
@@ -18,10 +21,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,6 +45,7 @@ public class ExecOwnershipService {
 
     private final ExecOwnershipRepository execOwnershipRepository;
     private final ExecOwnershipRepositoryCustom execOwnershipRepositoryCustom;
+    private final RedisPubModule redisPubModule;
 
     @Transactional
     @Scheduled(cron = "0 0 9 * * ?")
@@ -96,5 +98,22 @@ public class ExecOwnershipService {
 
         List<ExecOwnershipEntity> insertEntity = execOwnershipEntityList.subList(findIndex + 1, execOwnershipEntityList.size());
         execOwnershipRepository.saveAll(insertEntity);
+
+        if (insertEntity.isEmpty()) {
+            return;
+        }
+
+        List<ExecOwnershipDTO> execOwnershipDTOList = new ArrayList<>();
+        for (ExecOwnershipEntity entity : insertEntity) {
+            Optional<ExecOwnershipDTO> dtoOptional = EntityToDtoMapper.mapEntityToDto(entity, ExecOwnershipDTO.class);
+            dtoOptional.ifPresent(execOwnershipDTOList::add);
+        }
+
+        String message = ExecOwnershipDTO.getMessage("삼상전자", execOwnershipDTOList);
+        MessageDto messageDto = MessageDto.builder()
+                                          .message(message)
+                                          .channelType(ChannelType.STOCK_CHANGE_EXECOWNERSHIP)
+                                          .build();
+        redisPubModule.pubMsgChannel(messageDto);
     }
 }

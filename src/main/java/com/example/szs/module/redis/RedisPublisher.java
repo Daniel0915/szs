@@ -2,7 +2,7 @@ package com.example.szs.module.redis;
 
 import com.example.szs.model.dto.LargeHoldingsDTO;
 import com.example.szs.model.dto.MessageDto;
-import com.example.szs.model.eNum.redis.PubType;
+import com.example.szs.model.eNum.redis.ChannelType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public class RedisPublisher {
 
 
     // TODO : 요청 변수 Puh 객체 만들어서 매개변수 사용하기
-    public void pub(PubType pubType, List<LargeHoldingsDTO> largeHoldingsDTOList) {
+    public void pub(ChannelType pubType, List<LargeHoldingsDTO> largeHoldingsDTOList) {
 
         switch (pubType) {
             case STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS:
