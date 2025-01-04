@@ -94,6 +94,8 @@ public class ExecOwnershipService {
             return rceptNo_o1.compareTo(rceptNo_o2);
         };
 
+        execOwnershipEntityList.sort(comparator);
+
         int findIndex = Collections.binarySearch(execOwnershipEntityList, findLatestRecord, comparator);
 
         List<ExecOwnershipEntity> insertEntity = execOwnershipEntityList.subList(findIndex + 1, execOwnershipEntityList.size());

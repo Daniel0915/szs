@@ -26,7 +26,7 @@ public class RedisPubSubController {
     public void sendMessage(@RequestParam ChannelType channelType, @RequestBody MessageDto message) {
         log.info("Redis Pub MSG Channel = {}", channelType);
 //        execOwnershipService.insertData();
-        largeHoldingsService.insertData();
+//        largeHoldingsService.insertData();
 //        redisPubService.pubMsgChannel(channelType, message);
     }
 

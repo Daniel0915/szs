@@ -94,6 +94,8 @@ public class LargeHoldingsService {
             return rceptNo_o1.compareTo(rceptNo_o2);
         };
 
+        largeHoldingsEntityList.sort(comparator);
+
         int findIndex = Collections.binarySearch(largeHoldingsEntityList, findLatestRecord, comparator);
 
         List<LargeHoldingsEntity> insertEntity = largeHoldingsEntityList.subList(findIndex + 1, largeHoldingsEntityList.size());

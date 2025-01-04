@@ -35,7 +35,7 @@ public class LargeHoldingsDTO {
             } else {
                 messageBuilder.append("주식을 샀어요. 매도 주식 수: ").append(Math.abs(dto.getStkqyIrds())).append("\n");
             }
-            messageBuilder.append("지분 변경 날짜 : ").append(dto.getRepror()).append("\n");
+            messageBuilder.append("지분 변경 날짜 : ").append(dto.getRceptDt()).append("\n");
             messageBuilder.append("===================================").append("\n");
         }
 
