@@ -6,7 +6,7 @@ import com.example.szs.model.dto.ExecOwnershipDTO;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
-import com.example.szs.module.redis.RedisPubModule;
+import com.example.szs.module.redis.RedisPublisher;
 import com.example.szs.repository.stock.ExecOwnershipRepository;
 import com.example.szs.repository.stock.ExecOwnershipRepositoryCustom;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
@@ -22,7 +22,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,7 +44,7 @@ public class ExecOwnershipService {
 
     private final ExecOwnershipRepository execOwnershipRepository;
     private final ExecOwnershipRepositoryCustom execOwnershipRepositoryCustom;
-    private final RedisPubModule redisPubModule;
+    private final RedisPublisher redisPublisher;
 
     @Transactional
     @Scheduled(cron = "0 0 9 * * ?")
@@ -116,6 +115,6 @@ public class ExecOwnershipService {
                                           .message(message)
                                           .channelType(ChannelType.STOCK_CHANGE_EXECOWNERSHIP)
                                           .build();
-        redisPubModule.pubMsgChannel(messageDto);
+        redisPublisher.pubMsgChannel(messageDto);
     }
 }

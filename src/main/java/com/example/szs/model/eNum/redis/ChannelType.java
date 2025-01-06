@@ -3,6 +3,8 @@ package com.example.szs.model.eNum.redis;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @Getter
 public enum ChannelType {
@@ -12,4 +14,14 @@ public enum ChannelType {
 
 
     private final String desc;
+
+    public static ChannelType findChannelTypeOrNull(String channelTypeStr) {
+        ChannelType[] channelTypes = ChannelType.values();
+        for (ChannelType channelType : channelTypes) {
+            if (Objects.equals(channelType.name(), channelTypeStr)) {
+                return channelType;
+            }
+        }
+        return null;
+    }
 }

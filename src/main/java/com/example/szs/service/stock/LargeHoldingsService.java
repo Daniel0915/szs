@@ -1,13 +1,12 @@
 package com.example.szs.service.stock;
 
 import com.example.szs.domain.stock.LargeHoldingsEntity;
-import com.example.szs.model.dto.ExecOwnershipDTO;
 import com.example.szs.model.dto.LHResponseDTO;
 import com.example.szs.model.dto.LargeHoldingsDTO;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
-import com.example.szs.module.redis.RedisPubModule;
+import com.example.szs.module.redis.RedisPublisher;
 import com.example.szs.repository.stock.LargeHoldingsRepository;
 import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
@@ -45,7 +44,7 @@ public class LargeHoldingsService {
 
     private final LargeHoldingsRepository largeHoldingsRepository;
     private final LargeHoldingsRepositoryCustom largeHoldingsRepositoryCustom;
-    private final RedisPubModule redisPubModule;
+    private final RedisPublisher redisPublisher;
 
     @Transactional
     @Scheduled(cron = "0 0 9 * * ?")
@@ -117,6 +116,6 @@ public class LargeHoldingsService {
                                           .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
                                           .build();
 
-        redisPubModule.pubMsgChannel(messageDto);
+        redisPublisher.pubMsgChannel(messageDto);
     }
 }
