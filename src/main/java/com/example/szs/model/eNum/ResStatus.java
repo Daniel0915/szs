@@ -16,6 +16,8 @@ public enum ResStatus {
     JOIN_DUPLICATION_ERROR      ("0006", "이미 존재하는 회원입니다."),
 
     PERMISSION_DENIED           ("0007", "권한이 없습니다."),
+
+    ASYNC_TIME_OUT              ("008", "비동기 타임아웃"),
     ;
 
     private final String sCode;

@@ -1,13 +1,12 @@
 package com.example.szs.model.dto;
 
-import com.example.szs.config.json.NullToEmptySerializer;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
 @Getter
