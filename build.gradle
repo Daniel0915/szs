@@ -52,7 +52,13 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    implementation 'org.jsoup:jsoup:1.18.3'
+
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // crawling
+    implementation 'org.seleniumhq.selenium:selenium-java:4.11.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.5.3'
 }
 
 tasks.named('test') {
