@@ -1,5 +1,7 @@
 package com.example.szs.domain.stock;
 
+import com.example.szs.model.dto.LargeHoldingsDetailDTO;
+import com.example.szs.utils.jpa.EntityToDtoMapper;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;

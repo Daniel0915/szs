@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Getter
 @Builder(toBuilder = true)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @JsonSerialize(using = NullToEmptySerializer.class)
 @ToString

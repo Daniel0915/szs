@@ -27,7 +27,7 @@ class SzsApplicationTests {
     void contextLoads() throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         LargeHoldingsDetailDTO dto1 = LargeHoldingsDetailDTO.builder()
                                                                  .seq(1L)
-                                                                 .rceptNo(123456L)
+                                                                 .rceptNo("123456")
                                                                  .corpCode(987654L)
                                                                  .corpName("Example Corp")
                                                                  .largeHoldingsName("John Doe")
@@ -45,7 +45,7 @@ class SzsApplicationTests {
 
         LargeHoldingsDetailDTO dto2 = LargeHoldingsDetailDTO.builder()
                                                             .seq(0L)
-                                                            .rceptNo(49303301L)
+                                                            .rceptNo("49303301L")
                                                             .corpCode(987654L)
                                                             .corpName("Example Corp")
                                                             .largeHoldingsName("John Doe")
