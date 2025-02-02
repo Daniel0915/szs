@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @ToString
 public class LargeHoldingsDetailDTO {
     private Long seq;
-    private Long rceptNo; // 접수 번호
+    private String rceptNo; // 접수 번호
     private Long corpCode; // 회사코드
     private String corpName; // 회사명
     private String largeHoldingsName; // 대주주 이름

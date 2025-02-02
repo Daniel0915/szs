@@ -14,11 +14,11 @@ import lombok.experimental.FieldNameConstants;
 @ToString
 public class LargeHoldingsDetailEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rcept_no")
+    @Column(name = "seq")
     private Long seq;
 
     @Column(name = "rcept_no", nullable = false)
-    private Long rceptNo; // 접수 번호
+    private String rceptNo; // 접수 번호
 
     @Column(name = "corp_code", nullable = false)
     private Long corpCode; // 회사코드
@@ -32,7 +32,7 @@ public class LargeHoldingsDetailEntity {
     @Column(name = "birth_date_or_biz_reg_num", nullable = false, length = 20)
     private String birthDateOrBizRegNum; // 생년월일 또는 사업자등록번호 등
 
-    @Column(name = "trade_dt", nullable = false, length = 8)
+    @Column(name = "trade_dt", nullable = false, length = 10)
     private String tradeDt; // 거래일
 
     @Column(name = "trade_reason", nullable = false, length = 20)

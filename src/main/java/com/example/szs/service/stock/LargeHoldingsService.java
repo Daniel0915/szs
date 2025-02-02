@@ -3,10 +3,13 @@ package com.example.szs.service.stock;
 import com.example.szs.domain.stock.LargeHoldingsEntity;
 import com.example.szs.model.dto.LHResponseDTO;
 import com.example.szs.model.dto.LargeHoldingsDTO;
+import com.example.szs.model.dto.LargeHoldingsDetailDTO;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import com.example.szs.module.redis.RedisPublisher;
+import com.example.szs.module.stock.WebCrawling;
+import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsRepository;
 import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
@@ -45,6 +48,8 @@ public class LargeHoldingsService {
     private final LargeHoldingsRepository largeHoldingsRepository;
     private final LargeHoldingsRepositoryCustom largeHoldingsRepositoryCustom;
     private final RedisPublisher redisPublisher;
+    private final WebCrawling webCrawling;
+    private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
 
     @Transactional
     @Scheduled(cron = "0 0 9 * * ?")
@@ -99,6 +104,15 @@ public class LargeHoldingsService {
 
         List<LargeHoldingsEntity> insertEntity = largeHoldingsEntityList.subList(findIndex + 1, largeHoldingsEntityList.size());
         largeHoldingsRepository.saveAll(insertEntity);
+
+        // ############ 대주주 세부 내용 웹 크롤링 ############ [start]
+        for (LargeHoldingsEntity entity : insertEntity) {
+            List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(entity.getRceptNo(), entity.getCorpCode(), entity.getCorpName());
+            largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
+        }
+
+        // ############ 대주주 세부 내용 웹 크롤링 ############ [end]
+
 
         if (insertEntity.isEmpty()) {
             return;

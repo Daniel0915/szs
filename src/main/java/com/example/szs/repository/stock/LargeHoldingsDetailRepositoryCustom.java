@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,7 +30,7 @@ public class LargeHoldingsDetailRepositoryCustom {
         this.largeHoldingsDetailRepository = largeHoldingsDetailRepository;
     }
 
-    public void saveLargeHoldingsDetail(List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList) throws NoSuchFieldException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    public void saveLargeHoldingsDetail(List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList) {
         if (CollectionUtils.isEmpty(largeHoldingsDetailDTOList)) {
             return;
         }
@@ -57,8 +58,8 @@ public class LargeHoldingsDetailRepositoryCustom {
                     continue;
                 }
 
-                Optional<LargeHoldingsDetailEntity> optaional = Param.getSaveEntity(dto, findUpdateEntity);
-                optaional.ifPresent(updateEntityList::add);
+                Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optaional = Param.getSaveEntityToBuilder(dto, findUpdateEntity, findUpdateEntity.toBuilder());
+                optaional.ifPresent(value -> updateEntityList.add(value.build()));
             }
 
             largeHoldingsDetailRepository.saveAll(updateEntityList);
@@ -68,9 +69,10 @@ public class LargeHoldingsDetailRepositoryCustom {
         // ############# insert ############# [start]
         List<LargeHoldingsDetailDTO> insertDTOList = partitioned.get(true);
         List<LargeHoldingsDetailEntity> insertEntityList = new ArrayList<>();
+
         for (LargeHoldingsDetailDTO dto : insertDTOList) {
-            Optional<LargeHoldingsDetailEntity> optaional = Param.getSaveEntity(dto, new LargeHoldingsDetailEntity());
-            optaional.ifPresent(insertEntityList::add);
+            Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optaional = Param.getSaveEntityToBuilder(dto, new LargeHoldingsDetailEntity(), new LargeHoldingsDetailEntity().toBuilder());
+            optaional.ifPresent(value -> insertEntityList.add(value.build()));
         }
 
         largeHoldingsDetailRepository.saveAll(insertEntityList);

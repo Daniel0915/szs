@@ -18,9 +18,9 @@ public class TestJpa {
                                                            .seq(1L)
                                                            .build();
 
-        Optional<LargeHoldingsDetailEntity> test = Param.getSaveEntity(dto, entity);
+        Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> test = Param.getSaveEntityToBuilder(dto, entity, entity.toBuilder());
 
-        System.out.println(test.get());
+        System.out.println(test.get().build());
 
 
     }

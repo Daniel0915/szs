@@ -22,7 +22,7 @@ public class TimeUtil {
         assert (StringUtils.hasText(korDate)) : "not empty";
 
         SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
-        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyyMMddHH");
+        SimpleDateFormat targetFormat = new SimpleDateFormat("yyyyMMdd");
         try {
             // 날짜 문자열을 Date 객체로 변환
             Date date = originalFormat.parse(korDate);
