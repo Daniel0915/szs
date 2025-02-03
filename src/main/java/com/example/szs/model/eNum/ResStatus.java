@@ -2,6 +2,8 @@ package com.example.szs.model.eNum;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+@Getter
 @RequiredArgsConstructor
 public enum ResStatus {
     SUCCESS                     ("0000", "성공"),
@@ -22,12 +24,4 @@ public enum ResStatus {
 
     private final String sCode;
     private final String sMsg;
-
-    public String getsCode() {
-        return sCode;
-    }
-
-    public String getsMsg() {
-        return sMsg;
-    }
 }

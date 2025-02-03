@@ -4,6 +4,7 @@ import com.example.szs.model.dto.LHResponseDTO;
 import com.example.szs.model.dto.LargeHoldingsDetailDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
+import com.example.szs.module.ApiResponse;
 import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
@@ -28,6 +29,7 @@ public class StockController {
     private final LargeHoldingsService largeHoldingsService;
     private final ExecOwnershipService execOwnershipService;
     private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
+    private final ApiResponse apiResponse;
 
     @GetMapping("/update")
     public Map<String, Object> update(@RequestParam boolean isExec) {
@@ -40,7 +42,12 @@ public class StockController {
     }
 
     @GetMapping("/search/large-holdings")
-    public Page<LargeHoldingsDetailDTO> searchLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
-        return largeHoldingsDetailRepositoryCustom.searchPage(condition, pageable);
+    public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
+        try {
+            return largeHoldingsService.getSearchPagelargeHoldingsDetail(condition, pageable);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
     }
 }

@@ -15,21 +15,21 @@ import java.util.Map;
 public class ResUtil {
     public static <T> Map<String, Object> makeResponse(T t, ResStatus resStatus) {
         Map<String, Object> result = new HashMap();
-        result.put("sCode", resStatus.getsCode());
-        result.put("sMsg", resStatus.getsMsg());
+        result.put("sCode", resStatus.getSCode());
+        result.put("sMsg", resStatus.getSCode());
         result.put("data", t);
         return result;
     }
 
     public static <T> Map<String, Object> makeResponse(T t, String resStatuCode) {
         ResStatus resStatus = (ResStatus) Arrays.stream(ResStatus.values()).filter((status) -> {
-            return status.getsCode().equals(resStatuCode);
+            return status.getSCode().equals(resStatuCode);
         }).findFirst().orElseGet(() -> {
             return ResStatus.ERROR;
         });
         Map<String, Object> result = new HashMap();
-        result.put("sCode", resStatus.getsCode());
-        result.put("sMsg", resStatus.getsMsg());
+        result.put("sCode", resStatus.getSCode());
+        result.put("sMsg", resStatus.getSMsg());
         result.put("data", t);
         return result;
     }

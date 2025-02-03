@@ -163,6 +163,10 @@ public class LargeHoldingsDetailRepositoryCustom {
     }
 
     private BooleanExpression tradeDtBetween(String tradeDtLoe, String tradeDtGoe) {
+        if (!StringUtils.hasText(tradeDtLoe) || !StringUtils.hasText(tradeDtGoe)) {
+            return null;
+        }
+
         return tradeDtLoe(tradeDtLoe).and(tradeDtGoe(tradeDtGoe));
     }
 

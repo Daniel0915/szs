@@ -5,17 +5,25 @@ import com.example.szs.model.dto.LHResponseDTO;
 import com.example.szs.model.dto.LargeHoldingsDTO;
 import com.example.szs.model.dto.LargeHoldingsDetailDTO;
 import com.example.szs.model.dto.MessageDto;
+import com.example.szs.model.dto.page.PageDTO;
+import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
+import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
+import com.example.szs.module.ApiResponse;
 import com.example.szs.module.redis.RedisPublisher;
 import com.example.szs.module.stock.WebCrawling;
 import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsRepository;
 import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
+import com.example.szs.utils.Response.ResUtil;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -50,6 +58,7 @@ public class LargeHoldingsService {
     private final RedisPublisher redisPublisher;
     private final WebCrawling webCrawling;
     private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
+    private final ApiResponse apiResponse;
 
     @Transactional
     @Scheduled(cron = "0 0 9 * * ?")
@@ -131,5 +140,17 @@ public class LargeHoldingsService {
                                           .build();
 
         redisPublisher.pubMsgChannel(messageDto);
+    }
+
+    public <T> ResponseEntity<?> getSearchPagelargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
+        Page<LargeHoldingsDetailDTO> page = largeHoldingsDetailRepositoryCustom.searchPage(condition, pageable);
+
+        PageDTO pageDTO = PageDTO.builder()
+                                 .content(page.getContent())
+                                 .totalElements(page.getTotalElements())
+                                 .totalPages(page.getTotalPages())
+                                 .build();
+
+        return apiResponse.makeResponse(ResStatus.SUCCESS, pageDTO);
     }
 }
