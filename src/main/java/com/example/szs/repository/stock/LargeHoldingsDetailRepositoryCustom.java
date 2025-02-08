@@ -45,11 +45,17 @@ public class LargeHoldingsDetailRepositoryCustom {
     public Page<LargeHoldingsDetailDTO> searchPage(LargeHoldingsDetailSearchCondition condtion, Pageable pageable) {
         List<LargeHoldingsDetailDTO> content = queryFactory.selectFrom(largeHoldingsDetailEntity)
                                                            .where(
-                                                                   largeHoldingsNameEq      (condtion.getLargeHoldingsName()),
-                                                                   birthDateOrBizRegNumEq   (condtion.getBirthDateOrBizRegNum()),
-                                                                   tradeReasonEq            (condtion.getTradeReason()),
-                                                                   stockTypeEq              (condtion.getStockType()),
-                                                                   tradeDtBetween           (condtion.getTradeDtLoe(), condtion.getTradeDtGoe())
+                                                                   // eq
+                                                                   largeHoldingsNameEq      (condtion.getLargeHoldingsNameEq()),
+                                                                   birthDateOrBizRegNumEq   (condtion.getBirthDateOrBizRegNumEq()),
+                                                                   tradeReasonEq            (condtion.getTradeReasonEq()),
+                                                                   stockTypeEq              (condtion.getStockTypeEq()),
+                                                                   tradeDtBetween           (condtion.getTradeDtLoe(), condtion.getTradeDtGoe()),
+                                                                   // like
+                                                                   largeHoldingsNameContains    (condtion.getLargeHoldingsNameContains()),
+                                                                   birthDateOrBizRegNumContains (condtion.getBirthDateOrBizRegNumEqContains()),
+                                                                   tradeReasonContains          (condtion.getTradeReasonContains()),
+                                                                   stockTypeContains            (condtion.getStockTypeContains())
                                                            )
                                                            .orderBy(dynamicOrder(condtion))
                                                            .offset(pageable.getOffset())
@@ -62,10 +68,10 @@ public class LargeHoldingsDetailRepositoryCustom {
         JPAQuery<Long> countQuery = queryFactory.select(largeHoldingsDetailEntity.count())
                                                 .from(largeHoldingsDetailEntity)
                                                 .where(
-                                                        largeHoldingsNameEq     (condtion.getLargeHoldingsName()),
-                                                        birthDateOrBizRegNumEq  (condtion.getBirthDateOrBizRegNum()),
-                                                        tradeReasonEq           (condtion.getTradeReason()),
-                                                        stockTypeEq             (condtion.getStockType()),
+                                                        largeHoldingsNameEq     (condtion.getLargeHoldingsNameEq()),
+                                                        birthDateOrBizRegNumEq  (condtion.getBirthDateOrBizRegNumEq()),
+                                                        tradeReasonEq           (condtion.getTradeReasonEq()),
+                                                        stockTypeEq             (condtion.getStockTypeEq()),
                                                         tradeDtBetween          (condtion.getTradeDtLoe(), condtion.getTradeDtGoe())
                                                 );
 
@@ -135,6 +141,22 @@ public class LargeHoldingsDetailRepositoryCustom {
 
     private BooleanExpression stockTypeEq(String stockType) {
         return StringUtils.hasText(stockType) ? largeHoldingsDetailEntity.stockType.eq(stockType) : null;
+    }
+
+    private BooleanExpression largeHoldingsNameContains(String largeHoldingsName) {
+        return StringUtils.hasText(largeHoldingsName) ? largeHoldingsDetailEntity.largeHoldingsName.contains(largeHoldingsName) : null;
+    }
+
+    private BooleanExpression birthDateOrBizRegNumContains(String birthDateOrBizRegNum) {
+        return StringUtils.hasText(birthDateOrBizRegNum) ? largeHoldingsDetailEntity.birthDateOrBizRegNum.contains(birthDateOrBizRegNum) : null;
+    }
+
+    private BooleanExpression tradeReasonContains(String tradeReason) {
+        return StringUtils.hasText(tradeReason) ? largeHoldingsDetailEntity.tradeReason.contains(tradeReason) : null;
+    }
+
+    private BooleanExpression stockTypeContains(String stockType) {
+        return StringUtils.hasText(stockType) ? largeHoldingsDetailEntity.stockType.contains(stockType) : null;
     }
 
     private OrderSpecifier<?> dynamicOrder(LargeHoldingsDetailSearchCondition condition) {
