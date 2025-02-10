@@ -50,12 +50,26 @@ public class LargeHoldingsDetailRepositoryCustom {
                                                                    birthDateOrBizRegNumEq   (condtion.getBirthDateOrBizRegNumEq()),
                                                                    tradeReasonEq            (condtion.getTradeReasonEq()),
                                                                    stockTypeEq              (condtion.getStockTypeEq()),
+
+                                                                   // Between
                                                                    tradeDtBetween           (condtion.getTradeDtLoe(), condtion.getTradeDtGoe()),
+
+
                                                                    // like
                                                                    largeHoldingsNameContains    (condtion.getLargeHoldingsNameContains()),
                                                                    birthDateOrBizRegNumContains (condtion.getBirthDateOrBizRegNumEqContains()),
                                                                    tradeReasonContains          (condtion.getTradeReasonContains()),
-                                                                   stockTypeContains            (condtion.getStockTypeContains())
+                                                                   stockTypeContains            (condtion.getStockTypeContains()),
+
+                                                                   // goe
+                                                                   changeStockAmountGoe         (condtion.getChangeStockAmountGoe()),
+                                                                   unitStockPriceGoe            (condtion.getUnitStockPriceGoe()),
+                                                                   afterStockAmountGoe          (condtion.getAfterStockAmountGoe()),
+
+                                                                   // loe
+                                                                   changeStockAmountLoe         (condtion.getChangeStockAmountLoe()),
+                                                                   unitStockPriceLoe            (condtion.getUnitStockPriceLoe()),
+                                                                   afterStockAmountLoe          (condtion.getAfterStockAmountLoe())
                                                            )
                                                            .orderBy(dynamicOrder(condtion))
                                                            .offset(pageable.getOffset())
@@ -65,6 +79,8 @@ public class LargeHoldingsDetailRepositoryCustom {
                                                            .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDetailDTO.class).stream())
                                                            .toList();
 
+        // TODO : where 매개변수를 공통화 하자!
+
         JPAQuery<Long> countQuery = queryFactory.select(largeHoldingsDetailEntity.count())
                                                 .from(largeHoldingsDetailEntity)
                                                 .where(
@@ -72,7 +88,25 @@ public class LargeHoldingsDetailRepositoryCustom {
                                                         birthDateOrBizRegNumEq  (condtion.getBirthDateOrBizRegNumEq()),
                                                         tradeReasonEq           (condtion.getTradeReasonEq()),
                                                         stockTypeEq             (condtion.getStockTypeEq()),
-                                                        tradeDtBetween          (condtion.getTradeDtLoe(), condtion.getTradeDtGoe())
+
+                                                        // Between
+                                                        tradeDtBetween          (condtion.getTradeDtLoe(), condtion.getTradeDtGoe()),
+
+                                                        // like
+                                                        largeHoldingsNameContains    (condtion.getLargeHoldingsNameContains()),
+                                                        birthDateOrBizRegNumContains (condtion.getBirthDateOrBizRegNumEqContains()),
+                                                        tradeReasonContains          (condtion.getTradeReasonContains()),
+                                                        stockTypeContains            (condtion.getStockTypeContains()),
+
+                                                        // goe
+                                                        changeStockAmountGoe         (condtion.getChangeStockAmountGoe()),
+                                                        unitStockPriceGoe            (condtion.getUnitStockPriceGoe()),
+                                                        afterStockAmountGoe          (condtion.getAfterStockAmountGoe()),
+
+                                                        // loe
+                                                        changeStockAmountLoe         (condtion.getChangeStockAmountLoe()),
+                                                        unitStockPriceLoe            (condtion.getUnitStockPriceLoe()),
+                                                        afterStockAmountLoe          (condtion.getAfterStockAmountLoe())
                                                 );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
@@ -198,5 +232,32 @@ public class LargeHoldingsDetailRepositoryCustom {
 
     private BooleanExpression tradeDtLoe(String tradeDtLoe) {
         return tradeDtLoe != null ? largeHoldingsDetailEntity.tradeDt.loe(tradeDtLoe) : null;
+    }
+
+    // 거래량 changeStockAmount 범위
+    private BooleanExpression changeStockAmountGoe(Long changeStockAmountGoe) {
+        return changeStockAmountGoe != null ? largeHoldingsDetailEntity.changeStockAmount.goe(changeStockAmountGoe) : null;
+    }
+
+    private BooleanExpression changeStockAmountLoe(Long changeStockAmountLoe) {
+        return changeStockAmountLoe != null ? largeHoldingsDetailEntity.changeStockAmount.loe(changeStockAmountLoe) : null;
+    }
+
+    // 평단가 unitStockPrice 범위
+    private BooleanExpression unitStockPriceGoe(Long unitStockPriceGoe) {
+        return unitStockPriceGoe != null ? largeHoldingsDetailEntity.unitStockPrice.goe(unitStockPriceGoe) : null;
+    }
+
+    private BooleanExpression unitStockPriceLoe(Long unitStockPriceLoe) {
+        return unitStockPriceLoe != null ? largeHoldingsDetailEntity.unitStockPrice.loe(unitStockPriceLoe) : null;
+    }
+
+    // 보유주식 afterStockAmount 범위
+    private BooleanExpression afterStockAmountGoe(Long afterStockAmountGoe) {
+        return afterStockAmountGoe != null ? largeHoldingsDetailEntity.afterStockAmount.goe(afterStockAmountGoe) : null;
+    }
+
+    private BooleanExpression afterStockAmountLoe(Long afterStockAmountLoe) {
+        return afterStockAmountLoe != null ? largeHoldingsDetailEntity.afterStockAmount.loe(afterStockAmountLoe): null;
     }
 }

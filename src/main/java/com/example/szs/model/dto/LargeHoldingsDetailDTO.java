@@ -1,9 +1,8 @@
 package com.example.szs.model.dto;
 
 import com.example.szs.config.json.NullToEmptySerializer;
-import jakarta.persistence.Column;
-import lombok.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.*;
 
 @Getter
 @Builder(toBuilder = true)
