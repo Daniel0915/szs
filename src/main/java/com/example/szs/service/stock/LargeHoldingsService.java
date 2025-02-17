@@ -87,6 +87,12 @@ public class LargeHoldingsService {
                                                                                                                                            .build());
         if (optionalLargeHoldingsDTO.isEmpty()) {
             largeHoldingsRepository.saveAll(largeHoldingsEntityList);
+            // ############ 대주주 세부 내용 웹 크롤링 ############ [start]
+            for (LargeHoldingsEntity entity : largeHoldingsEntityList) {
+                List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(entity.getRceptNo(), entity.getCorpCode(), entity.getCorpName());
+                largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
+            }
+            // ############ 대주주 세부 내용 웹 크롤링 ############ [end]
             return;
         }
 
@@ -119,9 +125,7 @@ public class LargeHoldingsService {
             List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(entity.getRceptNo(), entity.getCorpCode(), entity.getCorpName());
             largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
         }
-
         // ############ 대주주 세부 내용 웹 크롤링 ############ [end]
-
 
         if (insertEntity.isEmpty()) {
             return;
