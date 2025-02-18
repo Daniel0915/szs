@@ -4,14 +4,18 @@ import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.model.dto.LHResponseDTO;
 import com.example.szs.model.dto.LargeHoldingsDTO;
 import com.example.szs.model.dto.LargeHoldingsDetailDTO;
+import com.example.szs.model.dto.user.LargeHoldingsStkrtDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
+import com.example.szs.repository.stock.LargeHoldingsStkrtRepositoryCustom;
 import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
 import com.example.szs.utils.Response.ResUtil;
 import com.example.szs.utils.jpa.Param;
+import com.example.szs.utils.money.NumberUtils;
+import com.example.szs.utils.type.NumberUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,6 +60,7 @@ public class StockController {
 
     @PostMapping("/update-scraping")
     public ResponseEntity<?> updateScraping(@RequestBody List<LargeHoldingsDTO> largeHoldingsDTOList) {
+        // TODO : header 체크 필요
         return largeHoldingsService.updateScraping(largeHoldingsDTOList);
     }
 }

@@ -7,6 +7,7 @@ import com.example.szs.model.dto.LargeHoldingsDTO;
 import com.example.szs.model.dto.LargeHoldingsDetailDTO;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.dto.page.PageDTO;
+import com.example.szs.model.dto.user.LargeHoldingsStkrtDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
@@ -18,6 +19,7 @@ import com.example.szs.module.stock.WebCrawling;
 import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsRepository;
 import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
+import com.example.szs.repository.stock.LargeHoldingsStkrtRepositoryCustom;
 import com.example.szs.utils.Response.ResUtil;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.example.szs.utils.jpa.Param;
@@ -60,9 +62,11 @@ public class LargeHoldingsService {
 
     private final LargeHoldingsRepository largeHoldingsRepository;
     private final LargeHoldingsRepositoryCustom largeHoldingsRepositoryCustom;
+    private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
+    private final LargeHoldingsStkrtRepositoryCustom largeHoldingsStkrtRepositoryCustom;
+
     private final RedisPublisher redisPublisher;
     private final WebCrawling webCrawling;
-    private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
     private final ApiResponse apiResponse;
     private final LargeHoldings largeHoldings;
 
@@ -170,9 +174,13 @@ public class LargeHoldingsService {
 
     @Transactional
     public <T> ResponseEntity<?> updateScraping(List<LargeHoldingsDTO> largeHoldingsDTOList) {
+        // TimeUtil.nowTime("yyyyMMddHHmmss")
         for (LargeHoldingsDTO dto : largeHoldingsDTOList) {
             List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
             largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
+
+            List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList = webCrawling.getLargeHoldingsStkrtCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
+            largeHoldingsStkrtRepositoryCustom.saveLargeHoldingsStkrt(largeHoldingsStkrtDTOList);
         }
 
         return apiResponse.makeResponse(ResStatus.SUCCESS);

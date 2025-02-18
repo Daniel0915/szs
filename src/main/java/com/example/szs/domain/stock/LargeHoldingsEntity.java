@@ -12,7 +12,7 @@ import lombok.experimental.FieldNameConstants;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "LARGE_HOLDINGS")
+@Table(name = "large_holdings")
 @Getter
 @FieldNameConstants
 public class LargeHoldingsEntity {

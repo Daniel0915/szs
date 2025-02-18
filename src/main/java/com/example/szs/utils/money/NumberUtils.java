@@ -29,4 +29,14 @@ public class NumberUtils {
 
         return Long.valueOf(valueWithoutCommas);
     }
+
+    public static Float stringToFloatConverter(String str) {
+        if (!StringUtils.hasText(str)) {
+            return 0F;
+        }
+
+        String valueWithoutCommas = str.replace(",", "");
+
+        return Float.valueOf(valueWithoutCommas);
+    }
 }

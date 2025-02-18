@@ -1,7 +1,5 @@
 package com.example.szs.domain.stock;
 
-import com.example.szs.model.dto.LargeHoldingsDetailDTO;
-import com.example.szs.utils.jpa.EntityToDtoMapper;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
@@ -13,7 +11,6 @@ import lombok.experimental.FieldNameConstants;
 @Table(name = "large_holdings_detail")
 @Getter
 @FieldNameConstants
-@ToString
 public class LargeHoldingsDetailEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seq")
@@ -60,4 +57,7 @@ public class LargeHoldingsDetailEntity {
 
     @Column(name = "total_stock_price", nullable = false)
     private Long totalStockPrice; // 전체 주식 취득 / 처분 단가
+
+    @Column(name= "reg_dt")
+    private String regDt;
 }

@@ -6,6 +6,7 @@ import com.example.szs.model.dto.LargeHoldingsDetailDTO;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.example.szs.utils.jpa.Param;
+import com.example.szs.utils.time.TimeUtil;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -154,11 +155,14 @@ public class LargeHoldingsDetailRepositoryCustom {
 
         for (LargeHoldingsDetailDTO dto : insertDTOList) {
             Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optaional = Param.getSaveEntityToBuilder(dto, new LargeHoldingsDetailEntity(), new LargeHoldingsDetailEntity().toBuilder());
-            optaional.ifPresent(value -> insertEntityList.add(value.build()));
+            optaional.ifPresent(value -> insertEntityList.add(value.build()
+                                                                   .toBuilder()
+                                                                   .regDt(TimeUtil.nowTime("yyyyMMddHHmmss"))
+                                                                   .build()));
         }
 
         largeHoldingsDetailRepository.saveAll(insertEntityList);
-        // ############# insert ############# [start]
+        // ############# insert ############# [end]
     }
 
     private BooleanExpression largeHoldingsNameEq(String largeHoldingsName) {

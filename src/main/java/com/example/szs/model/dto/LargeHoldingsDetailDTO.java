@@ -26,4 +26,5 @@ public class LargeHoldingsDetailDTO {
     private Long unitStockPrice; // 주식 단가
     private String currencyType; // 주식 단가 통화
     private Long totalStockPrice; // 전체 주식 취득 / 처분 단가
+    private Long regDt;
 }

@@ -16,7 +16,7 @@ import lombok.experimental.FieldNameConstants;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "EXEC_OWNERSHIP")
+@Table(name = "exec_ownership")
 @Getter
 @FieldNameConstants
 public class ExecOwnershipEntity {
