@@ -1,5 +1,6 @@
 package com.example.szs.service.stock;
 
+import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.domain.stock.LargeHoldingsEntity;
 import com.example.szs.model.dto.LHResponseDTO;
 import com.example.szs.model.dto.LargeHoldingsDTO;
@@ -12,12 +13,14 @@ import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.module.redis.RedisPublisher;
+import com.example.szs.module.stock.LargeHoldings;
 import com.example.szs.module.stock.WebCrawling;
 import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsRepository;
 import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
 import com.example.szs.utils.Response.ResUtil;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
+import com.example.szs.utils.jpa.Param;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,11 +31,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -59,6 +64,7 @@ public class LargeHoldingsService {
     private final WebCrawling webCrawling;
     private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
     private final ApiResponse apiResponse;
+    private final LargeHoldings largeHoldings;
 
     @Transactional
     @Scheduled(cron = "0 0 9 * * ?")
@@ -87,12 +93,13 @@ public class LargeHoldingsService {
                                                                                                                                            .build());
         if (optionalLargeHoldingsDTO.isEmpty()) {
             largeHoldingsRepository.saveAll(largeHoldingsEntityList);
-            // ############ 대주주 세부 내용 웹 크롤링 ############ [start]
-            for (LargeHoldingsEntity entity : largeHoldingsEntityList) {
-                List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(entity.getRceptNo(), entity.getCorpCode(), entity.getCorpName());
-                largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
+            if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
+                List<LargeHoldingsDTO> requestBody = largeHoldingsEntityList.stream()
+                                                                            .map(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class))
+                                                                            .flatMap(Optional::stream)
+                                                                            .toList();
+                largeHoldings.apiCallUpdateLargeHoldingsDetail(requestBody);
             }
-            // ############ 대주주 세부 내용 웹 크롤링 ############ [end]
             return;
         }
 
@@ -121,9 +128,12 @@ public class LargeHoldingsService {
         largeHoldingsRepository.saveAll(insertEntity);
 
         // ############ 대주주 세부 내용 웹 크롤링 ############ [start]
-        for (LargeHoldingsEntity entity : insertEntity) {
-            List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(entity.getRceptNo(), entity.getCorpCode(), entity.getCorpName());
-            largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
+        if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
+            List<LargeHoldingsDTO> requestBody = largeHoldingsEntityList.stream()
+                                                                        .map(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class))
+                                                                        .flatMap(Optional::stream)
+                                                                        .toList();
+            largeHoldings.apiCallUpdateLargeHoldingsDetail(requestBody);
         }
         // ############ 대주주 세부 내용 웹 크롤링 ############ [end]
 
@@ -156,5 +166,15 @@ public class LargeHoldingsService {
                                  .build();
 
         return apiResponse.makeResponse(ResStatus.SUCCESS, pageDTO);
+    }
+
+    @Transactional
+    public <T> ResponseEntity<?> updateScraping(List<LargeHoldingsDTO> largeHoldingsDTOList) {
+        for (LargeHoldingsDTO dto : largeHoldingsDTOList) {
+            List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
+            largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
+        }
+
+        return apiResponse.makeResponse(ResStatus.SUCCESS);
     }
 }

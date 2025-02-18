@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/redis/pub-sub")
-@CrossOrigin(origins = "http://127.0.0.1:5173")
 @RequiredArgsConstructor
 @Slf4j
 public class RedisPubSubController {

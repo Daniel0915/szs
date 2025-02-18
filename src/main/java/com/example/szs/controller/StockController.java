@@ -1,6 +1,8 @@
 package com.example.szs.controller;
 
+import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.model.dto.LHResponseDTO;
+import com.example.szs.model.dto.LargeHoldingsDTO;
 import com.example.szs.model.dto.LargeHoldingsDetailDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
@@ -9,17 +11,17 @@ import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
 import com.example.szs.utils.Response.ResUtil;
+import com.example.szs.utils.jpa.Param;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/stock")
@@ -49,5 +51,10 @@ public class StockController {
             e.printStackTrace();
             return apiResponse.makeResponse(ResStatus.ERROR);
         }
+    }
+
+    @PostMapping("/update-scraping")
+    public ResponseEntity<?> updateScraping(@RequestBody List<LargeHoldingsDTO> largeHoldingsDTOList) {
+        return largeHoldingsService.updateScraping(largeHoldingsDTOList);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.szs.module.client;
 
+import com.example.szs.model.eNum.ResStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -25,8 +26,8 @@ public class RestClient {
 
     public String post(String uri, String json, Map<String, Object> headersMap) {
         log.debug("-----------------------------------------------------------------");
-        log.debug("Proxy Post   	=> ["+uri+"] ");
-        log.debug("Proxy Param 	=> " + json);
+        log.debug("Proxy Post   \t=> [{}] ", uri);
+        log.debug("Proxy Param \t=> {}", json);
 
         for (Map.Entry<String, Object> entry : headersMap.entrySet()) {
             headers.add(entry.getKey(), entry.getValue().toString());
@@ -39,12 +40,13 @@ public class RestClient {
         } catch (HttpClientErrorException e) {
             // 4xx 에러 처리
             e.printStackTrace();
-            log.error("Client error: " + e.getStatusCode());
+            log.error("Client error: {}", e.getStatusCode());
+            return ResStatus.HTTP_STATUS_4XX.getSCode();
         } catch (HttpServerErrorException e) {
             // 5xx 에러 처리
             e.printStackTrace();
-            log.error("Server error: " + e.getStatusCode());
+            log.error("Server error: {}", e.getStatusCode());
+            return ResStatus.HTTP_STATUS_5XX.getSCode();
         }
-        return "";
     }
 }

@@ -19,7 +19,16 @@ public enum ResStatus {
 
     PERMISSION_DENIED           ("0007", "권한이 없습니다."),
 
-    ASYNC_TIME_OUT              ("008", "비동기 타임아웃"),
+    ASYNC_TIME_OUT              ("0008", "비동기 타임아웃"),
+    PARSING_ERROR               ("0009", "파싱 에러"),
+    SERVICE_ERROR               ("0010", "서비스 에러"),
+    PARAM_REQUIRE_ERROR         ("0011", "필수 파라미터 에러"),
+
+    HTTP_STATUS_4XX              ("9000", "4xx 에러"),
+    HTTP_STATUS_5XX              ("9001", "5xx 에러"),
+
+
+
     ;
 
     private final String sCode;
