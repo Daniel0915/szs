@@ -7,6 +7,7 @@ import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.example.szs.utils.jpa.Param;
 import com.example.szs.utils.time.TimeUtil;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -46,31 +47,7 @@ public class LargeHoldingsDetailRepositoryCustom {
     public Page<LargeHoldingsDetailDTO> searchPage(LargeHoldingsDetailSearchCondition condtion, Pageable pageable) {
         List<LargeHoldingsDetailDTO> content = queryFactory.selectFrom(largeHoldingsDetailEntity)
                                                            .where(
-                                                                   // eq
-                                                                   largeHoldingsNameEq      (condtion.getLargeHoldingsNameEq()),
-                                                                   birthDateOrBizRegNumEq   (condtion.getBirthDateOrBizRegNumEq()),
-                                                                   tradeReasonEq            (condtion.getTradeReasonEq()),
-                                                                   stockTypeEq              (condtion.getStockTypeEq()),
-
-                                                                   // Between
-                                                                   tradeDtBetween           (condtion.getTradeDtLoe(), condtion.getTradeDtGoe()),
-
-
-                                                                   // like
-                                                                   largeHoldingsNameContains    (condtion.getLargeHoldingsNameContains()),
-                                                                   birthDateOrBizRegNumContains (condtion.getBirthDateOrBizRegNumEqContains()),
-                                                                   tradeReasonContains          (condtion.getTradeReasonContains()),
-                                                                   stockTypeContains            (condtion.getStockTypeContains()),
-
-                                                                   // goe
-                                                                   changeStockAmountGoe         (condtion.getChangeStockAmountGoe()),
-                                                                   unitStockPriceGoe            (condtion.getUnitStockPriceGoe()),
-                                                                   afterStockAmountGoe          (condtion.getAfterStockAmountGoe()),
-
-                                                                   // loe
-                                                                   changeStockAmountLoe         (condtion.getChangeStockAmountLoe()),
-                                                                   unitStockPriceLoe            (condtion.getUnitStockPriceLoe()),
-                                                                   afterStockAmountLoe          (condtion.getAfterStockAmountLoe())
+                                                                   searchPageWhereCondition(condtion)
                                                            )
                                                            .orderBy(dynamicOrder(condtion))
                                                            .offset(pageable.getOffset())
@@ -80,34 +57,10 @@ public class LargeHoldingsDetailRepositoryCustom {
                                                            .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDetailDTO.class).stream())
                                                            .toList();
 
-        // TODO : where 매개변수를 공통화 하자!
-
         JPAQuery<Long> countQuery = queryFactory.select(largeHoldingsDetailEntity.count())
                                                 .from(largeHoldingsDetailEntity)
                                                 .where(
-                                                        largeHoldingsNameEq     (condtion.getLargeHoldingsNameEq()),
-                                                        birthDateOrBizRegNumEq  (condtion.getBirthDateOrBizRegNumEq()),
-                                                        tradeReasonEq           (condtion.getTradeReasonEq()),
-                                                        stockTypeEq             (condtion.getStockTypeEq()),
-
-                                                        // Between
-                                                        tradeDtBetween          (condtion.getTradeDtLoe(), condtion.getTradeDtGoe()),
-
-                                                        // like
-                                                        largeHoldingsNameContains    (condtion.getLargeHoldingsNameContains()),
-                                                        birthDateOrBizRegNumContains (condtion.getBirthDateOrBizRegNumEqContains()),
-                                                        tradeReasonContains          (condtion.getTradeReasonContains()),
-                                                        stockTypeContains            (condtion.getStockTypeContains()),
-
-                                                        // goe
-                                                        changeStockAmountGoe         (condtion.getChangeStockAmountGoe()),
-                                                        unitStockPriceGoe            (condtion.getUnitStockPriceGoe()),
-                                                        afterStockAmountGoe          (condtion.getAfterStockAmountGoe()),
-
-                                                        // loe
-                                                        changeStockAmountLoe         (condtion.getChangeStockAmountLoe()),
-                                                        unitStockPriceLoe            (condtion.getUnitStockPriceLoe()),
-                                                        afterStockAmountLoe          (condtion.getAfterStockAmountLoe())
+                                                        searchPageWhereCondition(condtion)
                                                 );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
@@ -263,5 +216,35 @@ public class LargeHoldingsDetailRepositoryCustom {
 
     private BooleanExpression afterStockAmountLoe(Long afterStockAmountLoe) {
         return afterStockAmountLoe != null ? largeHoldingsDetailEntity.afterStockAmount.loe(afterStockAmountLoe): null;
+    }
+
+    private BooleanBuilder searchPageWhereCondition(LargeHoldingsDetailSearchCondition condition) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(largeHoldingsNameEq(condition.getLargeHoldingsNameEq()));
+        builder.and(birthDateOrBizRegNumEq(condition.getBirthDateOrBizRegNumEq()));
+        builder.and(tradeReasonEq(condition.getTradeReasonEq()));
+        builder.and(stockTypeEq(condition.getStockTypeEq()));
+
+        // Between
+        builder.and(tradeDtBetween(condition.getTradeDtLoe(), condition.getTradeDtGoe()));
+
+        // Like
+        builder.and(largeHoldingsNameContains(condition.getLargeHoldingsNameContains()));
+        builder.and(birthDateOrBizRegNumContains(condition.getBirthDateOrBizRegNumEqContains()));
+        builder.and(tradeReasonContains(condition.getTradeReasonContains()));
+        builder.and(stockTypeContains(condition.getStockTypeContains()));
+
+        // Greater than or equal (GOE)
+        builder.and(changeStockAmountGoe(condition.getChangeStockAmountGoe()));
+        builder.and(unitStockPriceGoe(condition.getUnitStockPriceGoe()));
+        builder.and(afterStockAmountGoe(condition.getAfterStockAmountGoe()));
+
+        // Less than or equal (LOE)
+        builder.and(changeStockAmountLoe(condition.getChangeStockAmountLoe()));
+        builder.and(unitStockPriceLoe(condition.getUnitStockPriceLoe()));
+        builder.and(afterStockAmountLoe(condition.getAfterStockAmountLoe()));
+
+        return builder;
     }
 }

@@ -10,7 +10,7 @@ public class LargeHoldingsDetailSearchCondition {
     private String orderColumn;
     private Boolean isDescending;
 
-    // 거래일 trade_dt 범위
+    // 거래일 trade_dt 범위F
     private String tradeDtGoe;
     private String tradeDtLoe;
 

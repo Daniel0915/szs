@@ -174,15 +174,14 @@ public class LargeHoldingsService {
 
     @Transactional
     public <T> ResponseEntity<?> updateScraping(List<LargeHoldingsDTO> largeHoldingsDTOList) {
-        // TimeUtil.nowTime("yyyyMMddHHmmss")
         for (LargeHoldingsDTO dto : largeHoldingsDTOList) {
             List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
             largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
 
+            // TODO : LargeHoldingsDetail <-> LargeHoldingsStkrt 일대일 관계 매핑해야함.
             List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList = webCrawling.getLargeHoldingsStkrtCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
             largeHoldingsStkrtRepositoryCustom.saveLargeHoldingsStkrt(largeHoldingsStkrtDTOList);
         }
-
         return apiResponse.makeResponse(ResStatus.SUCCESS);
     }
 }

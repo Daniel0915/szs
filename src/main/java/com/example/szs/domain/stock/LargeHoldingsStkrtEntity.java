@@ -39,7 +39,7 @@ public class LargeHoldingsStkrtEntity {
     private Long totalStockAmount; // 전체 주식수
 
     @Column(name = "stkrt")
-    private Float stkrt; //
+    private Float stkrt;
 
     @Column(name = "reg_dt")
     private String regDt;
