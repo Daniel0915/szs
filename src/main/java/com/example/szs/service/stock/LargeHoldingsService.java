@@ -1,6 +1,5 @@
 package com.example.szs.service.stock;
 
-import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.domain.stock.LargeHoldingsEntity;
 import com.example.szs.model.dto.LHResponseDTO;
 import com.example.szs.model.dto.LargeHoldingsDTO;
@@ -10,6 +9,7 @@ import com.example.szs.model.dto.page.PageDTO;
 import com.example.szs.model.dto.user.LargeHoldingsStkrtDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
+import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import com.example.szs.module.ApiResponse;
@@ -20,9 +20,7 @@ import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsRepository;
 import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsStkrtRepositoryCustom;
-import com.example.szs.utils.Response.ResUtil;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
-import com.example.szs.utils.jpa.Param;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -173,7 +171,7 @@ public class LargeHoldingsService {
     }
 
     @Transactional
-    public <T> ResponseEntity<?> updateScraping(List<LargeHoldingsDTO> largeHoldingsDTOList) {
+    public ResponseEntity<?> updateScraping(List<LargeHoldingsDTO> largeHoldingsDTOList) {
         for (LargeHoldingsDTO dto : largeHoldingsDTOList) {
             List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
             largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
@@ -183,5 +181,14 @@ public class LargeHoldingsService {
             largeHoldingsStkrtRepositoryCustom.saveLargeHoldingsStkrt(largeHoldingsStkrtDTOList);
         }
         return apiResponse.makeResponse(ResStatus.SUCCESS);
+    }
+
+    public ResponseEntity<?> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition condition) {
+        List<LargeHoldingsStkrtDTO> findLargeHoldingsStockRatioList = largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(condition);
+
+        List<LargeHoldingsStkrtDTO> filteredStkrtExcNullOrInit = findLargeHoldingsStockRatioList.stream()
+                                                                                                .filter(dto -> dto.getStkrt() != null && dto.getStkrt() != 0.0F)
+                                                                                                .collect(Collectors.toList());
+        return apiResponse.makeResponse(ResStatus.SUCCESS, filteredStkrtExcNullOrInit);
     }
 }

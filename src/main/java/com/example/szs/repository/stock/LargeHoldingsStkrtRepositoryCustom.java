@@ -49,9 +49,14 @@ public class LargeHoldingsStkrtRepositoryCustom {
 
         // 가장 최근 등록일
         Optional<LargeHoldingsStkrtEntity> findOneByRecentRecptNoDesc = Optional.ofNullable(queryFactory.selectFrom(largeHoldingsStkrtEntity)
-                                                                                                        .where(corpCodeEq(condition.getCorpCodeEq()))
-                                                                                                        .orderBy(dynamicOrder(condition.getOrderColumn(), condition.getIsDescending()))
-                                                                                                        .limit(1).fetchOne());
+                                                                                                        .where(
+                                                                                                                corpCodeEq(condition.getCorpCodeEq())
+                                                                                                        )
+                                                                                                        .orderBy(
+                                                                                                                dynamicOrder(condition.getOrderColumn(), condition.getIsDescending())
+                                                                                                        )
+                                                                                                        .limit(1)
+                                                                                                        .fetchOne());
 
         if (findOneByRecentRecptNoDesc.isEmpty()) {
             return new ArrayList<>();
@@ -65,7 +70,8 @@ public class LargeHoldingsStkrtRepositoryCustom {
 
         return queryFactory.selectFrom(largeHoldingsStkrtEntity)
                            .where(
-                                   rceptNoEq(rceptNo), corpCodeEq(condition.getCorpCodeEq())
+                                   rceptNoEq(rceptNo),
+                                   corpCodeEq(condition.getCorpCodeEq())
                            )
                            .orderBy(
                                    dynamicOrder(LargeHoldingsStkrtEntity.Fields.corpCode, true)

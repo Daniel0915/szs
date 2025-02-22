@@ -17,6 +17,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -44,12 +45,12 @@ public class LargeHoldingsDetailRepositoryCustom {
         this.largeHoldingsDetailRepository = largeHoldingsDetailRepository;
     }
 
-    public Page<LargeHoldingsDetailDTO> searchPage(LargeHoldingsDetailSearchCondition condtion, Pageable pageable) {
+    public Page<LargeHoldingsDetailDTO> searchPage(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
         List<LargeHoldingsDetailDTO> content = queryFactory.selectFrom(largeHoldingsDetailEntity)
                                                            .where(
-                                                                   searchPageWhereCondition(condtion)
+                                                                   searchPageWhereCondition(condition)
                                                            )
-                                                           .orderBy(dynamicOrder(condtion))
+                                                           .orderBy(dynamicOrder(condition))
                                                            .offset(pageable.getOffset())
                                                            .limit(pageable.getPageSize())
                                                            .fetch()
@@ -57,13 +58,13 @@ public class LargeHoldingsDetailRepositoryCustom {
                                                            .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDetailDTO.class).stream())
                                                            .toList();
 
-        JPAQuery<Long> countQuery = queryFactory.select(largeHoldingsDetailEntity.count())
+        long totalCount = queryFactory.select(largeHoldingsDetailEntity.count())
                                                 .from(largeHoldingsDetailEntity)
                                                 .where(
-                                                        searchPageWhereCondition(condtion)
-                                                );
+                                                        searchPageWhereCondition(condition)
+                                                ).fetch().get(0);
 
-        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
+        return new PageImpl<>(content, pageable, totalCount);
     }
 
     public void saveLargeHoldingsDetail(List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList) {

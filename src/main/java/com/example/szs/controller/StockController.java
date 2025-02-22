@@ -10,12 +10,14 @@ import com.example.szs.repository.stock.LargeHoldingsStkrtRepositoryCustom;
 import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
 import com.example.szs.utils.Response.ResUtil;
+import com.example.szs.utils.error.ErrorMsgUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +49,7 @@ public class StockController {
         try {
             return largeHoldingsService.getSearchPagelargeHoldingsDetail(condition, pageable);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);
         }
     }
@@ -57,9 +59,19 @@ public class StockController {
         // TODO : header 체크 필요
         return largeHoldingsService.updateScraping(largeHoldingsDTOList);
     }
-    @PostMapping("/test")
-    public ResponseEntity<?> test(LargeHoldingStkrtSearchCondition condition) {
-        // TODO : header 체크 필요
-        return apiResponse.makeResponse(ResStatus.SUCCESS, largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(condition));
+    @PostMapping("/large-holdings-stock-ratio")
+    public ResponseEntity<?> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition condition) {
+        if (condition.getCorpCodeEq() == null) {
+            Map<String, Object> params = new HashMap<>() {{put(LargeHoldingStkrtSearchCondition.Fields.corpCodeEq, condition.getCorpCodeEq());}};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return largeHoldingsService.getLargeHoldingsStockRatio(condition);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
     }
 }
