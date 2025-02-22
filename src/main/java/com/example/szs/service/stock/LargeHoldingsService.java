@@ -158,7 +158,7 @@ public class LargeHoldingsService {
         redisPublisher.pubMsgChannel(messageDto);
     }
 
-    public <T> ResponseEntity<?> getSearchPagelargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
+    public <T> ResponseEntity<?> getSearchPageLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
         Page<LargeHoldingsDetailDTO> page = largeHoldingsDetailRepositoryCustom.searchPage(condition, pageable);
 
         PageDTO pageDTO = PageDTO.builder()

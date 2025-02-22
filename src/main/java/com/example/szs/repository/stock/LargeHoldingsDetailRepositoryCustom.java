@@ -35,12 +35,10 @@ import static org.springframework.util.StringUtils.hasText;
 @Repository
 @Slf4j
 public class LargeHoldingsDetailRepositoryCustom {
-    private final EntityManager em;
     private final JPAQueryFactory queryFactory;
     private final LargeHoldingsDetailRepository largeHoldingsDetailRepository;
 
     public LargeHoldingsDetailRepositoryCustom(EntityManager em, LargeHoldingsDetailRepository largeHoldingsDetailRepository) {
-        this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
         this.largeHoldingsDetailRepository = largeHoldingsDetailRepository;
     }
@@ -95,8 +93,8 @@ public class LargeHoldingsDetailRepositoryCustom {
                     continue;
                 }
 
-                Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optaional = Param.getSaveEntityToBuilder(dto, findUpdateEntity, findUpdateEntity.toBuilder());
-                optaional.ifPresent(value -> updateEntityList.add(value.build()));
+                Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optional = Param.getSaveEntityToBuilder(dto, findUpdateEntity, findUpdateEntity.toBuilder());
+                optional.ifPresent(value -> updateEntityList.add(value.build()));
             }
 
             largeHoldingsDetailRepository.saveAll(updateEntityList);
@@ -108,8 +106,8 @@ public class LargeHoldingsDetailRepositoryCustom {
         List<LargeHoldingsDetailEntity> insertEntityList = new ArrayList<>();
 
         for (LargeHoldingsDetailDTO dto : insertDTOList) {
-            Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optaional = Param.getSaveEntityToBuilder(dto, new LargeHoldingsDetailEntity(), new LargeHoldingsDetailEntity().toBuilder());
-            optaional.ifPresent(value -> insertEntityList.add(value.build()
+            Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optional = Param.getSaveEntityToBuilder(dto, new LargeHoldingsDetailEntity(), new LargeHoldingsDetailEntity().toBuilder());
+            optional.ifPresent(value -> insertEntityList.add(value.build()
                                                                    .toBuilder()
                                                                    .regDt(TimeUtil.nowTime("yyyyMMddHHmmss"))
                                                                    .build()));

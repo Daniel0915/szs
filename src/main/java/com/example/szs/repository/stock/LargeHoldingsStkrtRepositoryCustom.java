@@ -32,12 +32,10 @@ import static org.springframework.util.StringUtils.hasText;
 @Repository
 @Slf4j
 public class LargeHoldingsStkrtRepositoryCustom {
-    private final EntityManager em;
     private final JPAQueryFactory queryFactory;
     private final LargeHoldingsStkrtRepository largeHoldingsStkrtRepository;
 
     public LargeHoldingsStkrtRepositoryCustom(EntityManager em, LargeHoldingsStkrtRepository largeHoldingsStkrtRepository) {
-        this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
         this.largeHoldingsStkrtRepository = largeHoldingsStkrtRepository;
     }
@@ -53,7 +51,7 @@ public class LargeHoldingsStkrtRepositoryCustom {
                                                                                                                 corpCodeEq(condition.getCorpCodeEq())
                                                                                                         )
                                                                                                         .orderBy(
-                                                                                                                dynamicOrder(condition.getOrderColumn(), condition.getIsDescending())
+                                                                                                                dynamicOrder(LargeHoldingsStkrtEntity.Fields.rceptNo, true)
                                                                                                         )
                                                                                                         .limit(1)
                                                                                                         .fetchOne());
@@ -74,7 +72,7 @@ public class LargeHoldingsStkrtRepositoryCustom {
                                    corpCodeEq(condition.getCorpCodeEq())
                            )
                            .orderBy(
-                                   dynamicOrder(LargeHoldingsStkrtEntity.Fields.corpCode, true)
+                                   dynamicOrder(LargeHoldingsStkrtEntity.Fields.stkrt, true)
                            )
                            .stream()
                            .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsStkrtDTO.class).stream())

@@ -47,7 +47,7 @@ public class StockController {
     @GetMapping("/search/large-holdings")
     public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
         try {
-            return largeHoldingsService.getSearchPagelargeHoldingsDetail(condition, pageable);
+            return largeHoldingsService.getSearchPageLargeHoldingsDetail(condition, pageable);
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);
@@ -59,7 +59,8 @@ public class StockController {
         // TODO : header 체크 필요
         return largeHoldingsService.updateScraping(largeHoldingsDTOList);
     }
-    @PostMapping("/large-holdings-stock-ratio")
+
+    @GetMapping("/large-holdings-stock-ratio")
     public ResponseEntity<?> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition condition) {
         if (condition.getCorpCodeEq() == null) {
             Map<String, Object> params = new HashMap<>() {{put(LargeHoldingStkrtSearchCondition.Fields.corpCodeEq, condition.getCorpCodeEq());}};
