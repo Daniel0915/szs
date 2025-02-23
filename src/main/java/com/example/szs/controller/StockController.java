@@ -63,8 +63,8 @@ public class StockController {
 
     @GetMapping("/large-holdings-stock-ratio")
     public ResponseEntity<?> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition condition) {
-        if (condition.getCorpCodeEq() == null) {
-            Map<String, Object> params = new HashMap<>() {{put(LargeHoldingStkrtSearchCondition.Fields.corpCodeEq, condition.getCorpCodeEq());}};
+        if (condition.getCorpCode() == null) {
+            Map<String, Object> params = new HashMap<>() {{put(LargeHoldingStkrtSearchCondition.Fields.corpCode, condition.getCorpCode());}};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
         }

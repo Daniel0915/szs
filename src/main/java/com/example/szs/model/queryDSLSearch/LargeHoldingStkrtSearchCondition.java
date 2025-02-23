@@ -12,5 +12,5 @@ public class LargeHoldingStkrtSearchCondition {
     private String orderColumn;
     private Boolean isDescending;
 
-    private Long corpCodeEq;
+    private Long corpCode;
 }

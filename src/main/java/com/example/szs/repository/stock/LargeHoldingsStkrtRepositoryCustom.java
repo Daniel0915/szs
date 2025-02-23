@@ -38,14 +38,14 @@ public class LargeHoldingsStkrtRepositoryCustom {
     }
 
     public List<LargeHoldingsStkrtDTO> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition condition) {
-        if (condition.getCorpCodeEq() == null) {
+        if (condition.getCorpCode() == null) {
             return new ArrayList<>();
         }
 
         // 가장 최근 등록일
         Optional<LargeHoldingsStkrtEntity> findOneByRecentRecptNoDesc = Optional.ofNullable(queryFactory.selectFrom(largeHoldingsStkrtEntity)
                                                                                                         .where(
-                                                                                                                corpCodeEq(condition.getCorpCodeEq())
+                                                                                                                corpCodeEq(condition.getCorpCode())
                                                                                                         )
                                                                                                         .orderBy(
                                                                                                                 dynamicOrder(LargeHoldingsStkrtEntity.Fields.rceptNo, true)
@@ -66,7 +66,7 @@ public class LargeHoldingsStkrtRepositoryCustom {
         return queryFactory.selectFrom(largeHoldingsStkrtEntity)
                            .where(
                                    rceptNoEq(rceptNo),
-                                   corpCodeEq(condition.getCorpCodeEq())
+                                   corpCodeEq(condition.getCorpCode())
                            )
                            .orderBy(
                                    dynamicOrder(LargeHoldingsStkrtEntity.Fields.stkrt, true)
