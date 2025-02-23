@@ -5,8 +5,6 @@ import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
-import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
-import com.example.szs.repository.stock.LargeHoldingsStkrtRepositoryCustom;
 import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
 import com.example.szs.utils.Response.ResUtil;
@@ -29,11 +27,6 @@ public class StockController {
     private final LargeHoldingsService largeHoldingsService;
     private final ExecOwnershipService execOwnershipService;
     private final ApiResponse apiResponse;
-
-    // TODO : 테스트 코드
-    private final LargeHoldingsStkrtRepositoryCustom largeHoldingsStkrtRepositoryCustom;
-    private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
-    // TODO : 테스트 코드
 
     @GetMapping("/update")
     public Map<String, Object> update(@RequestParam boolean isExec) {
