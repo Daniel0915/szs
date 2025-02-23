@@ -1,7 +1,7 @@
 package com.example.szs;
 
 import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
-import com.example.szs.model.dto.LargeHoldingsDetailDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.utils.jpa.Param;
 
 import java.lang.reflect.InvocationTargetException;

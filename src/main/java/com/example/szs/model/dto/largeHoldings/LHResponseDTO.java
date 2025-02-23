@@ -1,17 +1,14 @@
-package com.example.szs.model.dto;
+package com.example.szs.model.dto.largeHoldings;
 
-import com.example.szs.config.json.NullToEmptySerializer;
 import com.example.szs.domain.stock.LargeHoldingsEntity;
 import com.example.szs.utils.money.NumberUtils;
 import com.example.szs.utils.time.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.ArrayList;
 import java.util.List;

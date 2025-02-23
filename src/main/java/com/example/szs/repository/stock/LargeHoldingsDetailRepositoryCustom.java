@@ -2,24 +2,24 @@ package com.example.szs.repository.stock;
 
 import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.domain.stock.QLargeHoldingsDetailEntity;
-import com.example.szs.model.dto.LargeHoldingsDetailDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.example.szs.utils.jpa.Param;
 import com.example.szs.utils.time.TimeUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -64,6 +64,30 @@ public class LargeHoldingsDetailRepositoryCustom {
 
         return new PageImpl<>(content, pageable, totalCount);
     }
+
+    public List<LargeHoldingsDetailDTO.MonthlyCountDTO> getLargeHoldingsMonthlyTradeCnt(Long corpCode, boolean isSell) {
+        if (corpCode == null) {
+            return new ArrayList<>();
+        }
+
+        StringExpression subStringTradeDt = largeHoldingsDetailEntity.tradeDt.stringValue().substring(0, 6);
+
+        return queryFactory.select(Projections.constructor(LargeHoldingsDetailDTO.MonthlyCountDTO.class,
+                                   subStringTradeDt.as(LargeHoldingsDetailDTO.MonthlyCountDTO.Fields.month),
+                                   largeHoldingsDetailEntity.corpCode.count().as(LargeHoldingsDetailDTO.MonthlyCountDTO.Fields.count)
+                           )).
+                           from(largeHoldingsDetailEntity)
+                           .where(
+                                   corpCodeEq(corpCode),
+                                   changeStockAmountLt(isSell ? 0L : null), // 매도
+                                   changeStockAmountGoe(!isSell ? 0L : null) // 매수
+                           )
+                           .groupBy(subStringTradeDt)
+                           .orderBy(subStringTradeDt.asc())
+                           .fetch();
+    }
+
+
 
     public void saveLargeHoldingsDetail(List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList) {
         if (CollectionUtils.isEmpty(largeHoldingsDetailDTOList)) {
@@ -115,6 +139,10 @@ public class LargeHoldingsDetailRepositoryCustom {
 
         largeHoldingsDetailRepository.saveAll(insertEntityList);
         // ############# insert ############# [end]
+    }
+
+    private BooleanExpression corpCodeEq(Long corpCode) {
+        return corpCode != null ? largeHoldingsDetailEntity.corpCode.eq(corpCode) : null;
     }
 
     private BooleanExpression largeHoldingsNameEq(String largeHoldingsName) {
@@ -195,8 +223,16 @@ public class LargeHoldingsDetailRepositoryCustom {
         return changeStockAmountGoe != null ? largeHoldingsDetailEntity.changeStockAmount.goe(changeStockAmountGoe) : null;
     }
 
+    private BooleanExpression changeStockAmountGt(Long changeStockAmountGt) {
+        return changeStockAmountGt != null ? largeHoldingsDetailEntity.changeStockAmount.gt(changeStockAmountGt) : null;
+    }
+
     private BooleanExpression changeStockAmountLoe(Long changeStockAmountLoe) {
         return changeStockAmountLoe != null ? largeHoldingsDetailEntity.changeStockAmount.loe(changeStockAmountLoe) : null;
+    }
+
+    private BooleanExpression changeStockAmountLt(Long changeStockAmountLt) {
+        return changeStockAmountLt != null ? largeHoldingsDetailEntity.changeStockAmount.lt(changeStockAmountLt) : null;
     }
 
     // 평단가 unitStockPrice 범위

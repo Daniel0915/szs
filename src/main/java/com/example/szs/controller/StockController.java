@@ -1,6 +1,6 @@
 package com.example.szs.controller;
 
-import com.example.szs.model.dto.LargeHoldingsDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
@@ -28,11 +28,12 @@ import java.util.Map;
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
     private final ExecOwnershipService execOwnershipService;
-    private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
     private final ApiResponse apiResponse;
 
     // TODO : 테스트 코드
     private final LargeHoldingsStkrtRepositoryCustom largeHoldingsStkrtRepositoryCustom;
+    private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
+    // TODO : 테스트 코드
 
     @GetMapping("/update")
     public Map<String, Object> update(@RequestParam boolean isExec) {
@@ -70,6 +71,22 @@ public class StockController {
 
         try {
             return largeHoldingsService.getLargeHoldingsStockRatio(condition);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/large-holdings-monthly-trade-cnt")
+    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(Long corpCode) {
+        if (corpCode == null) {
+            Map<String, Object> params = new HashMap<>() {{put("corpCode", corpCode);}};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return largeHoldingsService.getLargeHoldingsMonthlyTradeCnt(corpCode);
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);

@@ -1,7 +1,6 @@
-package com.example.szs.model.dto;
+package com.example.szs.model.dto.execOwnership;
 
 import com.example.szs.domain.stock.ExecOwnershipEntity;
-import com.example.szs.domain.stock.LargeHoldingsEntity;
 import com.example.szs.utils.money.NumberUtils;
 import com.example.szs.utils.time.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;

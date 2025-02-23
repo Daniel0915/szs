@@ -1,7 +1,7 @@
 package com.example.szs;
 
-import com.example.szs.model.dto.LargeHoldingsDetailDTO;
-import com.example.szs.model.dto.user.LargeHoldingsStkrtDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsStkrtDTO;
 import com.example.szs.utils.money.NumberUtils;
 import com.example.szs.utils.time.TimeUtil;
 import io.github.bonigarcia.wdm.WebDriverManager;

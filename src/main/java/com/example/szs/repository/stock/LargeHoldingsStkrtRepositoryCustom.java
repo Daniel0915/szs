@@ -1,10 +1,8 @@
 package com.example.szs.repository.stock;
 
-import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.domain.stock.LargeHoldingsStkrtEntity;
 import com.example.szs.domain.stock.QLargeHoldingsStkrtEntity;
-import com.example.szs.model.dto.LargeHoldingsDetailDTO;
-import com.example.szs.model.dto.user.LargeHoldingsStkrtDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsStkrtDTO;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.example.szs.utils.jpa.Param;
@@ -16,7 +14,6 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -78,8 +75,6 @@ public class LargeHoldingsStkrtRepositoryCustom {
                            .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsStkrtDTO.class).stream())
                            .toList();
     }
-
-
 
     public void saveLargeHoldingsStkrt(List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList) {
         if (CollectionUtils.isEmpty(largeHoldingsStkrtDTOList)) {

@@ -1,7 +1,7 @@
 package com.example.szs.repository.stock;
 
 import com.example.szs.domain.stock.QExecOwnershipEntity;
-import com.example.szs.model.dto.ExecOwnershipDTO;
+import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.querydsl.core.types.OrderSpecifier;

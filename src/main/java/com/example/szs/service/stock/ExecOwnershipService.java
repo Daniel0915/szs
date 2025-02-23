@@ -1,8 +1,8 @@
 package com.example.szs.service.stock;
 
 import com.example.szs.domain.stock.ExecOwnershipEntity;
-import com.example.szs.model.dto.EOResponseDTO;
-import com.example.szs.model.dto.ExecOwnershipDTO;
+import com.example.szs.model.dto.execOwnership.EOResponseDTO;
+import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;

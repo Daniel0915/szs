@@ -1,4 +1,4 @@
-package com.example.szs.model.dto.user;
+package com.example.szs.model.dto.largeHoldings;
 
 import lombok.*;
 

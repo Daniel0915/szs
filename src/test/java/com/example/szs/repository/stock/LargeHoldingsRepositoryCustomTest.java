@@ -1,8 +1,6 @@
 package com.example.szs.repository.stock;
 
-import com.example.szs.domain.stock.LargeHoldingsEntity;
-
-import com.example.szs.model.dto.LargeHoldingsDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;

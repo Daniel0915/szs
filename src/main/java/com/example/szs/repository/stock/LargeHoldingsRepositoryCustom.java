@@ -1,7 +1,7 @@
 package com.example.szs.repository.stock;
 
 import com.example.szs.domain.stock.QLargeHoldingsEntity;
-import com.example.szs.model.dto.LargeHoldingsDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.querydsl.core.types.OrderSpecifier;

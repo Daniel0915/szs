@@ -1,4 +1,4 @@
-package com.example.szs.model.dto;
+package com.example.szs.model.dto.largeHoldings;
 
 import lombok.Getter;
 import lombok.Builder;

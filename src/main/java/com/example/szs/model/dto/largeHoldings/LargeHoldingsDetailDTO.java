@@ -1,14 +1,19 @@
-package com.example.szs.model.dto;
+package com.example.szs.model.dto.largeHoldings;
 
 import com.example.szs.config.json.NullToEmptySerializer;
+import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
+
+import java.util.List;
 
 @Getter
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonSerialize(using = NullToEmptySerializer.class)
+@FieldNameConstants
 public class LargeHoldingsDetailDTO {
     private Long seq;
     private String rceptNo; // 접수 번호
@@ -26,4 +31,25 @@ public class LargeHoldingsDetailDTO {
     private String currencyType; // 주식 단가 통화
     private Long totalStockPrice; // 전체 주식 취득 / 처분 단가
     private String regDt;
+
+    @Getter
+    @Builder(toBuilder = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @FieldNameConstants
+    public static class MonthlyCountDTO {
+        private String month;
+        private Long count;
+    }
+
+
+    @Getter
+    @Builder(toBuilder = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @FieldNameConstants
+    public static class SellOrBuyMonthlyCountResponse {
+        private String sellOrBuyType;
+        private List<MonthlyCountDTO> monthlyCountDTOList;
+    }
 }

@@ -1,6 +1,6 @@
 package com.example.szs.module.stock;
 
-import com.example.szs.model.dto.LargeHoldingsDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.http.HeaderType;
 import com.example.szs.module.ApiResponse;
@@ -31,7 +31,7 @@ public class LargeHoldings {
     @Value("${pjt.server.url}")
     private String serverUrl;
 
-    public <T>ResponseEntity<?> apiCallUpdateLargeHoldingsDetail(List<LargeHoldingsDTO> requestBody) {
+    public ResponseEntity<?> apiCallUpdateLargeHoldingsDetail(List<LargeHoldingsDTO> requestBody) {
         if (CollectionUtils.isEmpty(requestBody)) {
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
         }
@@ -62,5 +62,7 @@ public class LargeHoldings {
             return apiResponse.makeResponse(ResStatus.SERVICE_ERROR);
         }
     }
+
+
 
 }
