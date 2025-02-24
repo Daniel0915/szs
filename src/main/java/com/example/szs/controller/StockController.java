@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -85,4 +86,41 @@ public class StockController {
             return apiResponse.makeResponse(ResStatus.ERROR);
         }
     }
+
+    @GetMapping("/large-holdings-top-5")
+    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(Long corpCode) {
+        if (corpCode == null) {
+            Map<String, Object> params = new HashMap<>() {{put("corpCode", corpCode);}};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return largeHoldingsService.getLargeHoldingsStockRatioTop5(corpCode);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/large-holdings-trade-history")
+    public ResponseEntity<?> getLargeHoldingsTradeHistory(@RequestParam(required = false) Long corpCode, @RequestParam(required = false) String largeHoldingsName) {
+        if (corpCode == 0 || !StringUtils.hasText(largeHoldingsName)) {
+            Map<String, Object> params = new HashMap<>() {{
+                put("corpCode", corpCode);
+                put("largeHoldingsName", largeHoldingsName);
+            }};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return largeHoldingsService.getLargeHoldingsTradeDtBy(corpCode, largeHoldingsName);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+
 }

@@ -50,7 +50,7 @@ public class LargeHoldingsStkrtRepositoryCustom {
                                                                                                         .orderBy(
                                                                                                                 dynamicOrder(LargeHoldingsStkrtEntity.Fields.rceptNo, true)
                                                                                                         )
-                                                                                                        .limit(1)
+                                                                                                        .limit(condition.getLimit())
                                                                                                         .fetchOne());
 
         if (findOneByRecentRecptNoDesc.isEmpty()) {

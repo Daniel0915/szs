@@ -1,5 +1,6 @@
 package com.example.szs.service.stock;
 
+import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.domain.stock.LargeHoldingsEntity;
 import com.example.szs.model.dto.largeHoldings.LHResponseDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
@@ -37,6 +38,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.sql.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -185,7 +187,9 @@ public class LargeHoldingsService {
     }
 
     public ResponseEntity<?> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition condition) {
-        List<LargeHoldingsStkrtDTO> findLargeHoldingsStockRatioList = largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(condition);
+        List<LargeHoldingsStkrtDTO> findLargeHoldingsStockRatioList = largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(condition.toBuilder()
+                                                                                                                                             .limit(1L)
+                                                                                                                                             .build());
 
         List<LargeHoldingsStkrtDTO> filteredStkrtExcNullOrInit = findLargeHoldingsStockRatioList.stream()
                                                                                                 .filter(dto -> dto.getStkrt() != null && dto.getStkrt() != 0.0F)
@@ -193,7 +197,6 @@ public class LargeHoldingsService {
         return apiResponse.makeResponse(ResStatus.SUCCESS, filteredStkrtExcNullOrInit);
     }
 
-    @Transactional
     public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(Long corpCode) {
         assert (corpCode != null) : "corpCode not null";
 
@@ -211,5 +214,28 @@ public class LargeHoldingsService {
 
         List<LargeHoldingsDetailDTO.SellOrBuyMonthlyCountResponse> responses = Arrays.asList(sell, buy);
         return apiResponse.makeResponse(ResStatus.SUCCESS, responses);
+    }
+
+    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(Long corpCode) {
+        List<LargeHoldingsStkrtDTO> findLargeHoldingsStockRatioList = largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition.builder()
+                                                                                                                                                                    .corpCode(corpCode)
+                                                                                                                                                                    .limit(1L)
+                                                                                                                                                                    .build());
+
+        List<LargeHoldingsStkrtDTO> top5List = findLargeHoldingsStockRatioList.size() > 5 ? findLargeHoldingsStockRatioList.stream().limit(5).collect(Collectors.toList()) : findLargeHoldingsStockRatioList;
+
+
+        return apiResponse.makeResponse(ResStatus.SUCCESS, top5List);
+    }
+
+    public ResponseEntity<?> getLargeHoldingsTradeDtBy(Long corpCode, String largeHoldingsName) {
+        List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = largeHoldingsDetailRepositoryCustom.getLargeHoldingsDetailDTOListBy(LargeHoldingsDetailSearchCondition.builder()
+                                                                                                                                                                        .corpCodeEq(corpCode)
+                                                                                                                                                                        .largeHoldingsNameEq(largeHoldingsName)
+                                                                                                                                                                        .orderColumn(LargeHoldingsDetailEntity.Fields.tradeDt)
+                                                                                                                                                                        .isDescending(false)
+                                                                                                                                                                        .build());
+
+        return apiResponse.makeResponse(ResStatus.SUCCESS, largeHoldingsDetailDTOList);
     }
 }

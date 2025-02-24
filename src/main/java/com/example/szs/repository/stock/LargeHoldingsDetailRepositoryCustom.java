@@ -87,6 +87,39 @@ public class LargeHoldingsDetailRepositoryCustom {
                            .fetch();
     }
 
+    public List<LargeHoldingsDetailDTO> getLargeHoldingsDetailDTOListBy(LargeHoldingsDetailSearchCondition condition) {
+        return queryFactory.selectFrom(largeHoldingsDetailEntity)
+                           .where(
+                                   largeHoldingsNameEq(condition.getLargeHoldingsNameEq()),
+                                   birthDateOrBizRegNumEq(condition.getBirthDateOrBizRegNumEq()),
+                                   tradeReasonEq(condition.getTradeReasonEq()),
+                                   stockTypeEq(condition.getStockTypeEq()),
+                                   corpCodeEq(condition.getCorpCodeEq()),
+
+                                   afterStockAmountGoe(condition.getAfterStockAmountGoe()),
+                                   afterStockAmountLoe(condition.getAfterStockAmountLoe()),
+                                   unitStockPriceGoe(condition.getUnitStockPriceGoe()),
+                                   unitStockPriceLoe(condition.getUnitStockPriceLoe()),
+                                   changeStockAmountGoe(condition.getChangeStockAmountGoe()),
+                                   changeStockAmountLoe(condition.getChangeStockAmountLoe()),
+                                   tradeDtGoe(condition.getTradeDtGoe()),
+                                   tradeDtLoe(condition.getTradeDtLoe()),
+
+                                   largeHoldingsNameContains(condition.getLargeHoldingsNameContains()),
+                                   birthDateOrBizRegNumContains(condition.getBirthDateOrBizRegNumEqContains()),
+                                   tradeReasonContains(condition.getTradeReasonContains()),
+                                   stockTypeContains(condition.getStockTypeContains())
+                           )
+                           .orderBy(dynamicOrder(condition))
+                           .fetch()
+                           .stream()
+                           .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDetailDTO.class).stream())
+                           .toList();
+
+
+    }
+
+
 
 
     public void saveLargeHoldingsDetail(List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList) {
