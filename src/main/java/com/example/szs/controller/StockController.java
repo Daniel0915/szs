@@ -5,6 +5,7 @@ import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
+import com.example.szs.service.stock.CorpInfoService;
 import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
 import com.example.szs.utils.Response.ResUtil;
@@ -27,6 +28,7 @@ import java.util.Map;
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
     private final ExecOwnershipService execOwnershipService;
+    private final CorpInfoService corpInfoService;
     private final ApiResponse apiResponse;
 
     @GetMapping("/update")
@@ -72,7 +74,7 @@ public class StockController {
     }
 
     @GetMapping("/large-holdings-monthly-trade-cnt")
-    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(Long corpCode) {
+    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(String corpCode) {
         if (corpCode == null) {
             Map<String, Object> params = new HashMap<>() {{put("corpCode", corpCode);}};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
@@ -88,7 +90,7 @@ public class StockController {
     }
 
     @GetMapping("/large-holdings-top-5")
-    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(Long corpCode) {
+    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(String corpCode) {
         if (corpCode == null) {
             Map<String, Object> params = new HashMap<>() {{put("corpCode", corpCode);}};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
@@ -104,8 +106,8 @@ public class StockController {
     }
 
     @GetMapping("/large-holdings-trade-history")
-    public ResponseEntity<?> getLargeHoldingsTradeHistory(@RequestParam(required = false) Long corpCode, @RequestParam(required = false) String largeHoldingsName) {
-        if (corpCode == 0 || !StringUtils.hasText(largeHoldingsName)) {
+    public ResponseEntity<?> getLargeHoldingsTradeHistory(@RequestParam(required = false) String corpCode, @RequestParam(required = false) String largeHoldingsName) {
+        if (!StringUtils.hasText(corpCode)|| !StringUtils.hasText(largeHoldingsName)) {
             Map<String, Object> params = new HashMap<>() {{
                 put("corpCode", corpCode);
                 put("largeHoldingsName", largeHoldingsName);
@@ -122,5 +124,13 @@ public class StockController {
         }
     }
 
-
+    @GetMapping("/corp-info-all")
+    public ResponseEntity<?> getAllCorpInfoDTOList() {
+        try {
+            return corpInfoService.getAllCorpInfoDTOList();
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
 }

@@ -128,7 +128,7 @@ public class LargeHoldingsStkrtRepositoryCustom {
         // ############# insert ############# [end]
     }
 
-    private BooleanExpression corpCodeEq(Long corpCode) {
+    private BooleanExpression corpCodeEq(String corpCode) {
         return corpCode != null ? largeHoldingsStkrtEntity.corpCode.eq(corpCode) : null;
     }
 

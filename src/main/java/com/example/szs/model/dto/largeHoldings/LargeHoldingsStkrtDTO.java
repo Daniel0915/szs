@@ -10,7 +10,7 @@ import lombok.*;
 public class LargeHoldingsStkrtDTO {
     private Long seq;
     private String rceptNo;
-    private Long corpCode;
+    private String corpCode;
     private String corpName;
     private String largeHoldingsName; // 대주주 이름
     private String birthDateOrBizRegNum; // 생년월일 또는 사업자 등록번호

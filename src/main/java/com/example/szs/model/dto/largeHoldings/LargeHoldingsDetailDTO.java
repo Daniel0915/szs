@@ -17,7 +17,7 @@ import java.util.List;
 public class LargeHoldingsDetailDTO {
     private Long seq;
     private String rceptNo; // 접수 번호
-    private Long corpCode; // 회사코드
+    private String corpCode; // 회사코드
     private String corpName; // 회사명
     private String largeHoldingsName; // 대주주 이름
     private String birthDateOrBizRegNum; // 생년월일 또는 사업자등록번호 등

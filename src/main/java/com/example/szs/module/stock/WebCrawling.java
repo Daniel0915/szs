@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
 public class WebCrawling {
     private final String largeHoldingsDetailUrl = "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=";
 
-    public List<LargeHoldingsDetailDTO> getLargeHoldingsDetailCrawling(String rceptNo, Long corpCode, String corpName) {
-        assert ( StringUtils.hasText(rceptNo) && !NumberUtil.isLongInitOrNull(corpCode) && StringUtils.hasText(corpName) ) : "rceptNo, corpCode, corpName must be have value";
+    public List<LargeHoldingsDetailDTO> getLargeHoldingsDetailCrawling(String rceptNo, String corpCode, String corpName) {
+        assert ( StringUtils.hasText(rceptNo) && StringUtils.hasText(corpCode) && StringUtils.hasText(corpName) ) : "rceptNo, corpCode, corpName must be have value";
 
         List<LargeHoldingsDetailDTO> result = new ArrayList<>();
         WebDriver driver = this.getSettingChromeDriver();
@@ -158,8 +158,8 @@ public class WebCrawling {
                      .collect(Collectors.toList());
     }
 
-    public List<LargeHoldingsStkrtDTO> getLargeHoldingsStkrtCrawling(String rceptNo, Long corpCode, String corpName) {
-        assert ( StringUtils.hasText(rceptNo) && !NumberUtil.isLongInitOrNull(corpCode) && StringUtils.hasText(corpName) ) : "rceptNo, corpCode, corpName must be have value";
+    public List<LargeHoldingsStkrtDTO> getLargeHoldingsStkrtCrawling(String rceptNo, String corpCode, String corpName) {
+        assert ( StringUtils.hasText(rceptNo) && StringUtils.hasText(corpCode) && StringUtils.hasText(corpName) ) : "rceptNo, corpCode, corpName must be have value";
 
         WebDriver driver = this.getSettingChromeDriver();
 

@@ -197,7 +197,7 @@ public class LargeHoldingsService {
         return apiResponse.makeResponse(ResStatus.SUCCESS, filteredStkrtExcNullOrInit);
     }
 
-    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(Long corpCode) {
+    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(String corpCode) {
         assert (corpCode != null) : "corpCode not null";
 
         // 매월 매도건수
@@ -216,7 +216,7 @@ public class LargeHoldingsService {
         return apiResponse.makeResponse(ResStatus.SUCCESS, responses);
     }
 
-    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(Long corpCode) {
+    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(String corpCode) {
         List<LargeHoldingsStkrtDTO> findLargeHoldingsStockRatioList = largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition.builder()
                                                                                                                                                                     .corpCode(corpCode)
                                                                                                                                                                     .limit(1L)
@@ -228,7 +228,7 @@ public class LargeHoldingsService {
         return apiResponse.makeResponse(ResStatus.SUCCESS, top5List);
     }
 
-    public ResponseEntity<?> getLargeHoldingsTradeDtBy(Long corpCode, String largeHoldingsName) {
+    public ResponseEntity<?> getLargeHoldingsTradeDtBy(String corpCode, String largeHoldingsName) {
         List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = largeHoldingsDetailRepositoryCustom.getLargeHoldingsDetailDTOListBy(LargeHoldingsDetailSearchCondition.builder()
                                                                                                                                                                         .corpCodeEq(corpCode)
                                                                                                                                                                         .largeHoldingsNameEq(largeHoldingsName)

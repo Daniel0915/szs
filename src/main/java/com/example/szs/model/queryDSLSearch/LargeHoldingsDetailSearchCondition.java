@@ -31,7 +31,7 @@ public class LargeHoldingsDetailSearchCondition {
     private String birthDateOrBizRegNumEq; // 생년월일 또는 사업자등록번호 등
     private String tradeReasonEq; // 매매 사유
     private String stockTypeEq; // 주식 종류
-    private Long corpCodeEq; // 회사코드
+    private String corpCodeEq; // 회사코드
 
     // where contains
     private String largeHoldingsNameContains; // 대주주 이름

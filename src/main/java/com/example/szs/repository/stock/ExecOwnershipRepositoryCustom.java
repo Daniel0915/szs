@@ -23,11 +23,9 @@ import static org.springframework.util.StringUtils.hasText;
 @Repository
 @Slf4j
 public class ExecOwnershipRepositoryCustom {
-    private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
     public ExecOwnershipRepositoryCustom(EntityManager em) {
-        this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
 

@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class LargeHoldingsDTO {
     private String rceptNo; // 접수 번호
-    private Long corpCode; // 회사코드
+    private String corpCode; // 회사코드
     private String corpName; // 회사명
     private String repror; // 보고자
     private Long stkqy; // 보유 주식수

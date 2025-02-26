@@ -11,6 +11,6 @@ import lombok.experimental.FieldNameConstants;
 public class LargeHoldingStkrtSearchCondition {
     private String orderColumn;
     private Boolean isDescending;
-    private Long corpCode;
+    private String corpCode;
     private Long limit;
 }

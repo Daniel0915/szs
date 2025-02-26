@@ -24,7 +24,7 @@ public class LargeHoldingsStkrtEntity {
     private String rceptNo; // 접수 번호
 
     @Column(name = "corp_code", nullable = false)
-    private Long corpCode; // 회사코드
+    private String corpCode; // 회사코드
 
     @Column(name = "corp_name", nullable = false, length = 20)
     private String corpName; // 회사명

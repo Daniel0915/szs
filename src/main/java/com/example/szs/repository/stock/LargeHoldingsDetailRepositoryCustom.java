@@ -65,7 +65,7 @@ public class LargeHoldingsDetailRepositoryCustom {
         return new PageImpl<>(content, pageable, totalCount);
     }
 
-    public List<LargeHoldingsDetailDTO.MonthlyCountDTO> getLargeHoldingsMonthlyTradeCnt(Long corpCode, boolean isSell) {
+    public List<LargeHoldingsDetailDTO.MonthlyCountDTO> getLargeHoldingsMonthlyTradeCnt(String corpCode, boolean isSell) {
         if (corpCode == null) {
             return new ArrayList<>();
         }
@@ -174,8 +174,8 @@ public class LargeHoldingsDetailRepositoryCustom {
         // ############# insert ############# [end]
     }
 
-    private BooleanExpression corpCodeEq(Long corpCode) {
-        return corpCode != null ? largeHoldingsDetailEntity.corpCode.eq(corpCode) : null;
+    private BooleanExpression corpCodeEq(String corpCode) {
+        return StringUtils.hasText(corpCode) ? largeHoldingsDetailEntity.corpCode.eq(corpCode) : null;
     }
 
     private BooleanExpression largeHoldingsNameEq(String largeHoldingsName) {
