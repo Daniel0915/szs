@@ -290,6 +290,7 @@ public class LargeHoldingsDetailRepositoryCustom {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(largeHoldingsNameEq(condition.getLargeHoldingsNameEq()));
+        builder.and(corpCodeEq(condition.getCorpCodeEq()));
         builder.and(birthDateOrBizRegNumEq(condition.getBirthDateOrBizRegNumEq()));
         builder.and(tradeReasonEq(condition.getTradeReasonEq()));
         builder.and(stockTypeEq(condition.getStockTypeEq()));

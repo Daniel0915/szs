@@ -18,6 +18,6 @@ public class CorpInfoService {
     private final ApiResponse apiResponse;
 
     public ResponseEntity<?> getAllCorpInfoDTOList() {
-        return apiResponse.makeResponse(ResStatus.SUCCESS, corpInfoRepositoryCustom.getAllCorpInfoDTOList().stream().limit(5));
+        return apiResponse.makeResponse(ResStatus.SUCCESS, corpInfoRepositoryCustom.getAllCorpInfoDTOList());
     }
 }
