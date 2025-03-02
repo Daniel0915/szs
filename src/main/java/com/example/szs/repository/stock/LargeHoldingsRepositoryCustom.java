@@ -12,6 +12,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -23,11 +24,9 @@ import static org.springframework.util.StringUtils.hasText;
 @Repository
 @Slf4j
 public class LargeHoldingsRepositoryCustom {
-    private final EntityManager em;
     private final JPAQueryFactory queryFactory;
 
     public LargeHoldingsRepositoryCustom(EntityManager em) {
-        this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
 
@@ -46,8 +45,8 @@ public class LargeHoldingsRepositoryCustom {
         return hasText(rceptNo) ? largeHoldingsEntity.rceptNo.eq(rceptNo) : null;
     }
 
-    private BooleanExpression corpCodeEq(Long corpCode) {
-        return corpCode != null ? largeHoldingsEntity.corpCode.eq(corpCode) : null;
+    private BooleanExpression corpCodeEq(String corpCode) {
+        return StringUtils.hasText(corpCode) ? largeHoldingsEntity.corpCode.eq(corpCode) : null;
     }
 
     private OrderSpecifier<?> dynamicOrder(LargeHoldingsSearchCondition condition) {

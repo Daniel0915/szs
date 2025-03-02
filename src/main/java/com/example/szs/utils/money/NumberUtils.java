@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.Objects;
 
 public class NumberUtils {
     /**
@@ -25,6 +26,10 @@ public class NumberUtils {
             return 0L;
         }
 
+        if (Objects.equals("-" , str)) {
+            return 0L;
+        }
+
         String valueWithoutCommas = str.replace(",", "");
 
         return Long.valueOf(valueWithoutCommas);
@@ -32,6 +37,10 @@ public class NumberUtils {
 
     public static Float stringToFloatConverter(String str) {
         if (!StringUtils.hasText(str)) {
+            return 0F;
+        }
+
+        if (Objects.equals(str, "-")) {
             return 0F;
         }
 

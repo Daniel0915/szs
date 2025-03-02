@@ -24,7 +24,7 @@ class LargeHoldingsRepositoryCustomTest {
     @Test
     void findLatestRecordBy() {
         LargeHoldingsSearchCondition condition = LargeHoldingsSearchCondition.builder()
-                                                                             .corpCode(126380L)
+                                                                             .corpCode("00126380")
                                                                              .orderColumn(stkqy)
                                                                              .isDescending(true)
                                                                              .build();

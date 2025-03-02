@@ -54,8 +54,8 @@ public class LargeHoldingsService {
     private String path;
     @Value("${corp.code.key}")
     private String corpCodeKey;
-    @Value("${corp.code.value}")
-    private String corpCodeValue;
+//    @Value("${corp.code.value}")
+//    private String corpCodeValue;
     @Value("${dart.key}")
     private String dartKey;
     @Value("${dart.value}")
@@ -72,8 +72,8 @@ public class LargeHoldingsService {
     private final LargeHoldings largeHoldings;
 
     @Transactional
-    @Scheduled(cron = "0 0 9 * * ?")
-    public void insertData() {
+//    @Scheduled(cron = "0 0 9 * * ?")
+    public void insertData(String corpCodeValue) {
         WebClient webClient = WebClient.builder()
                                        .baseUrl(baseUri)
                                        .build();
@@ -92,18 +92,18 @@ public class LargeHoldingsService {
         List<LargeHoldingsEntity> largeHoldingsEntityList = lhResponseDTO.toEntity();
 
         Optional<LargeHoldingsDTO> optionalLargeHoldingsDTO = largeHoldingsRepositoryCustom.findLatestRecordBy(LargeHoldingsSearchCondition.builder()
-                                                                                                                                           .corpCode(Long.valueOf(corpCodeValue))
+                                                                                                                                           .corpCode(corpCodeValue)
                                                                                                                                            .orderColumn(LargeHoldingsEntity.Fields.rceptNo)
                                                                                                                                            .isDescending(true)
                                                                                                                                            .build());
         if (optionalLargeHoldingsDTO.isEmpty()) {
             largeHoldingsRepository.saveAll(largeHoldingsEntityList);
             if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
+
                 List<LargeHoldingsDTO> requestBody = largeHoldingsEntityList.stream()
-                                                                            .map(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class))
-                                                                            .flatMap(Optional::stream)
-                                                                            .toList();
-                largeHoldings.apiCallUpdateLargeHoldingsDetail(requestBody);
+                                                                            .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class).stream())
+                                                                            .collect(Collectors.toList());
+                this.updateScraping(requestBody);
             }
             return;
         }
@@ -138,7 +138,7 @@ public class LargeHoldingsService {
                                                                         .map(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class))
                                                                         .flatMap(Optional::stream)
                                                                         .toList();
-            largeHoldings.apiCallUpdateLargeHoldingsDetail(requestBody);
+            this.updateScraping(requestBody);
         }
         // ############ 대주주 세부 내용 웹 크롤링 ############ [end]
 
@@ -176,12 +176,18 @@ public class LargeHoldingsService {
     @Transactional
     public ResponseEntity<?> updateScraping(List<LargeHoldingsDTO> largeHoldingsDTOList) {
         for (LargeHoldingsDTO dto : largeHoldingsDTOList) {
-            List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
-            largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
+            try {
+                List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
+                largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
 
-            // TODO : LargeHoldingsDetail <-> LargeHoldingsStkrt 일대일 관계 매핑해야함.
-            List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList = webCrawling.getLargeHoldingsStkrtCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
-            largeHoldingsStkrtRepositoryCustom.saveLargeHoldingsStkrt(largeHoldingsStkrtDTOList);
+                // TODO : LargeHoldingsDetail <-> LargeHoldingsStkrt 일대일 관계 매핑해야함.
+                List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList = webCrawling.getLargeHoldingsStkrtCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
+                largeHoldingsStkrtRepositoryCustom.saveLargeHoldingsStkrt(largeHoldingsStkrtDTOList);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
+            }
+
         }
         return apiResponse.makeResponse(ResStatus.SUCCESS);
     }

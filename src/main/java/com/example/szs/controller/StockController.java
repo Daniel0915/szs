@@ -1,10 +1,12 @@
 package com.example.szs.controller;
 
+import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
+import com.example.szs.repository.stock.CorpInfoRepositoryCustom;
 import com.example.szs.service.stock.CorpInfoService;
 import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
@@ -17,9 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/stock")
@@ -30,14 +30,26 @@ public class StockController {
     private final ExecOwnershipService execOwnershipService;
     private final CorpInfoService corpInfoService;
     private final ApiResponse apiResponse;
+    private final CorpInfoRepositoryCustom corpInfoRepositoryCustom;
 
     @GetMapping("/update")
-    public Map<String, Object> update(@RequestParam boolean isExec) {
-        if (isExec) {
-            execOwnershipService.insertData();
-        } else {
-            largeHoldingsService.insertData();
+    public Map<String, Object> update() {
+        List<String> corpCodeList = Arrays.asList("00918444","00375302","00126229","00144155","01664948","00860332","00159023",
+                "01133217","00126362","00126371","00164645","00145109","00989619","00120021",
+                "00356361","00106641","00126566","00159616","00760971","00401731","01205851",
+                "01350869","00266961","00547583","00149655","00382199","00126380","00164779",
+                "00181712","01652129","01596425","01204056","00111704","01390344","00877059",
+                "01160363","00155276","01515323","00258801","00631518","00688996","00421045",
+                "00149646","00102858","00413046","00199252","00126256","00126478","00155319",
+                "00164788","00164830");
+        for (String corpCode : corpCodeList) {
+            largeHoldingsService.insertData(corpCode);
         }
+
+
+
+
+
         return ResUtil.makeResponse("", ResStatus.SUCCESS);
     }
 

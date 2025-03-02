@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +59,14 @@ public class LHResponseDTO {
 
     public List<LargeHoldingsEntity> toEntity() {
         List<LargeHoldingsEntity> largeHoldingsEntityList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(this.list)) {
+            return new ArrayList<>();
+        }
+
         for (LargeHolding largeHolding : this.list) {
             largeHoldingsEntityList.add(LargeHoldingsEntity.builder()
                                                            .rceptNo     (largeHolding.getRceptNo())
-                                                           .corpCode    (NumberUtils.stringToLongConverter(largeHolding.getCorpCode()))
+                                                           .corpCode    (largeHolding.getCorpCode())
                                                            .corpName    (largeHolding.getCorpName())
                                                            .repror      (largeHolding.getRepror())
                                                            .stkqy       (NumberUtils.stringToLongConverter(largeHolding.getStkqy()))

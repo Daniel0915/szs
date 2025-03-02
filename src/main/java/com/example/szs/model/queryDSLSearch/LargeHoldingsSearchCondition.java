@@ -16,5 +16,5 @@ public class LargeHoldingsSearchCondition {
 
     // where 절 사용
     private String rceptNo;
-    private Long corpCode;
+    private String corpCode;
 }

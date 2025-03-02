@@ -1,5 +1,6 @@
 package com.example.szs.domain.stock;
 
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class LargeHoldingsEntity {
     private String rceptNo; // 접수 번호
 
     @Column(name = "corp_code")
-    private Long corpCode; // 회사코드
+    private String corpCode; // 회사코드
 
     @Column(name = "corp_name")
     private String corpName; // 회사명

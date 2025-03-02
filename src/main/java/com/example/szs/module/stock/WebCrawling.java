@@ -25,6 +25,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -149,7 +150,10 @@ public class WebCrawling {
                                                  .build());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("=============error [start]==============");
+            log.error("rceptNo : {}, corpCode: {}, corpName: {}", rceptNo, corpCode, corpName);
+            log.error(e.getMessage());
+            log.error("=============error [end]==============");
         } finally {
             driver.quit();
         }
@@ -174,9 +178,8 @@ public class WebCrawling {
                 ((JavascriptExecutor) driver).executeScript("arguments[0].style.display='none';", msgElement);
             }
 
-            // 해당 XPath 요소가 클릭 가능할 때까지 대기
-            WebElement targetTab = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(), '보고자 및 특별관계자별 보유내역')]")));
-
+            // 보고자 및 특별관계자
+            WebElement targetTab = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(), '보고자 및 특별관계자')]")));
             // 클릭 실행
             targetTab.click();
 
@@ -267,6 +270,17 @@ public class WebCrawling {
                     }
                 }
 
+                // trim
+                rceptNo = rceptNo.trim();
+                corpCode= corpCode.trim();
+                corpName= rceptNo.trim();
+                largeHoldingsName = largeHoldingsName.trim();
+                birthDateOrBizRegNum = birthDateOrBizRegNum.trim();
+
+                if (!StringUtils.hasText(largeHoldingsName) || Objects.equals(largeHoldingsName, "-")) {
+                    continue;
+                }
+
                 result.add(LargeHoldingsStkrtDTO.builder()
                                                 .rceptNo(rceptNo)
                                                 .corpCode(corpCode)
@@ -278,7 +292,10 @@ public class WebCrawling {
                                                 .build());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("=============error [start]==============");
+            log.error("rceptNo : {}, corpCode: {}, corpName: {}", rceptNo, corpCode, corpName);
+            log.error(e.getMessage());
+            log.error("=============error [end]==============");
         } finally {
             driver.quit();
         }
