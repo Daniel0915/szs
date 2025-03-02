@@ -62,7 +62,7 @@ class SzsApplicationTests {
                                                             .build();
 
         List<LargeHoldingsDetailDTO> list = new ArrayList<>(Arrays.asList(dto1, dto2));
-        largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(list);
+        largeHoldingsDetailRepositoryCustom.saveAll(list);
     }
 
 }

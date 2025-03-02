@@ -5,6 +5,7 @@ import com.example.szs.domain.stock.QLargeHoldingsStkrtEntity;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsStkrtDTO;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
+import com.example.szs.utils.jpa.ListDivider;
 import com.example.szs.utils.jpa.Param;
 import com.example.szs.utils.time.TimeUtil;
 import com.querydsl.core.types.OrderSpecifier;
@@ -76,7 +77,7 @@ public class LargeHoldingsStkrtRepositoryCustom {
                            .toList();
     }
 
-    public void saveLargeHoldingsStkrt(List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList) {
+    public void saveAll(List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList) {
         if (CollectionUtils.isEmpty(largeHoldingsStkrtDTOList)) {
             return;
         }
@@ -84,48 +85,65 @@ public class LargeHoldingsStkrtRepositoryCustom {
                                                                                            .collect(Collectors.partitioningBy(dto -> dto.getSeq() == null || dto.getSeq() == 0L));
 
         // ############# update ############# [start]
-        List<LargeHoldingsStkrtDTO> updateDTOList = partitioned.get(false);
-
-        if (!CollectionUtils.isEmpty(updateDTOList)) {
-            List<Long> seqList = updateDTOList.stream().map(LargeHoldingsStkrtDTO::getSeq).toList();
-
-            Map<Long, LargeHoldingsStkrtEntity> findUpdateEntityMap = queryFactory.selectFrom(largeHoldingsStkrtEntity)
-                                                                                   .where(largeHoldingsStkrtEntity.seq.in(seqList))
-                                                                                   .fetch()
-                                                                                   .stream()
-                                                                                   .collect(Collectors.toMap(LargeHoldingsStkrtEntity::getSeq, Function.identity(), (oldValue, newValue) -> newValue));
-
-            List<LargeHoldingsStkrtEntity> updateEntityList = new ArrayList<>();
-
-            for (LargeHoldingsStkrtDTO dto : updateDTOList) {
-                LargeHoldingsStkrtEntity findUpdateEntity = findUpdateEntityMap.getOrDefault(dto.getSeq(), null);
-
-                if (findUpdateEntity == null) {
-                    continue;
-                }
-
-                Optional<LargeHoldingsStkrtEntity.LargeHoldingsStkrtEntityBuilder> optaional = Param.getSaveEntityToBuilder(dto, findUpdateEntity, findUpdateEntity.toBuilder());
-                optaional.ifPresent(value -> updateEntityList.add(value.build()));
-            }
-
-            largeHoldingsStkrtRepository.saveAll(updateEntityList);
-        }
+        update(partitioned.get(false));
         // ############# update ############# [end]
 
         // ############# insert ############# [start]
-        List<LargeHoldingsStkrtDTO> insertDTOList = partitioned.get(true);
+        insert(partitioned.get(true));
+        // ############# insert ############# [end]
+    }
+
+    private void insert(List<LargeHoldingsStkrtDTO> insertDTOList) {
+        if (CollectionUtils.isEmpty(insertDTOList)) {
+            return;
+        }
         List<LargeHoldingsStkrtEntity> insertEntityList = new ArrayList<>();
 
         for (LargeHoldingsStkrtDTO dto : insertDTOList) {
-            Optional<LargeHoldingsStkrtEntity.LargeHoldingsStkrtEntityBuilder> optaional = Param.getSaveEntityToBuilder(dto, new LargeHoldingsStkrtEntity(), new LargeHoldingsStkrtEntity().toBuilder());
-            optaional.ifPresent(value -> insertEntityList.add(value.build()
-                                                                   .toBuilder()
-                                                                   .regDt(TimeUtil.nowTime("yyyyMMddHHmmss"))
-                                                                   .build()));
+            Optional<LargeHoldingsStkrtEntity.LargeHoldingsStkrtEntityBuilder> optional = Param.getSaveEntityToBuilder(dto, new LargeHoldingsStkrtEntity(), new LargeHoldingsStkrtEntity().toBuilder());
+            optional.ifPresent(value -> insertEntityList.add(value.build()
+                                                                  .toBuilder()
+                                                                  .regDt(TimeUtil.nowTime("yyyyMMddHHmmss"))
+                                                                  .build()));
         }
 
         largeHoldingsStkrtRepository.saveAll(insertEntityList);
-        // ############# insert ############# [end]
+    }
+
+    private void update(List<LargeHoldingsStkrtDTO> updateDTOList) {
+        if (CollectionUtils.isEmpty(updateDTOList)) {
+            return;
+        }
+        List<Long> distinctSeqList = updateDTOList.stream()
+                                          .map(LargeHoldingsStkrtDTO::getSeq)
+                                          .collect(Collectors.toSet())
+                                          .stream()
+                                          .collect(Collectors.toList());
+
+        Map<Long, LargeHoldingsStkrtEntity> findUpdateEntityMap = new HashMap<>();
+        for (List<Long> seqList : ListDivider.getDivisionList(distinctSeqList, 300)) {
+            findUpdateEntityMap.putAll(queryFactory.selectFrom(largeHoldingsStkrtEntity)
+                                                   .where(largeHoldingsStkrtEntity.seq.in(seqList))
+                                                   .fetch()
+                                                   .stream()
+                                                   .collect(Collectors.toMap(LargeHoldingsStkrtEntity::getSeq, Function.identity(), (oldValue, newValue) -> newValue)));
+
+        }
+
+        List<LargeHoldingsStkrtEntity> updateEntityList = new ArrayList<>();
+
+        for (LargeHoldingsStkrtDTO dto : updateDTOList) {
+            LargeHoldingsStkrtEntity findUpdateEntity = findUpdateEntityMap.getOrDefault(dto.getSeq(), null);
+
+            if (findUpdateEntity == null) {
+                continue;
+            }
+
+            Optional<LargeHoldingsStkrtEntity.LargeHoldingsStkrtEntityBuilder> optional = Param.getSaveEntityToBuilder(dto, findUpdateEntity, findUpdateEntity.toBuilder());
+            optional.ifPresent(value -> updateEntityList.add(value.build()));
+        }
+
+        largeHoldingsStkrtRepository.saveAll(updateEntityList);
     }
 
     private BooleanExpression corpCodeEq(String corpCode) {

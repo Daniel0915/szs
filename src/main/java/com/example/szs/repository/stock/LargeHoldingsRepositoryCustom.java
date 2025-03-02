@@ -1,9 +1,13 @@
 package com.example.szs.repository.stock;
 
+import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
+import com.example.szs.domain.stock.LargeHoldingsEntity;
 import com.example.szs.domain.stock.QLargeHoldingsEntity;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
+import com.example.szs.utils.jpa.ListDivider;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -12,12 +16,15 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import static com.example.szs.domain.stock.QLargeHoldingsDetailEntity.largeHoldingsDetailEntity;
 import static com.example.szs.domain.stock.QLargeHoldingsEntity.largeHoldingsEntity;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -25,9 +32,11 @@ import static org.springframework.util.StringUtils.hasText;
 @Slf4j
 public class LargeHoldingsRepositoryCustom {
     private final JPAQueryFactory queryFactory;
+    private final LargeHoldingsRepository largeHoldingsRepository;
 
-    public LargeHoldingsRepositoryCustom(EntityManager em) {
+    public LargeHoldingsRepositoryCustom(EntityManager em, LargeHoldingsRepository largeHoldingsRepository) {
         this.queryFactory = new JPAQueryFactory(em);
+        this.largeHoldingsRepository = largeHoldingsRepository;
     }
 
     public Optional<LargeHoldingsDTO> findLatestRecordBy(LargeHoldingsSearchCondition condition) {
@@ -40,6 +49,14 @@ public class LargeHoldingsRepositoryCustom {
                                                .fetchFirst())
                        .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class));
     }
+
+    public void saveAll(List<LargeHoldingsEntity> entityList) {
+        if (CollectionUtils.isEmpty(entityList)) {
+            return;
+        }
+        largeHoldingsRepository.saveAll(entityList);
+    }
+
 
     private BooleanExpression rceptNoEq(String rceptNo) {
         return hasText(rceptNo) ? largeHoldingsEntity.rceptNo.eq(rceptNo) : null;

@@ -5,6 +5,7 @@ import com.example.szs.domain.stock.QLargeHoldingsDetailEntity;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
+import com.example.szs.utils.jpa.ListDivider;
 import com.example.szs.utils.jpa.Param;
 import com.example.szs.utils.time.TimeUtil;
 import com.querydsl.core.BooleanBuilder;
@@ -119,10 +120,7 @@ public class LargeHoldingsDetailRepositoryCustom {
 
     }
 
-
-
-
-    public void saveLargeHoldingsDetail(List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList) {
+    public void saveAll(List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList) {
         if (CollectionUtils.isEmpty(largeHoldingsDetailDTOList)) {
             return;
         }
@@ -130,48 +128,66 @@ public class LargeHoldingsDetailRepositoryCustom {
                                                                                            .collect(Collectors.partitioningBy(dto -> dto.getSeq() == null || dto.getSeq() == 0L));
 
         // ############# update ############# [start]
-        List<LargeHoldingsDetailDTO> updateDTOList = partitioned.get(false);
-
-        if (!CollectionUtils.isEmpty(updateDTOList)) {
-            List<Long> seqList = updateDTOList.stream().map(LargeHoldingsDetailDTO::getSeq).toList();
-
-            Map<Long, LargeHoldingsDetailEntity> findUpdateEntityMap = queryFactory.selectFrom(largeHoldingsDetailEntity)
-                                                                                   .where(largeHoldingsDetailEntity.seq.in(seqList))
-                                                                                   .fetch()
-                                                                                   .stream()
-                                                                                   .collect(Collectors.toMap(LargeHoldingsDetailEntity::getSeq, Function.identity(), (oldValue, newValue) -> newValue));
-
-            List<LargeHoldingsDetailEntity> updateEntityList = new ArrayList<>();
-
-            for (LargeHoldingsDetailDTO dto : updateDTOList) {
-                LargeHoldingsDetailEntity findUpdateEntity = findUpdateEntityMap.getOrDefault(dto.getSeq(), null);
-
-                if (findUpdateEntity == null) {
-                    continue;
-                }
-
-                Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optional = Param.getSaveEntityToBuilder(dto, findUpdateEntity, findUpdateEntity.toBuilder());
-                optional.ifPresent(value -> updateEntityList.add(value.build()));
-            }
-
-            largeHoldingsDetailRepository.saveAll(updateEntityList);
-        }
+        update(partitioned.get(false));
         // ############# update ############# [end]
 
         // ############# insert ############# [start]
-        List<LargeHoldingsDetailDTO> insertDTOList = partitioned.get(true);
+        insert(partitioned.get(true));
+        // ############# insert ############# [end]
+    }
+
+    private void insert(List<LargeHoldingsDetailDTO> insertDTOList) {
+        if (CollectionUtils.isEmpty(insertDTOList)) {
+            return;
+        }
+
         List<LargeHoldingsDetailEntity> insertEntityList = new ArrayList<>();
 
         for (LargeHoldingsDetailDTO dto : insertDTOList) {
             Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optional = Param.getSaveEntityToBuilder(dto, new LargeHoldingsDetailEntity(), new LargeHoldingsDetailEntity().toBuilder());
             optional.ifPresent(value -> insertEntityList.add(value.build()
-                                                                   .toBuilder()
-                                                                   .regDt(TimeUtil.nowTime("yyyyMMddHHmmss"))
-                                                                   .build()));
+                                                                  .toBuilder()
+                                                                  .regDt(TimeUtil.nowTime("yyyyMMddHHmmss"))
+                                                                  .build()));
         }
 
         largeHoldingsDetailRepository.saveAll(insertEntityList);
-        // ############# insert ############# [end]
+    }
+
+    private void update(List<LargeHoldingsDetailDTO> updateDTOList) {
+        if (CollectionUtils.isEmpty(updateDTOList)) {
+            return;
+        }
+
+        List<Long> distinctSeqList = updateDTOList.stream()
+                                                  .map(LargeHoldingsDetailDTO::getSeq)
+                                                  .collect(Collectors.toSet())
+                                                  .stream()
+                                                  .collect(Collectors.toList());
+
+        Map<Long, LargeHoldingsDetailEntity> findUpdateEntityMap = new HashMap<>();
+        for (List<Long> seqList : ListDivider.getDivisionList(distinctSeqList, 300)) {
+            findUpdateEntityMap.putAll(queryFactory.selectFrom(largeHoldingsDetailEntity)
+                                                   .where(largeHoldingsDetailEntity.seq.in(seqList))
+                                                   .fetch()
+                                                   .stream()
+                                                   .collect(Collectors.toMap(LargeHoldingsDetailEntity::getSeq, Function.identity(), (oldValue, newValue) -> newValue)));
+        }
+
+        List<LargeHoldingsDetailEntity> updateEntityList = new ArrayList<>();
+
+        for (LargeHoldingsDetailDTO dto : updateDTOList) {
+            LargeHoldingsDetailEntity findUpdateEntity = findUpdateEntityMap.getOrDefault(dto.getSeq(), null);
+
+            if (findUpdateEntity == null) {
+                continue;
+            }
+
+            Optional<LargeHoldingsDetailEntity.LargeHoldingsDetailEntityBuilder> optional = Param.getSaveEntityToBuilder(dto, findUpdateEntity, findUpdateEntity.toBuilder());
+            optional.ifPresent(value -> updateEntityList.add(value.build()));
+        }
+
+        largeHoldingsDetailRepository.saveAll(updateEntityList);
     }
 
     private BooleanExpression corpCodeEq(String corpCode) {

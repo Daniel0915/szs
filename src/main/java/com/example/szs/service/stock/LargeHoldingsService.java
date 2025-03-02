@@ -2,12 +2,12 @@ package com.example.szs.service.stock;
 
 import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.domain.stock.LargeHoldingsEntity;
+import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.dto.largeHoldings.LHResponseDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
-import com.example.szs.model.dto.MessageDto;
-import com.example.szs.model.dto.page.PageDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsStkrtDTO;
+import com.example.szs.model.dto.page.PageDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
@@ -19,7 +19,6 @@ import com.example.szs.module.redis.RedisPublisher;
 import com.example.szs.module.stock.LargeHoldings;
 import com.example.szs.module.stock.WebCrawling;
 import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
-import com.example.szs.repository.stock.LargeHoldingsRepository;
 import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsStkrtRepositoryCustom;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
@@ -30,7 +29,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -38,7 +36,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.sql.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,14 +51,11 @@ public class LargeHoldingsService {
     private String path;
     @Value("${corp.code.key}")
     private String corpCodeKey;
-//    @Value("${corp.code.value}")
-//    private String corpCodeValue;
     @Value("${dart.key}")
     private String dartKey;
     @Value("${dart.value}")
     private String dartValue;
 
-    private final LargeHoldingsRepository largeHoldingsRepository;
     private final LargeHoldingsRepositoryCustom largeHoldingsRepositoryCustom;
     private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
     private final LargeHoldingsStkrtRepositoryCustom largeHoldingsStkrtRepositoryCustom;
@@ -97,7 +91,7 @@ public class LargeHoldingsService {
                                                                                                                                            .isDescending(true)
                                                                                                                                            .build());
         if (optionalLargeHoldingsDTO.isEmpty()) {
-            largeHoldingsRepository.saveAll(largeHoldingsEntityList);
+            largeHoldingsRepositoryCustom.saveAll(largeHoldingsEntityList);
             if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
 
                 List<LargeHoldingsDTO> requestBody = largeHoldingsEntityList.stream()
@@ -130,7 +124,7 @@ public class LargeHoldingsService {
         int findIndex = Collections.binarySearch(largeHoldingsEntityList, findLatestRecord, comparator);
 
         List<LargeHoldingsEntity> insertEntity = largeHoldingsEntityList.subList(findIndex + 1, largeHoldingsEntityList.size());
-        largeHoldingsRepository.saveAll(insertEntity);
+        largeHoldingsRepositoryCustom.saveAll(insertEntity);
 
         // ############ 대주주 세부 내용 웹 크롤링 ############ [start]
         if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
@@ -178,11 +172,11 @@ public class LargeHoldingsService {
         for (LargeHoldingsDTO dto : largeHoldingsDTOList) {
             try {
                 List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = webCrawling.getLargeHoldingsDetailCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
-                largeHoldingsDetailRepositoryCustom.saveLargeHoldingsDetail(largeHoldingsDetailDTOList);
+                largeHoldingsDetailRepositoryCustom.saveAll(largeHoldingsDetailDTOList);
 
                 // TODO : LargeHoldingsDetail <-> LargeHoldingsStkrt 일대일 관계 매핑해야함.
                 List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList = webCrawling.getLargeHoldingsStkrtCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
-                largeHoldingsStkrtRepositoryCustom.saveLargeHoldingsStkrt(largeHoldingsStkrtDTOList);
+                largeHoldingsStkrtRepositoryCustom.saveAll(largeHoldingsStkrtDTOList);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
