@@ -84,13 +84,8 @@ public class LargeHoldingsStkrtRepositoryCustom {
         Map<Boolean, List<LargeHoldingsStkrtDTO>> partitioned = largeHoldingsStkrtDTOList.stream()
                                                                                            .collect(Collectors.partitioningBy(dto -> dto.getSeq() == null || dto.getSeq() == 0L));
 
-        // ############# update ############# [start]
         update(partitioned.get(false));
-        // ############# update ############# [end]
-
-        // ############# insert ############# [start]
         insert(partitioned.get(true));
-        // ############# insert ############# [end]
     }
 
     private void insert(List<LargeHoldingsStkrtDTO> insertDTOList) {

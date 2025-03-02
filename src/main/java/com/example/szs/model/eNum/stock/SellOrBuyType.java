@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum SellOrBuyType {
     SELL("sell", "매도"),
-    BUY("buy", "매수")
+    BUY("buy", "매수"),
+    ALL("all", "매수+매도")
     ;
 
     private final String code;

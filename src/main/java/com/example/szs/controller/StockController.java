@@ -1,12 +1,13 @@
 package com.example.szs.controller;
 
-import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.eNum.ResStatus;
+import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.repository.stock.CorpInfoRepositoryCustom;
+import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.service.stock.CorpInfoService;
 import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
@@ -19,7 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/stock")
@@ -27,10 +31,8 @@ import java.util.*;
 @Slf4j
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
-    private final ExecOwnershipService execOwnershipService;
     private final CorpInfoService corpInfoService;
     private final ApiResponse apiResponse;
-    private final CorpInfoRepositoryCustom corpInfoRepositoryCustom;
 
     @GetMapping("/update")
     public Map<String, Object> update() {
@@ -45,10 +47,6 @@ public class StockController {
         for (String corpCode : corpCodeList) {
             largeHoldingsService.insertData(corpCode);
         }
-
-
-
-
 
         return ResUtil.makeResponse("", ResStatus.SUCCESS);
     }
@@ -140,6 +138,47 @@ public class StockController {
     public ResponseEntity<?> getAllCorpInfoDTOList() {
         try {
             return corpInfoService.getAllCorpInfoDTOList();
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/large-holdings-top-5-trade")
+    public ResponseEntity<?> getTop5StockTrade(@RequestParam(required = false) String tradeDtGoe, @RequestParam(required = false) String tradeDtLoe) {
+        if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
+            Map<String, Object> params = new HashMap<>() {{
+                put("tradeDtGoe", tradeDtGoe);
+                put("tradeDtLoe", tradeDtLoe);
+            }};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return largeHoldingsService.getTop5StockTrade(tradeDtGoe, tradeDtLoe);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/large-holdings-trade")
+    public ResponseEntity<?> getTopStockTradeTotal(@RequestParam(required = false) String tradeDtGoe,
+                                                   @RequestParam(required = false) String tradeDtLoe,
+                                                   @RequestParam(required = false, defaultValue = "ALL") SellOrBuyType sellOrBuyType) {
+        if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
+            Map<String, Object> params = new HashMap<>() {{
+                put("tradeDtGoe", tradeDtGoe);
+                put("tradeDtLoe", tradeDtLoe);
+                put("sellOrBuyType", sellOrBuyType);
+            }};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return largeHoldingsService.getTopStockTradeTotal(tradeDtGoe, tradeDtLoe, sellOrBuyType);
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);

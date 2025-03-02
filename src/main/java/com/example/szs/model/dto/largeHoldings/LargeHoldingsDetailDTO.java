@@ -52,4 +52,26 @@ public class LargeHoldingsDetailDTO {
         private String sellOrBuyType;
         private List<MonthlyCountDTO> monthlyCountDTOList;
     }
+
+
+    @Getter
+    @Builder(toBuilder = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @FieldNameConstants
+    public static class TopStockDetailDTO {
+        private String corpCode; // 회사코드
+        private Long totalStockAmount;
+        private Long totalStockPrice;
+    }
+
+    @Getter
+    @Builder(toBuilder = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @FieldNameConstants
+    public static class SellOrBuyTop5StockResponse {
+        private String sellOrBuyType;
+        private List<TopStockDetailDTO> top5StockDetailDTOList;
+    }
 }

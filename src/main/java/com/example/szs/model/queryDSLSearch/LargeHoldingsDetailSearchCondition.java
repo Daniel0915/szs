@@ -17,6 +17,8 @@ public class LargeHoldingsDetailSearchCondition {
     // 거래량 changeStockAmount 범위
     private Long changeStockAmountGoe;
     private Long changeStockAmountLoe;
+    private Long changeStockAmountGt;
+    private Long changeStockAmountLt;
 
     // 평단가 unitStockPrice 범위
     private Long unitStockPriceGoe;
@@ -38,4 +40,8 @@ public class LargeHoldingsDetailSearchCondition {
     private String birthDateOrBizRegNumEqContains; // 생년월일 또는 사업자등록번호 등
     private String tradeReasonContains; // 매매 사유
     private String stockTypeContains; // 주식 종류
+
+    // limit
+    private Long limit;
+
 }

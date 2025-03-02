@@ -11,10 +11,8 @@ import com.example.szs.utils.time.TimeUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.StringExpression;
-import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +36,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class LargeHoldingsDetailRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final LargeHoldingsDetailRepository largeHoldingsDetailRepository;
-
+    private static final String ABS_CODE = "abs({0})";
     public LargeHoldingsDetailRepositoryCustom(EntityManager em, LargeHoldingsDetailRepository largeHoldingsDetailRepository) {
         this.queryFactory = new JPAQueryFactory(em);
         this.largeHoldingsDetailRepository = largeHoldingsDetailRepository;
@@ -120,20 +118,36 @@ public class LargeHoldingsDetailRepositoryCustom {
 
     }
 
+    public List<LargeHoldingsDetailDTO.TopStockDetailDTO> getTopStockDetail(LargeHoldingsDetailSearchCondition condition) {
+        JPAQuery<LargeHoldingsDetailDTO.TopStockDetailDTO> query = queryFactory.select(Projections.constructor(LargeHoldingsDetailDTO.TopStockDetailDTO.class,
+                                                largeHoldingsDetailEntity.corpCode.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpCode),
+                                                Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetailEntity.changeStockAmount.sum()).as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.totalStockAmount),
+                                                Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetailEntity.totalStockPrice.sum()).as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.totalStockPrice)
+                                        ))
+                                        .from(largeHoldingsDetailEntity)
+                                        .where(
+                                                changeStockAmountLt(condition.getChangeStockAmountLt()),
+                                                changeStockAmountGt(condition.getChangeStockAmountGt()),
+                                                tradeDtBetween(condition.getTradeDtLoe(), condition.getTradeDtGoe())
+                                        )
+                                        .groupBy(largeHoldingsDetailEntity.corpCode)
+                                        .orderBy(Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetailEntity.changeStockAmount).sum().desc());
+
+
+        if (condition.getLimit() != null && condition.getLimit() != 0) {
+            query.limit(condition.getLimit());
+        }
+        return query.fetch();
+    }
+
     public void saveAll(List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList) {
         if (CollectionUtils.isEmpty(largeHoldingsDetailDTOList)) {
             return;
         }
         Map<Boolean, List<LargeHoldingsDetailDTO>> partitioned = largeHoldingsDetailDTOList.stream()
                                                                                            .collect(Collectors.partitioningBy(dto -> dto.getSeq() == null || dto.getSeq() == 0L));
-
-        // ############# update ############# [start]
         update(partitioned.get(false));
-        // ############# update ############# [end]
-
-        // ############# insert ############# [start]
         insert(partitioned.get(true));
-        // ############# insert ############# [end]
     }
 
     private void insert(List<LargeHoldingsDetailDTO> insertDTOList) {
