@@ -1,7 +1,6 @@
 package com.example.szs.model.dto.execOwnership;
 
 import com.example.szs.config.json.NullToEmptySerializer;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;

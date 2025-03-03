@@ -3,6 +3,8 @@ package com.example.szs.controller;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
+import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
+import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
@@ -34,7 +36,7 @@ public class StockController {
     private final ApiResponse apiResponse;
 
     @GetMapping("/update/large-holdings")
-    public Map<String, Object> updateLargeHoldings() {
+    public Map<String, Object> updateLargeHoldings() throws InterruptedException {
         List<String> corpCodeList = Arrays.asList("00918444","00375302","00126229","00144155","01664948","00860332","00159023",
                 "01133217","00126362","00126371","00164645","00145109","00989619","00120021",
                 "00356361","00106641","00126566","00159616","00760971","00401731","01205851",
@@ -44,6 +46,7 @@ public class StockController {
                 "00149646","00102858","00413046","00199252","00126256","00126478","00155319",
                 "00164788","00164830");
         for (String corpCode : corpCodeList) {
+            Thread.sleep(3000);
             largeHoldingsService.insertData(corpCode);
         }
 
@@ -51,9 +54,10 @@ public class StockController {
     }
 
     @GetMapping("/update/exec-ownership")
-    public Map<String, Object> updateExecOwnership() {
+    public Map<String, Object> updateExecOwnership() throws InterruptedException {
         List<String> corpCodeList = Arrays.asList("00126371");
         for (String corpCode : corpCodeList) {
+            Thread.sleep(3000);
             execOwnershipService.insertData(corpCode);
         }
 
@@ -64,6 +68,16 @@ public class StockController {
     public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
         try {
             return largeHoldingsService.getSearchPageLargeHoldingsDetail(condition, pageable);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/search/exec-ownership")
+    public ResponseEntity<?> searchExecOwnershipDetail(ExecOwnershipDetailSearchCondition condition, Pageable pageable) {
+        try {
+            return execOwnershipService.getSearchPageExecOwnershipDetail(condition, pageable);
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);

@@ -5,8 +5,13 @@ import com.example.szs.model.dto.execOwnership.EOResponseDTO;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
+import com.example.szs.model.dto.page.PageDTO;
+import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
+import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
+import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
+import com.example.szs.module.ApiResponse;
 import com.example.szs.module.redis.RedisPublisher;
 import com.example.szs.module.stock.WebCrawling;
 import com.example.szs.repository.stock.ExecOwnershipDetailRepository;
@@ -17,6 +22,9 @@ import com.example.szs.utils.jpa.EntityToDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -48,11 +56,10 @@ public class ExecOwnershipService {
     private final ExecOwnershipRepository execOwnershipRepository;
     private final ExecOwnershipRepositoryCustom execOwnershipRepositoryCustom;
     private final ExecOwnershipDetailRepositoryCustom execOwnershipDetailRepositoryCustom;
+    private final ApiResponse apiResponse;
     private final RedisPublisher redisPublisher;
     private final WebCrawling webCrawling;
 
-
-//    @Scheduled(cron = "0 0 9 * * ?")
     @Transactional
     public void insertData(String corpCodeValue) {
         WebClient webClient = WebClient.builder()
@@ -150,5 +157,15 @@ public class ExecOwnershipService {
                                           .channelType(ChannelType.STOCK_CHANGE_EXECOWNERSHIP)
                                           .build();
         redisPublisher.pubMsgChannel(messageDto);
+    }
+    public ResponseEntity<?> getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchCondition condition, Pageable pageable) {
+        Page<ExecOwnershipDetailDTO> page = execOwnershipDetailRepositoryCustom.searchPage(condition, pageable);
+
+        PageDTO pageDTO = PageDTO.builder()
+                                 .content(page.getContent())
+                                 .totalElements(page.getTotalElements())
+                                 .totalPages(page.getTotalPages())
+                                 .build();
+        return apiResponse.makeResponse(ResStatus.SUCCESS, pageDTO);
     }
 }

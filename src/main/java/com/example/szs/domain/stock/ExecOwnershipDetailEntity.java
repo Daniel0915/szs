@@ -65,6 +65,6 @@ public class ExecOwnershipDetailEntity {
     @Column(name = "total_stock_price", nullable = false)
     private Long totalStockPrice;
 
-    @Column(name = "reg_dt", length = 14, columnDefinition = "varchar(14) DEFAULT ''")
+    @Column(name = "reg_dt")
     private String regDt; // 등록일시
 }

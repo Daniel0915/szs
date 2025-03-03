@@ -1,7 +1,6 @@
 package com.example.szs.repository.stock;
 
 import com.example.szs.domain.stock.CorpInfoEntity;
-import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.example.szs.utils.jpa.Param;
@@ -39,7 +38,7 @@ public class CorpInfoRepositoryCustom {
 
     }
 
-    public void saveCorpInfo(List<CorpInfoDTO> corpInfoDTOList) {
+    public void saveAll(List<CorpInfoDTO> corpInfoDTOList) {
         if (CollectionUtils.isEmpty(corpInfoDTOList)) {
             return;
         }

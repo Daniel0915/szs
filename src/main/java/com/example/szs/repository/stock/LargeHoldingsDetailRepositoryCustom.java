@@ -122,6 +122,7 @@ public class LargeHoldingsDetailRepositoryCustom {
     public List<LargeHoldingsDetailDTO.TopStockDetailDTO> getTopStockDetail(LargeHoldingsDetailSearchCondition condition) {
         JPAQuery<LargeHoldingsDetailDTO.TopStockDetailDTO> query = queryFactory.select(Projections.constructor(LargeHoldingsDetailDTO.TopStockDetailDTO.class,
                                                 largeHoldingsDetailEntity.corpCode.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpCode),
+                                               largeHoldingsDetailEntity.corpName.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpName),
                                                 Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetailEntity.changeStockAmount.sum()).as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.totalStockAmount),
                                                 Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetailEntity.totalStockPrice.sum()).as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.totalStockPrice)
                                         ))
@@ -131,7 +132,7 @@ public class LargeHoldingsDetailRepositoryCustom {
                                                 changeStockAmountGt(condition.getChangeStockAmountGt()),
                                                 tradeDtBetween(condition.getTradeDtLoe(), condition.getTradeDtGoe())
                                         )
-                                        .groupBy(largeHoldingsDetailEntity.corpCode)
+                                        .groupBy(largeHoldingsDetailEntity.corpCode, largeHoldingsDetailEntity.corpName)
                                         .orderBy(Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetailEntity.changeStockAmount).sum().desc());
 
 

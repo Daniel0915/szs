@@ -26,13 +26,13 @@ public class LargeHoldingsStkrtEntity {
     @Column(name = "corp_code", nullable = false)
     private String corpCode; // 회사코드
 
-    @Column(name = "corp_name", nullable = false, length = 20)
+    @Column(name = "corp_name")
     private String corpName; // 회사명
 
-    @Column(name = "large_holdings_name", nullable = false, length = 50)
+    @Column(name = "large_holdings_name")
     private String largeHoldingsName; // 대주주 이름
 
-    @Column(name = "birth_date_or_biz_reg_num", nullable = false, length = 20)
+    @Column(name = "birth_date_or_biz_reg_num")
     private String birthDateOrBizRegNum; // 생년월일 또는 사업자등록번호 등
 
     @Column(name = "total_stock_amount")
