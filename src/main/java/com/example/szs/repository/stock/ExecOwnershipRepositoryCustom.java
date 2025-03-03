@@ -44,8 +44,8 @@ public class ExecOwnershipRepositoryCustom {
         return hasText(rceptNo) ? execOwnershipEntity.rceptNo.eq(rceptNo) : null;
     }
 
-    private BooleanExpression corpCodeEq(Long corpCode) {
-        return corpCode != null ? execOwnershipEntity.corpCode.eq(corpCode) : null;
+    private BooleanExpression corpCodeEq(String corpCode) {
+        return hasText(corpCode) ? execOwnershipEntity.corpCode.eq(corpCode) : null;
     }
 
     private OrderSpecifier<?> dynamicOrder(ExecOwnershipSearchCondition condition) {

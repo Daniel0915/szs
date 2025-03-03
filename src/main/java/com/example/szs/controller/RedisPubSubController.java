@@ -12,14 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 
-import java.io.IOException;
 import java.time.Duration;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/redis/pub-sub")
@@ -28,10 +23,6 @@ import java.util.concurrent.TimeUnit;
 public class RedisPubSubController {
     private final RedisPublisher redisPubService;
     private final RedisSubscribeListener redisSubscribeListener;
-    private final ExecOwnershipService execOwnershipService;
-    private final LargeHoldingsService largeHoldingsService;
-
-
 
     @PostMapping("/send")
     public void sendMessage(@RequestParam ChannelType channelType, @RequestBody MessageDto message) {
@@ -41,7 +32,7 @@ public class RedisPubSubController {
 //        redisPubService.pubMsgChannel(channelType, message);
     }
 
-    @PostMapping("/cancle")
+    @PostMapping("/cancel")
     public void cancelSubChannel(@RequestParam String channel) {
         redisPubService.cancelSubChannel(channel);
     }

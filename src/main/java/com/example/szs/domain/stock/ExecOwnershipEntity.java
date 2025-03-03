@@ -26,7 +26,7 @@ public class ExecOwnershipEntity {
     private String rceptNo; // 접수 번호
 
     @Column(name = "corp_code")
-    private Long corpCode; // 회사코드
+    private String corpCode; // 회사코드
 
     @Column(name = "corp_name")
     private String corpName; // 회사명

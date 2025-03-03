@@ -4,9 +4,13 @@ import com.example.szs.domain.stock.ExecOwnershipEntity;
 import com.example.szs.model.dto.execOwnership.EOResponseDTO;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 import com.example.szs.model.dto.MessageDto;
+import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 import com.example.szs.module.redis.RedisPublisher;
+import com.example.szs.module.stock.WebCrawling;
+import com.example.szs.repository.stock.ExecOwnershipDetailRepository;
+import com.example.szs.repository.stock.ExecOwnershipDetailRepositoryCustom;
 import com.example.szs.repository.stock.ExecOwnershipRepository;
 import com.example.szs.repository.stock.ExecOwnershipRepositoryCustom;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
@@ -17,6 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -35,8 +40,6 @@ public class ExecOwnershipService {
     private String path;
     @Value("${corp.code.key}")
     private String corpCodeKey;
-    @Value("${corp.code.value}")
-    private String corpCodeValue;
     @Value("${dart.key}")
     private String dartKey;
     @Value("${dart.value}")
@@ -44,11 +47,14 @@ public class ExecOwnershipService {
 
     private final ExecOwnershipRepository execOwnershipRepository;
     private final ExecOwnershipRepositoryCustom execOwnershipRepositoryCustom;
+    private final ExecOwnershipDetailRepositoryCustom execOwnershipDetailRepositoryCustom;
     private final RedisPublisher redisPublisher;
+    private final WebCrawling webCrawling;
 
+
+//    @Scheduled(cron = "0 0 9 * * ?")
     @Transactional
-    @Scheduled(cron = "0 0 9 * * ?")
-    public void insertData() {
+    public void insertData(String corpCodeValue) {
         WebClient webClient = WebClient.builder()
                                        .baseUrl(baseUri)
                                        .build();
@@ -67,12 +73,27 @@ public class ExecOwnershipService {
         List<ExecOwnershipEntity> execOwnershipEntityList = eoResponseDTO.toEntity();
 
         Optional<ExecOwnershipDTO> optionalExecOwnershipDTO = execOwnershipRepositoryCustom.findLatestRecordBy(ExecOwnershipSearchCondition.builder()
-                                                                                                                                           .corpCode(Long.valueOf(corpCodeValue))
+                                                                                                                                           .corpCode(corpCodeValue)
                                                                                                                                            .orderColumn(ExecOwnershipEntity.Fields.rceptNo)
                                                                                                                                            .isDescending(true)
                                                                                                                                            .build());
         if (optionalExecOwnershipDTO.isEmpty()) {
             execOwnershipRepository.saveAll(execOwnershipEntityList);
+            if (!CollectionUtils.isEmpty(execOwnershipEntityList)) {
+                List<ExecOwnershipDetailDTO> insertExecExecOwnershipDetailDTOList = new ArrayList<>();
+                for (ExecOwnershipEntity entity :execOwnershipEntityList) {
+                    insertExecExecOwnershipDetailDTOList.addAll(webCrawling.getExecOwnershipDetailCrawling(
+                            entity.getRceptNo(),
+                            entity.getCorpCode(),
+                            entity.getCorpName(),
+                            entity.getRepror(),
+                            entity.getIsuExctvRgistAt(),
+                            entity.getIsuExctvOfcps(),
+                            entity.getIsuMainShrholdr()
+                    ));
+                }
+                execOwnershipDetailRepositoryCustom.saveAll(insertExecExecOwnershipDetailDTOList);
+            }
             return;
         }
 
@@ -98,11 +119,24 @@ public class ExecOwnershipService {
         int findIndex = Collections.binarySearch(execOwnershipEntityList, findLatestRecord, comparator);
 
         List<ExecOwnershipEntity> insertEntity = execOwnershipEntityList.subList(findIndex + 1, execOwnershipEntityList.size());
-        execOwnershipRepository.saveAll(insertEntity);
 
         if (insertEntity.isEmpty()) {
             return;
         }
+
+        execOwnershipRepository.saveAll(insertEntity);
+
+        List<ExecOwnershipDetailDTO> updateExecExecOwnershipDetailDTOList = new ArrayList<>();
+        for (ExecOwnershipEntity entity : insertEntity) {
+            updateExecExecOwnershipDetailDTOList.addAll(webCrawling.getExecOwnershipDetailCrawling(entity.getRceptNo(),
+                    entity.getCorpCode(),
+                    entity.getCorpName(),
+                    entity.getRepror(),
+                    entity.getIsuExctvRgistAt(),
+                    entity.getIsuExctvOfcps(),
+                    entity.getIsuMainShrholdr()));
+        }
+        execOwnershipDetailRepositoryCustom.saveAll(updateExecExecOwnershipDetailDTOList);
 
         List<ExecOwnershipDTO> execOwnershipDTOList = new ArrayList<>();
         for (ExecOwnershipEntity entity : insertEntity) {

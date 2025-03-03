@@ -63,7 +63,7 @@ public class EOResponseDTO {
         for (ExecOwnership execOwnership : this.list) {
             execOwnershipEntityList.add(ExecOwnershipEntity.builder()
                                                            .rceptNo             (execOwnership.getRceptNo())
-                                                           .corpCode            (NumberUtils.stringToLongConverter(execOwnership.getCorpCode()))
+                                                           .corpCode            (execOwnership.getCorpCode())
                                                            .corpName            (execOwnership.getCorpName())
                                                            .repror              (execOwnership.getRepror())
                                                            .isuExctvRgistAt     (execOwnership.getIsuExctvRgistAt())

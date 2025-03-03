@@ -93,11 +93,9 @@ public class LargeHoldingsService {
         if (optionalLargeHoldingsDTO.isEmpty()) {
             largeHoldingsRepositoryCustom.saveAll(largeHoldingsEntityList);
             if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
-
-                List<LargeHoldingsDTO> requestBody = largeHoldingsEntityList.stream()
-                                                                            .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class).stream())
-                                                                            .collect(Collectors.toList());
-                this.updateScraping(requestBody);
+                this.updateScraping(largeHoldingsEntityList.stream()
+                                                           .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class).stream())
+                                                           .collect(Collectors.toList()));
             }
             return;
         }
@@ -126,15 +124,12 @@ public class LargeHoldingsService {
         List<LargeHoldingsEntity> insertEntity = largeHoldingsEntityList.subList(findIndex + 1, largeHoldingsEntityList.size());
         largeHoldingsRepositoryCustom.saveAll(insertEntity);
 
-        // ############ 대주주 세부 내용 웹 크롤링 ############ [start]
         if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
-            List<LargeHoldingsDTO> requestBody = largeHoldingsEntityList.stream()
-                                                                        .map(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class))
-                                                                        .flatMap(Optional::stream)
-                                                                        .toList();
-            this.updateScraping(requestBody);
+            this.updateScraping(largeHoldingsEntityList.stream()
+                                                       .map(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class))
+                                                       .flatMap(Optional::stream)
+                                                       .toList());
         }
-        // ############ 대주주 세부 내용 웹 크롤링 ############ [end]
 
         if (insertEntity.isEmpty()) {
             return;
@@ -181,7 +176,6 @@ public class LargeHoldingsService {
                 e.printStackTrace();
                 log.error(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
             }
-
         }
         return apiResponse.makeResponse(ResStatus.SUCCESS);
     }

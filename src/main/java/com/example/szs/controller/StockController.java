@@ -6,8 +6,6 @@ import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
-import com.example.szs.repository.stock.CorpInfoRepositoryCustom;
-import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.service.stock.CorpInfoService;
 import com.example.szs.service.stock.ExecOwnershipService;
 import com.example.szs.service.stock.LargeHoldingsService;
@@ -31,11 +29,12 @@ import java.util.Map;
 @Slf4j
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
+    private final ExecOwnershipService execOwnershipService;
     private final CorpInfoService corpInfoService;
     private final ApiResponse apiResponse;
 
-    @GetMapping("/update")
-    public Map<String, Object> update() {
+    @GetMapping("/update/large-holdings")
+    public Map<String, Object> updateLargeHoldings() {
         List<String> corpCodeList = Arrays.asList("00918444","00375302","00126229","00144155","01664948","00860332","00159023",
                 "01133217","00126362","00126371","00164645","00145109","00989619","00120021",
                 "00356361","00106641","00126566","00159616","00760971","00401731","01205851",
@@ -46,6 +45,16 @@ public class StockController {
                 "00164788","00164830");
         for (String corpCode : corpCodeList) {
             largeHoldingsService.insertData(corpCode);
+        }
+
+        return ResUtil.makeResponse("", ResStatus.SUCCESS);
+    }
+
+    @GetMapping("/update/exec-ownership")
+    public Map<String, Object> updateExecOwnership() {
+        List<String> corpCodeList = Arrays.asList("00126371");
+        for (String corpCode : corpCodeList) {
+            execOwnershipService.insertData(corpCode);
         }
 
         return ResUtil.makeResponse("", ResStatus.SUCCESS);
@@ -144,7 +153,7 @@ public class StockController {
         }
     }
 
-    @GetMapping("/large-holdings-top-5-trade")
+    @GetMapping("/trade-top-5")
     public ResponseEntity<?> getTop5StockTrade(@RequestParam(required = false) String tradeDtGoe, @RequestParam(required = false) String tradeDtLoe) {
         if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
             Map<String, Object> params = new HashMap<>() {{
@@ -163,7 +172,7 @@ public class StockController {
         }
     }
 
-    @GetMapping("/large-holdings-trade")
+    @GetMapping("/trade-total")
     public ResponseEntity<?> getTopStockTradeTotal(@RequestParam(required = false) String tradeDtGoe,
                                                    @RequestParam(required = false) String tradeDtLoe,
                                                    @RequestParam(required = false, defaultValue = "ALL") SellOrBuyType sellOrBuyType) {

@@ -1,7 +1,6 @@
 package com.example.szs.model.dto.largeHoldings;
 
 import com.example.szs.config.json.NullToEmptySerializer;
-import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
