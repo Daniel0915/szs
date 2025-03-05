@@ -5,6 +5,7 @@ import com.example.szs.utils.money.NumberUtils;
 import com.example.szs.utils.time.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,11 @@ public class EOResponseDTO {
 
     public List<ExecOwnershipEntity> toEntity() {
         List<ExecOwnershipEntity> execOwnershipEntityList = new ArrayList<>();
+
+        if (CollectionUtils.isEmpty(this.list)) {
+            return new ArrayList<>();
+        }
+
         for (ExecOwnership execOwnership : this.list) {
             execOwnershipEntityList.add(ExecOwnershipEntity.builder()
                                                            .rceptNo             (execOwnership.getRceptNo())

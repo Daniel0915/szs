@@ -4,6 +4,7 @@ import com.example.szs.domain.stock.QExecOwnershipEntity;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
+import com.example.szs.utils.jpa.ListDivider;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -12,10 +13,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.example.szs.domain.stock.QExecOwnershipEntity.execOwnershipEntity;
 import static org.springframework.util.StringUtils.hasText;
@@ -42,6 +45,52 @@ public class ExecOwnershipRepositoryCustom {
 
     private BooleanExpression rceptNoEq(String rceptNo) {
         return hasText(rceptNo) ? execOwnershipEntity.rceptNo.eq(rceptNo) : null;
+    }
+
+    public List<ExecOwnershipDTO> getExecOwnershipTop5(String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
+            return new ArrayList<>();
+        }
+
+        List<String> reprorList = queryFactory.select(execOwnershipEntity.repror) // 반환 타입을 지정.from(execOwnershipEntity)
+                                              .from(execOwnershipEntity)
+                                              .where(corpCodeEq(corpCode))
+                                              .groupBy(execOwnershipEntity.repror)
+                                              .fetch();
+        if (CollectionUtils.isEmpty(reprorList)) {
+            return new ArrayList<>();
+        }
+
+        List<String> recentRceptNoList = new ArrayList<>();
+        for (List<String> divisionReprorList : ListDivider.getDivisionList(reprorList, 300)) {
+            recentRceptNoList.addAll(queryFactory
+                    .select(execOwnershipEntity.rceptNo.max())
+                    .from(execOwnershipEntity)
+                    .where(execOwnershipEntity.repror.in(divisionReprorList))
+                    .groupBy(execOwnershipEntity.repror)
+                    .fetch());
+        }
+
+        if (CollectionUtils.isEmpty(recentRceptNoList)) {
+            return new ArrayList<>();
+        }
+
+        List<ExecOwnershipDTO> execOwnershipDTOList = new ArrayList<>();
+
+        for (List<String> divisionRceptNoList : ListDivider.getDivisionList(recentRceptNoList, 300)) {
+            execOwnershipDTOList.addAll(queryFactory.selectFrom(execOwnershipEntity)
+                                                    .where(execOwnershipEntity.rceptNo.in(divisionRceptNoList))
+                                                    .fetch()
+                                                    .stream()
+                                                    .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, ExecOwnershipDTO.class).stream())
+                                                    .collect(Collectors.toList()));
+        }
+
+        if (CollectionUtils.isEmpty(execOwnershipDTOList)) {
+            return new ArrayList<>();
+        }
+
+        return execOwnershipDTOList.stream().sorted(Comparator.comparing(ExecOwnershipDTO::getSpStockLmpCnt).reversed()).limit(5).collect(Collectors.toList());
     }
 
     private BooleanExpression corpCodeEq(String corpCode) {

@@ -37,17 +37,15 @@ public class StockController {
 
     @GetMapping("/update/large-holdings")
     public Map<String, Object> updateLargeHoldings() throws InterruptedException {
-        List<String> corpCodeList = Arrays.asList("00918444","00375302","00126229","00144155","01664948","00860332","00159023",
-                "01133217","00126362","00126371","00164645","00145109","00989619","00120021",
-                "00356361","00106641","00126566","00159616","00760971","00401731","01205851",
-                "01350869","00266961","00547583","00149655","00382199","00126380","00164779",
-                "00181712","01652129","01596425","01204056","00111704","01390344","00877059",
-                "01160363","00155276","01515323","00258801","00631518","00688996","00421045",
-                "00149646","00102858","00413046","00199252","00126256","00126478","00155319",
-                "00164788","00164830");
+        List<String> corpCodeList = Arrays.asList("00164645","00145109","00989619","00120021");
         for (String corpCode : corpCodeList) {
             Thread.sleep(3000);
             largeHoldingsService.insertData(corpCode);
+        }
+
+        for (String corpCode : corpCodeList) {
+            Thread.sleep(3000);
+            execOwnershipService.insertData(corpCode);
         }
 
         return ResUtil.makeResponse("", ResStatus.SUCCESS);
@@ -55,7 +53,7 @@ public class StockController {
 
     @GetMapping("/update/exec-ownership")
     public Map<String, Object> updateExecOwnership() throws InterruptedException {
-        List<String> corpCodeList = Arrays.asList("00126371");
+        List<String> corpCodeList = Arrays.asList("00159023");
         for (String corpCode : corpCodeList) {
             Thread.sleep(3000);
             execOwnershipService.insertData(corpCode);
@@ -132,6 +130,22 @@ public class StockController {
 
         try {
             return largeHoldingsService.getLargeHoldingsStockRatioTop5(corpCode);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/exec-ownership-top-5")
+    public ResponseEntity<?> getStockCntTop5(String corpCode) {
+        if (corpCode == null) {
+            Map<String, Object> params = new HashMap<>() {{put("corpCode", corpCode);}};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return execOwnershipService.getStockCntTop5(corpCode);
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);

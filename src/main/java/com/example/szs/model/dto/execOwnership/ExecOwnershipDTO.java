@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ExecOwnershipDTO {
     private String rceptNo; // 접수 번호
-    private Long corpCode; // 회사코드
+    private String corpCode; // 회사코드
     private String corpName; // 회사명
     private String repror; // 보고자
     private String isuExctvRgistAt; // 등기여부

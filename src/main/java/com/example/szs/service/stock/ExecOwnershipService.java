@@ -168,4 +168,8 @@ public class ExecOwnershipService {
                                  .build();
         return apiResponse.makeResponse(ResStatus.SUCCESS, pageDTO);
     }
+
+    public ResponseEntity<?> getStockCntTop5(String corpCode) {
+        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipTop5(corpCode));
+    }
 }
