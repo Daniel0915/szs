@@ -10,11 +10,9 @@ import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
-import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.module.redis.RedisPublisher;
 import com.example.szs.module.stock.WebCrawling;
-import com.example.szs.repository.stock.ExecOwnershipDetailRepository;
 import com.example.szs.repository.stock.ExecOwnershipDetailRepositoryCustom;
 import com.example.szs.repository.stock.ExecOwnershipRepository;
 import com.example.szs.repository.stock.ExecOwnershipRepositoryCustom;
@@ -26,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -171,5 +168,9 @@ public class ExecOwnershipService {
 
     public ResponseEntity<?> getStockCntTop5(String corpCode) {
         return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipTop5(corpCode));
+    }
+
+    public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchCondition condition) {
+        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipDetailRepositoryCustom.getExecOwnershipDetailDTOList(condition));
     }
 }

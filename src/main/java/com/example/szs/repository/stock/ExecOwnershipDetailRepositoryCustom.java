@@ -63,6 +63,19 @@ public class ExecOwnershipDetailRepositoryCustom {
         return new PageImpl<>(content, pageable, totalCount);
     }
 
+    public List<ExecOwnershipDetailDTO> getExecOwnershipDetailDTOList(ExecOwnershipDetailSearchCondition condition) {
+        return queryFactory.selectFrom(execOwnershipDetailEntity)
+                           .where(
+                                   corpCodeEq(condition.getCorpCodeEq()),
+                                   execOwnershipNameEq(condition.getExecOwnershipNameEq())
+                           )
+                           .orderBy(dynamicOrder(condition))
+                           .fetch()
+                           .stream()
+                           .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, ExecOwnershipDetailDTO.class).stream())
+                           .collect(Collectors.toList());
+    }
+
     public void saveAll(List<ExecOwnershipDetailDTO> execOwnershipDetailDTOList) {
         if (CollectionUtils.isEmpty(execOwnershipDetailDTOList)) {
             return;

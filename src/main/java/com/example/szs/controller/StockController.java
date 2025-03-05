@@ -1,5 +1,6 @@
 package com.example.szs.controller;
 
+import com.example.szs.domain.stock.ExecOwnershipDetailEntity;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
@@ -34,6 +35,13 @@ public class StockController {
     private final ExecOwnershipService execOwnershipService;
     private final CorpInfoService corpInfoService;
     private final ApiResponse apiResponse;
+
+    private static final String CORP_CODE = "corpCode";
+    private static final String LARGE_HOLDINGS_NAME = "largeHoldingsName";
+    private static final String TRADE_DT_GOE = "tradeDtGoe";
+    private static final String TRADE_DT_LOE = "tradeDtLoe";
+    private static final String SELL_OR_BUY_TYPE = "sellOrBuyType";
+    private static final String EXEC_OWNERSHIP_NAME = "execOwnershipName";
 
     @GetMapping("/update/large-holdings")
     public Map<String, Object> updateLargeHoldings() throws InterruptedException {
@@ -107,7 +115,7 @@ public class StockController {
     @GetMapping("/large-holdings-monthly-trade-cnt")
     public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(String corpCode) {
         if (corpCode == null) {
-            Map<String, Object> params = new HashMap<>() {{put("corpCode", corpCode);}};
+            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
         }
@@ -123,7 +131,7 @@ public class StockController {
     @GetMapping("/large-holdings-top-5")
     public ResponseEntity<?> getLargeHoldingsStockRatioTop5(String corpCode) {
         if (corpCode == null) {
-            Map<String, Object> params = new HashMap<>() {{put("corpCode", corpCode);}};
+            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
         }
@@ -137,9 +145,9 @@ public class StockController {
     }
 
     @GetMapping("/exec-ownership-top-5")
-    public ResponseEntity<?> getStockCntTop5(String corpCode) {
-        if (corpCode == null) {
-            Map<String, Object> params = new HashMap<>() {{put("corpCode", corpCode);}};
+    public ResponseEntity<?> getStockCntTop5(@RequestParam(required = false) String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
+            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
         }
@@ -152,12 +160,37 @@ public class StockController {
         }
     }
 
+    @GetMapping("/exec-ownership-trade-list")
+    public ResponseEntity<?> getExecOwnershipTradeList(@RequestParam(required = false) String corpCode,
+                                                       @RequestParam(required = false) String execOwnershipName) {
+        if (!StringUtils.hasText(corpCode) || !StringUtils.hasText(execOwnershipName)) {
+            Map<String, Object> params = new HashMap<>() {{
+                put(CORP_CODE, corpCode);
+                put(EXEC_OWNERSHIP_NAME, execOwnershipName);
+            }};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return execOwnershipService.getExecOwnershipTradeList(ExecOwnershipDetailSearchCondition.builder()
+                                                                                                    .corpCodeEq(corpCode)
+                                                                                                    .execOwnershipNameEq(execOwnershipName)
+                                                                                                    .orderColumn(ExecOwnershipDetailEntity.Fields.tradeDt)
+                                                                                                    .isDescending(false)
+                                                                                                    .build());
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
     @GetMapping("/large-holdings-trade-history")
     public ResponseEntity<?> getLargeHoldingsTradeHistory(@RequestParam(required = false) String corpCode, @RequestParam(required = false) String largeHoldingsName) {
         if (!StringUtils.hasText(corpCode)|| !StringUtils.hasText(largeHoldingsName)) {
             Map<String, Object> params = new HashMap<>() {{
-                put("corpCode", corpCode);
-                put("largeHoldingsName", largeHoldingsName);
+                put(CORP_CODE, corpCode);
+                put(LARGE_HOLDINGS_NAME, largeHoldingsName);
             }};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
@@ -185,8 +218,8 @@ public class StockController {
     public ResponseEntity<?> getTop5StockTrade(@RequestParam(required = false) String tradeDtGoe, @RequestParam(required = false) String tradeDtLoe) {
         if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
             Map<String, Object> params = new HashMap<>() {{
-                put("tradeDtGoe", tradeDtGoe);
-                put("tradeDtLoe", tradeDtLoe);
+                put(TRADE_DT_GOE, tradeDtGoe);
+                put(TRADE_DT_LOE, tradeDtLoe);
             }};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
@@ -206,9 +239,9 @@ public class StockController {
                                                    @RequestParam(required = false, defaultValue = "ALL") SellOrBuyType sellOrBuyType) {
         if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
             Map<String, Object> params = new HashMap<>() {{
-                put("tradeDtGoe", tradeDtGoe);
-                put("tradeDtLoe", tradeDtLoe);
-                put("sellOrBuyType", sellOrBuyType);
+                put(TRADE_DT_GOE, tradeDtGoe);
+                put(TRADE_DT_LOE, tradeDtLoe);
+                put(SELL_OR_BUY_TYPE, sellOrBuyType);
             }};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
