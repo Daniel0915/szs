@@ -47,7 +47,7 @@ public class ExecOwnershipRepositoryCustom {
         return hasText(rceptNo) ? execOwnershipEntity.rceptNo.eq(rceptNo) : null;
     }
 
-    public List<ExecOwnershipDTO> getExecOwnershipTop5(String corpCode) {
+    public List<ExecOwnershipDTO> getExecOwnershipOrderSpStockLmpCnt(String corpCode) {
         if (!StringUtils.hasText(corpCode)) {
             return new ArrayList<>();
         }
@@ -90,7 +90,7 @@ public class ExecOwnershipRepositoryCustom {
             return new ArrayList<>();
         }
 
-        return execOwnershipDTOList.stream().sorted(Comparator.comparing(ExecOwnershipDTO::getSpStockLmpCnt).reversed()).limit(5).collect(Collectors.toList());
+        return execOwnershipDTOList.stream().sorted(Comparator.comparing(ExecOwnershipDTO::getSpStockLmpCnt).reversed()).collect(Collectors.toList());
     }
 
     private BooleanExpression corpCodeEq(String corpCode) {

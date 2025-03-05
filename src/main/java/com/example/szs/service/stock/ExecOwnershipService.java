@@ -167,7 +167,11 @@ public class ExecOwnershipService {
     }
 
     public ResponseEntity<?> getStockCntTop5(String corpCode) {
-        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipTop5(corpCode));
+        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipOrderSpStockLmpCnt(corpCode).stream().limit(5));
+    }
+
+    public ResponseEntity<?> getRatio(String corpCode) {
+        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipOrderSpStockLmpCnt(corpCode).stream().filter(dto -> dto.getSpStockLmpCnt() != null && dto.getSpStockLmpRate() != 0.0F));
     }
 
     public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchCondition condition) {

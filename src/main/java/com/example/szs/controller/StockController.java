@@ -112,9 +112,25 @@ public class StockController {
         }
     }
 
+    @GetMapping("/exec-ownership-ratio")
+    public ResponseEntity<?> getExecOwnershipRatio(@RequestParam(required = false) String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
+            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return execOwnershipService.getRatio(corpCode);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
     @GetMapping("/large-holdings-monthly-trade-cnt")
-    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(String corpCode) {
-        if (corpCode == null) {
+    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(@RequestParam(required = false) String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
             Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
@@ -129,8 +145,8 @@ public class StockController {
     }
 
     @GetMapping("/large-holdings-top-5")
-    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(String corpCode) {
-        if (corpCode == null) {
+    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(@RequestParam(required = false) String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
             Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
             log.error(ErrorMsgUtil.paramErrorMessage(params));
             return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
