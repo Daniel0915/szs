@@ -5,6 +5,7 @@ import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.dto.execOwnership.EOResponseDTO;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.model.dto.page.PageDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
@@ -187,7 +188,7 @@ public class ExecOwnershipService {
     }
 
     public ResponseEntity<?> getRatio(String corpCode) {
-        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipOrderSpStockLmpCnt(corpCode).stream().filter(dto -> dto.getSpStockLmpCnt() != null && dto.getSpStockLmpRate() != 0.0F));
+        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipOrderSpStockLmpCnt(corpCode));
     }
 
     public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchCondition condition) {
@@ -258,5 +259,26 @@ public class ExecOwnershipService {
                                                                              .build()
                     ));
         };
+    }
+
+    public ResponseEntity<?> getMonthlyTradeCnt(String corpCode) {
+        assert (corpCode != null) : "corpCode not null";
+        // 매월 매도건수
+        ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse sell = ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse.builder()
+                                                                                                                        .sellOrBuyType(SellOrBuyType.SELL.getCode())
+                                                                                                                        .monthlyCountDTOList(execOwnershipDetailRepositoryCustom.getMonthlyTradeCnt(corpCode, true))
+                                                                                                                        .build();
+
+        // 매월 매수건수
+        ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse buy = ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse.builder()
+                                                                                                                       .sellOrBuyType(SellOrBuyType.BUY.getCode())
+                                                                                                                       .monthlyCountDTOList(execOwnershipDetailRepositoryCustom.getMonthlyTradeCnt(corpCode, false))
+                                                                                                                       .build();
+
+
+
+
+        List<ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse> responses = Arrays.asList(sell, buy);
+        return apiResponse.makeResponse(ResStatus.SUCCESS, responses);
     }
 }

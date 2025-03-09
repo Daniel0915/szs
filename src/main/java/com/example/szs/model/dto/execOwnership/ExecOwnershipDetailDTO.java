@@ -38,6 +38,26 @@ public class ExecOwnershipDetailDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @FieldNameConstants
+    public static class MonthlyCountDTO {
+        private String month;
+        private Long count;
+    }
+
+    @Getter
+    @Builder(toBuilder = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @FieldNameConstants
+    public static class SellOrBuyMonthlyCountResponse {
+        private String sellOrBuyType;
+        private List<ExecOwnershipDetailDTO.MonthlyCountDTO> monthlyCountDTOList;
+    }
+
+    @Getter
+    @Builder(toBuilder = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @FieldNameConstants
     public static class TopStockDetailDTO {
         private String corpCode; // 회사코드
         private String corpName; // 회사이름

@@ -12,10 +12,7 @@ import com.example.szs.utils.time.TimeUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -80,6 +77,31 @@ public class ExecOwnershipDetailRepositoryCustom {
                            .stream()
                            .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, ExecOwnershipDetailDTO.class).stream())
                            .collect(Collectors.toList());
+    }
+
+    public List<ExecOwnershipDetailDTO.MonthlyCountDTO> getMonthlyTradeCnt(String corpCode, boolean isSell) {
+        if (corpCode == null) {
+            return new ArrayList<>();
+        }
+
+        StringExpression subStringTradeDt = execOwnershipDetailEntity.tradeDt.stringValue().substring(0, 6);
+
+        return queryFactory.select(Projections.constructor(ExecOwnershipDetailDTO.MonthlyCountDTO.class,
+                                   subStringTradeDt.as(ExecOwnershipDetailDTO.MonthlyCountDTO.Fields.month),
+                                   execOwnershipDetailEntity.corpCode.count().as(ExecOwnershipDetailDTO.MonthlyCountDTO.Fields.count)
+                           )).
+                           from(execOwnershipDetailEntity)
+                           .where(
+                                   corpCodeEq(corpCode),
+                                   changeStockAmountLt(isSell ? 0L : null), // 매도
+                                   changeStockAmountGt(!isSell ? 0L : null), // 매수
+                                   execOwnershipDetailEntity.tradeDt.isNotNull(),
+                                   execOwnershipDetailEntity.tradeDt.isNotEmpty(),
+                                   execOwnershipDetailEntity.tradeDt.ne("-")
+                           )
+                           .groupBy(subStringTradeDt)
+                           .orderBy(subStringTradeDt.asc())
+                           .fetch();
     }
 
     public void saveAll(List<ExecOwnershipDetailDTO> execOwnershipDetailDTOList) {

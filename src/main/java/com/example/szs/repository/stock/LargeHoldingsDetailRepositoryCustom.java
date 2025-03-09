@@ -81,7 +81,7 @@ public class LargeHoldingsDetailRepositoryCustom {
                            .where(
                                    corpCodeEq(corpCode),
                                    changeStockAmountLt(isSell ? 0L : null), // 매도
-                                   changeStockAmountGoe(!isSell ? 0L : null), // 매수
+                                   changeStockAmountGt(!isSell ? 0L : null), // 매수
                                    largeHoldingsDetailEntity.tradeDt.isNotNull(),
                                    largeHoldingsDetailEntity.tradeDt.isNotEmpty(),
                                    largeHoldingsDetailEntity.tradeDt.ne("-")
