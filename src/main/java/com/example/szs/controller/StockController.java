@@ -45,19 +45,8 @@ public class StockController {
 
     @GetMapping("/update/large-holdings")
     public Map<String, Object> updateLargeHoldings() throws InterruptedException {
-        /*List<String> largeCorpCodeList = Arrays.asList("00111704","01390344","00877059","01160363",
-                "00155276","01515323","00258801","00631518","00688996","00421045","00149646",
-                "00102858","00413046","00199252","00126256","00126478","00155319","00164788",
-                "00164830");
-        for (String corpCode : largeCorpCodeList) {
-            Thread.sleep(3000);
-            largeHoldingsService.insertData(corpCode);
-        }*/
-
         List<String> execOwnershipCorpCodeList = Arrays.asList(
-                "01160363",
-                "00155276","01515323","00258801","00631518","00688996","00421045","00149646",
-                "00102858","00413046","00199252","00126256","00126478","00155319","00164788",
+                "00413046","00199252","00126256","00126478","00155319","00164788",
                 "00164830");
 
         for (String corpCode : execOwnershipCorpCodeList) {

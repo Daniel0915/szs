@@ -62,7 +62,6 @@ public class LargeHoldingsDetailDTO {
         private String corpCode; // 회사코드
         private String corpName; // 회사이름
         private Long totalStockAmount;
-        private Long totalStockPrice;
     }
 
     @Getter

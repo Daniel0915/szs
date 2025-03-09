@@ -1,18 +1,16 @@
 package com.example.szs.service.stock;
 
 import com.example.szs.domain.stock.ExecOwnershipEntity;
+import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.dto.execOwnership.EOResponseDTO;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
-import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
-import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.model.dto.page.PageDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
-import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.module.redis.RedisPublisher;
 import com.example.szs.module.stock.WebCrawling;

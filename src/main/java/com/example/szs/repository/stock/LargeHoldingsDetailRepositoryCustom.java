@@ -81,7 +81,10 @@ public class LargeHoldingsDetailRepositoryCustom {
                            .where(
                                    corpCodeEq(corpCode),
                                    changeStockAmountLt(isSell ? 0L : null), // 매도
-                                   changeStockAmountGoe(!isSell ? 0L : null) // 매수
+                                   changeStockAmountGoe(!isSell ? 0L : null), // 매수
+                                   largeHoldingsDetailEntity.tradeDt.isNotNull(),
+                                   largeHoldingsDetailEntity.tradeDt.isNotEmpty(),
+                                   largeHoldingsDetailEntity.tradeDt.ne("-")
                            )
                            .groupBy(subStringTradeDt)
                            .orderBy(subStringTradeDt.asc())
@@ -124,8 +127,7 @@ public class LargeHoldingsDetailRepositoryCustom {
         JPAQuery<LargeHoldingsDetailDTO.TopStockDetailDTO> query = queryFactory.select(Projections.constructor(LargeHoldingsDetailDTO.TopStockDetailDTO.class,
                                                 largeHoldingsDetailEntity.corpCode.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpCode),
                                                largeHoldingsDetailEntity.corpName.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpName),
-                                                Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetailEntity.changeStockAmount.sum()).as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.totalStockAmount),
-                                                Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetailEntity.totalStockPrice.sum()).as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.totalStockPrice)
+                                                Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetailEntity.changeStockAmount.sum()).as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.totalStockAmount)
                                         ))
                                         .from(largeHoldingsDetailEntity)
                                         .where(
