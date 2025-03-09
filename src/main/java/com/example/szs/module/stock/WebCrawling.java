@@ -22,10 +22,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -311,10 +308,14 @@ public class WebCrawling {
                                                                        String isuMainShrholdr) {
         assert ( StringUtils.hasText(rceptNo) && StringUtils.hasText(corpCode) && StringUtils.hasText(corpName) ) : "rceptNo, corpCode, corpName must be have value";
 
+        Random random = new Random();
+
         List<ExecOwnershipDetailDTO> result = new ArrayList<>();
         WebDriver driver = this.getSettingChromeDriver();
         try {
+
             driver.get(detailUrl + rceptNo);
+            Thread.sleep(3000 + random.nextInt(3000)); // 3~6초 랜덤 대기
             // 페이지 로딩을 위한 대기 (명시적 대기)
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -336,6 +337,7 @@ public class WebCrawling {
             // iframe 의 src 속성 값 가져오기
             String iframeSrc = iframeElement.getAttribute("src");
 
+            Thread.sleep(3000 + random.nextInt(3000)); // 3~6초 랜덤 대기
             driver.get(iframeSrc);
             // /html/body/table[4]
 
@@ -363,8 +365,7 @@ public class WebCrawling {
                 Long beforeStockAmount = 0L;
                 Long changeStockAmount = 0L;
                 Long afterStockAmount = 0L;
-                Long unitStockPrice = 0L;
-                Long totalStockPrice = 0L;
+                String unitStockPrice = "";
 
                 for (int i = 0; i < cells.size(); i++) {
                     String value = cells.get(i).getText() == null ? "" : cells.get(i).getText().trim();
@@ -389,8 +390,7 @@ public class WebCrawling {
                             afterStockAmount = NumberUtils.stringToLongConverter(value);
                             break;
                         case 6:
-                            unitStockPrice = NumberUtils.stringToLongConverter(value);
-                            totalStockPrice = unitStockPrice * changeStockAmount;
+                            unitStockPrice = value;
                             break;
                     }
                 }
@@ -410,7 +410,6 @@ public class WebCrawling {
                                                  .changeStockAmount(changeStockAmount)
                                                  .afterStockAmount(afterStockAmount)
                                                  .unitStockPrice(unitStockPrice)
-                                                 .totalStockPrice(totalStockPrice)
                                                  .build());
 
             }

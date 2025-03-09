@@ -3,6 +3,7 @@ package com.example.szs.repository.stock;
 import com.example.szs.domain.stock.ExecOwnershipDetailEntity;
 import com.example.szs.domain.stock.QExecOwnershipDetailEntity;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
+import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.example.szs.utils.jpa.ListDivider;
@@ -10,9 +11,12 @@ import com.example.szs.utils.jpa.Param;
 import com.example.szs.utils.time.TimeUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +40,8 @@ import static org.springframework.util.StringUtils.hasText;
 public class ExecOwnershipDetailRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final ExecOwnershipDetailRepository execOwnershipDetailRepository;
+
+    private static final String ABS_CODE = "abs({0})";
 
     public ExecOwnershipDetailRepositoryCustom(EntityManager em, ExecOwnershipDetailRepository execOwnershipDetailRepository) {
         this.queryFactory = new JPAQueryFactory(em);
@@ -144,6 +150,26 @@ public class ExecOwnershipDetailRepositoryCustom {
         execOwnershipDetailRepository.saveAll(updateEntityList);
     }
 
+    public List<ExecOwnershipDetailDTO.TopStockDetailDTO> getTopStockDetail(ExecOwnershipDetailSearchCondition condition) {
+        JPAQuery<ExecOwnershipDetailDTO.TopStockDetailDTO> query = queryFactory.select(Projections.constructor(ExecOwnershipDetailDTO.TopStockDetailDTO.class,
+                                                                                       execOwnershipDetailEntity.corpCode.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpCode),
+                                                                                       execOwnershipDetailEntity.corpName.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpName),
+                                                                                       Expressions.numberTemplate(Long.class, ABS_CODE, execOwnershipDetailEntity.changeStockAmount.sum()).as(ExecOwnershipDetailDTO.TopStockDetailDTO.Fields.totalStockAmount)))
+                                                                               .from(execOwnershipDetailEntity)
+                                                                               .where(
+                                                                                       changeStockAmountLt(condition.getChangeStockAmountLt()),
+                                                                                       changeStockAmountGt(condition.getChangeStockAmountGt()),
+                                                                                       tradeDtBetween(condition.getTradeDtLoe(), condition.getTradeDtGoe())
+                                                                               )
+                                                                               .groupBy(execOwnershipDetailEntity.corpCode, execOwnershipDetailEntity.corpName)
+                                                                               .orderBy(Expressions.numberTemplate(Long.class, ABS_CODE, execOwnershipDetailEntity.changeStockAmount).sum().desc());
+
+        if (condition.getLimit() != null && condition.getLimit() != 0) {
+            query.limit(condition.getLimit());
+        }
+        return query.fetch();
+    }
+
     private BooleanExpression corpCodeEq(String corpCode) {
         return StringUtils.hasText(corpCode) ? execOwnershipDetailEntity.corpCode.eq(corpCode) : null;
     }
@@ -230,15 +256,6 @@ public class ExecOwnershipDetailRepositoryCustom {
         return changeStockAmountLt != null ? execOwnershipDetailEntity.changeStockAmount.lt(changeStockAmountLt) : null;
     }
 
-    // 평단가 unitStockPrice 범위
-    private BooleanExpression unitStockPriceGoe(Long unitStockPriceGoe) {
-        return unitStockPriceGoe != null ? execOwnershipDetailEntity.unitStockPrice.goe(unitStockPriceGoe) : null;
-    }
-
-    private BooleanExpression unitStockPriceLoe(Long unitStockPriceLoe) {
-        return unitStockPriceLoe != null ? execOwnershipDetailEntity.unitStockPrice.loe(unitStockPriceLoe) : null;
-    }
-
     // 보유주식 afterStockAmount 범위
     private BooleanExpression afterStockAmountGoe(Long afterStockAmountGoe) {
         return afterStockAmountGoe != null ? execOwnershipDetailEntity.afterStockAmount.goe(afterStockAmountGoe) : null;
@@ -266,12 +283,10 @@ public class ExecOwnershipDetailRepositoryCustom {
 
         // Greater than or equal (GOE)
         builder.and(changeStockAmountGoe(condition.getChangeStockAmountGoe()));
-        builder.and(unitStockPriceGoe(condition.getUnitStockPriceGoe()));
         builder.and(afterStockAmountGoe(condition.getAfterStockAmountGoe()));
 
         // Less than or equal (LOE)
         builder.and(changeStockAmountLoe(condition.getChangeStockAmountLoe()));
-        builder.and(unitStockPriceLoe(condition.getUnitStockPriceLoe()));
         builder.and(afterStockAmountLoe(condition.getAfterStockAmountLoe()));
 
         return builder;

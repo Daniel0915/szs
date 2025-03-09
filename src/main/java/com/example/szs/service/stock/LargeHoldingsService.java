@@ -233,7 +233,7 @@ public class LargeHoldingsService {
         return apiResponse.makeResponse(ResStatus.SUCCESS, largeHoldingsDetailDTOList);
     }
 
-    public ResponseEntity<?> getTop5StockTrade(String tradeDtGoe, String tradeDtLoe) {
+    public List<LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse> getTop5StockTrade(String tradeDtGoe, String tradeDtLoe) {
         LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse buy = LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                                                                  .sellOrBuyType(SellOrBuyType.BUY.getCode())
                                                                                                                  .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchCondition.builder()
@@ -254,8 +254,7 @@ public class LargeHoldingsService {
                                                                                                                                                                                                                                  .build()))
                                                                                                                  .build();
 
-        List<LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse> responses = Arrays.asList(sell, buy);
-        return apiResponse.makeResponse(ResStatus.SUCCESS, responses);
+        return Arrays.asList(sell, buy);
     }
 
     public ResponseEntity<?> getTopStockTradeTotal(String tradeDtGoe, String tradeDtLoe, SellOrBuyType sellOrBuyType) {

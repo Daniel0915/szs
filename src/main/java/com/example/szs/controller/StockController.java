@@ -4,8 +4,8 @@ import com.example.szs.domain.stock.ExecOwnershipDetailEntity;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
+import com.example.szs.model.eNum.stock.ShareDisclosure;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
-import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
@@ -45,13 +45,22 @@ public class StockController {
 
     @GetMapping("/update/large-holdings")
     public Map<String, Object> updateLargeHoldings() throws InterruptedException {
-        List<String> corpCodeList = Arrays.asList("00164645","00145109","00989619","00120021");
-        for (String corpCode : corpCodeList) {
+        /*List<String> largeCorpCodeList = Arrays.asList("00111704","01390344","00877059","01160363",
+                "00155276","01515323","00258801","00631518","00688996","00421045","00149646",
+                "00102858","00413046","00199252","00126256","00126478","00155319","00164788",
+                "00164830");
+        for (String corpCode : largeCorpCodeList) {
             Thread.sleep(3000);
             largeHoldingsService.insertData(corpCode);
-        }
+        }*/
 
-        for (String corpCode : corpCodeList) {
+        List<String> execOwnershipCorpCodeList = Arrays.asList(
+                "01160363",
+                "00155276","01515323","00258801","00631518","00688996","00421045","00149646",
+                "00102858","00413046","00199252","00126256","00126478","00155319","00164788",
+                "00164830");
+
+        for (String corpCode : execOwnershipCorpCodeList) {
             Thread.sleep(3000);
             execOwnershipService.insertData(corpCode);
         }
@@ -230,6 +239,7 @@ public class StockController {
         }
     }
 
+
     @GetMapping("/trade-top-5")
     public ResponseEntity<?> getTop5StockTrade(@RequestParam(required = false) String tradeDtGoe, @RequestParam(required = false) String tradeDtLoe) {
         if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
@@ -242,7 +252,12 @@ public class StockController {
         }
 
         try {
-            return largeHoldingsService.getTop5StockTrade(tradeDtGoe, tradeDtLoe);
+            Map<String, Object> result = new HashMap<>(){{
+                put(ShareDisclosure.LARGE_HOLDINGS.getCode(), largeHoldingsService.getTop5StockTrade(tradeDtGoe, tradeDtLoe));
+                put(ShareDisclosure.EXEC_OWNERSHIP.getCode(), execOwnershipService.getTop5StockTrade(tradeDtGoe, tradeDtLoe));
+            }};
+
+            return apiResponse.makeResponse(ResStatus.SUCCESS, result);
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);

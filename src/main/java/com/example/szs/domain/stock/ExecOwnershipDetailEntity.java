@@ -59,11 +59,8 @@ public class ExecOwnershipDetailEntity {
     @Column(name = "after_stock_amount", nullable = false)
     private Long afterStockAmount;
 
-    @Column(name = "unit_stock_price", nullable = false)
-    private Long unitStockPrice;
-
-    @Column(name = "total_stock_price", nullable = false)
-    private Long totalStockPrice;
+    @Column(name = "unit_stock_price")
+    private String unitStockPrice;
 
     @Column(name = "reg_dt")
     private String regDt; // 등록일시

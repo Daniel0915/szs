@@ -36,6 +36,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class LargeHoldingsDetailRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final LargeHoldingsDetailRepository largeHoldingsDetailRepository;
+
     private static final String ABS_CODE = "abs({0})";
 
     public LargeHoldingsDetailRepositoryCustom(EntityManager em, LargeHoldingsDetailRepository largeHoldingsDetailRepository) {
