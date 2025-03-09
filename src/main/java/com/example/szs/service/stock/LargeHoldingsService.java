@@ -60,10 +60,9 @@ public class LargeHoldingsService {
     private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
     private final LargeHoldingsStkrtRepositoryCustom largeHoldingsStkrtRepositoryCustom;
 
-    private final RedisPublisher redisPublisher;
+    private final PushService pushService;
     private final WebCrawling webCrawling;
     private final ApiResponse apiResponse;
-    private final LargeHoldings largeHoldings;
 
     @Transactional
 //    @Scheduled(cron = "0 0 9 * * ?")
@@ -97,6 +96,12 @@ public class LargeHoldingsService {
                                                            .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class).stream())
                                                            .collect(Collectors.toList()));
             }
+
+            pushService.sendMessage(MessageDto.builder()
+                                              .message(largeHoldingsEntityList.get(0).getCorpName())
+                                              .corpCode(largeHoldingsEntityList.get(0).getCorpCode())
+                                              .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
+                                              .build());
             return;
         }
 
@@ -141,13 +146,11 @@ public class LargeHoldingsService {
             dtoOptional.ifPresent(largeHoldingsDTOList::add);
         }
 
-        String message = LargeHoldingsDTO.getMessage("삼상전자", largeHoldingsDTOList);
-        MessageDto messageDto = MessageDto.builder()
-                                          .message(message)
+        pushService.sendMessage(MessageDto.builder()
+                                          .message(insertEntity.get(0).getCorpName())
+                                          .corpCode(insertEntity.get(0).getCorpCode())
                                           .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
-                                          .build();
-
-        redisPublisher.pubMsgChannel(messageDto);
+                                          .build());
     }
 
     public ResponseEntity<?> getSearchPageLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {

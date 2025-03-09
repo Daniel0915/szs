@@ -61,6 +61,8 @@ public class ExecOwnershipService {
     private final ExecOwnershipRepository execOwnershipRepository;
     private final ExecOwnershipRepositoryCustom execOwnershipRepositoryCustom;
     private final ExecOwnershipDetailRepositoryCustom execOwnershipDetailRepositoryCustom;
+
+    private final PushService pushService;
     private final ApiResponse apiResponse;
     private final RedisPublisher redisPublisher;
     private final WebCrawling webCrawling;
@@ -115,6 +117,11 @@ public class ExecOwnershipService {
                 }
                 execOwnershipDetailRepositoryCustom.saveAll(insertExecExecOwnershipDetailDTOList);
             }
+            pushService.sendMessage(MessageDto.builder()
+                                              .message(execOwnershipEntityList.get(0).getCorpName())
+                                              .corpCode(execOwnershipEntityList.get(0).getCorpCode())
+                                              .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
+                                              .build());
             return;
         }
 
@@ -165,12 +172,11 @@ public class ExecOwnershipService {
             dtoOptional.ifPresent(execOwnershipDTOList::add);
         }
 
-        String message = ExecOwnershipDTO.getMessage("삼상전자", execOwnershipDTOList);
-        MessageDto messageDto = MessageDto.builder()
-                                          .message(message)
+        pushService.sendMessage(MessageDto.builder()
+                                          .message(insertEntity.get(0).getCorpName())
+                                          .corpCode(insertEntity.get(0).getCorpCode())
                                           .channelType(ChannelType.STOCK_CHANGE_EXECOWNERSHIP)
-                                          .build();
-        redisPublisher.pubMsgChannel(messageDto);
+                                          .build());
     }
     public ResponseEntity<?> getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchCondition condition, Pageable pageable) {
         Page<ExecOwnershipDetailDTO> page = execOwnershipDetailRepositoryCustom.searchPage(condition, pageable);

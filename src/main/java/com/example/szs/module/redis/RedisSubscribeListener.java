@@ -18,8 +18,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.async.DeferredResult;
 import reactor.core.publisher.Flux;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -37,6 +35,7 @@ public class RedisSubscribeListener implements MessageListener {
     private final ConcurrentHashMap<Long, DeferredResult<MessageDto>> userDeferredResults = new ConcurrentHashMap<>();
 
 
+    // TODO : 현재 사용 안함
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
@@ -69,7 +68,7 @@ public class RedisSubscribeListener implements MessageListener {
         // 큐가 없으면 초기화하여 삽입
         userMessageQueues.computeIfAbsent(userId, key -> new LinkedBlockingQueue<>()).add(messageDto);
 
-        // DeferredResult가 있으면 큐에서 메시지를 전달
+        // DeferredResult 가 있으면 큐에서 메시지를 전달
         DeferredResult<MessageDto> deferredResult = userDeferredResults.get(userId);
 
         if (deferredResult != null) {

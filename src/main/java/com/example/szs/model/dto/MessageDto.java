@@ -19,6 +19,7 @@ public class MessageDto implements Serializable {
 
     // 전송할 메시지 내용
     private String message;
+    private String corpCode;
     // channel
     private ChannelType channelType;
 }
