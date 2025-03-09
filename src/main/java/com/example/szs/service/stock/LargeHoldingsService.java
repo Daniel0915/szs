@@ -3,6 +3,7 @@ package com.example.szs.service.stock;
 import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
 import com.example.szs.domain.stock.LargeHoldingsEntity;
 import com.example.szs.model.dto.MessageDto;
+import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
 import com.example.szs.model.dto.largeHoldings.LHResponseDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
@@ -15,9 +16,8 @@ import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
 import com.example.szs.module.ApiResponse;
-import com.example.szs.module.redis.RedisPublisher;
-import com.example.szs.module.stock.LargeHoldings;
 import com.example.szs.module.stock.WebCrawling;
+import com.example.szs.repository.stock.CorpInfoRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsRepositoryCustom;
 import com.example.szs.repository.stock.LargeHoldingsStkrtRepositoryCustom;
@@ -29,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -59,98 +60,104 @@ public class LargeHoldingsService {
     private final LargeHoldingsRepositoryCustom largeHoldingsRepositoryCustom;
     private final LargeHoldingsDetailRepositoryCustom largeHoldingsDetailRepositoryCustom;
     private final LargeHoldingsStkrtRepositoryCustom largeHoldingsStkrtRepositoryCustom;
+    private final CorpInfoRepositoryCustom corpInfoRepositoryCustom;
 
     private final PushService pushService;
     private final WebCrawling webCrawling;
     private final ApiResponse apiResponse;
 
     @Transactional
-//    @Scheduled(cron = "0 0 9 * * ?")
-    public void insertData(String corpCodeValue) {
-        WebClient webClient = WebClient.builder()
-                                       .baseUrl(baseUri)
-                                       .build();
+    @Scheduled(cron = "0 0 9 * * ?")
+    public void insertData() {
+        List<CorpInfoDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
 
-        Mono<LHResponseDTO> lhResponseDtoMono = webClient.get()
-                                                         .uri(uriBuilder -> uriBuilder.path(path)
-                                                                                      .queryParam(dartKey, dartValue)
-                                                                                      .queryParam(corpCodeKey, corpCodeValue)
-                                                                                      .build()).retrieve().bodyToMono(LHResponseDTO.class);
+        for (CorpInfoDTO dto : corpInfoDTOList) {
+            WebClient webClient = WebClient.builder()
+                                           .baseUrl(baseUri)
+                                           .build();
 
-        LHResponseDTO lhResponseDTO = lhResponseDtoMono.block();
-        if (lhResponseDTO == null) {
-            return;
-        }
+            Mono<LHResponseDTO> lhResponseDtoMono = webClient.get()
+                                                             .uri(uriBuilder -> uriBuilder.path(path)
+                                                                                          .queryParam(dartKey, dartValue)
+                                                                                          .queryParam(corpCodeKey, dto.getCorpCode())
+                                                                                          .build()).retrieve().bodyToMono(LHResponseDTO.class);
 
-        List<LargeHoldingsEntity> largeHoldingsEntityList = lhResponseDTO.toEntity();
+            LHResponseDTO lhResponseDTO = lhResponseDtoMono.block();
+            if (lhResponseDTO == null) {
+                return;
+            }
 
-        Optional<LargeHoldingsDTO> optionalLargeHoldingsDTO = largeHoldingsRepositoryCustom.findLatestRecordBy(LargeHoldingsSearchCondition.builder()
-                                                                                                                                           .corpCode(corpCodeValue)
-                                                                                                                                           .orderColumn(LargeHoldingsEntity.Fields.rceptNo)
-                                                                                                                                           .isDescending(true)
-                                                                                                                                           .build());
-        if (optionalLargeHoldingsDTO.isEmpty()) {
-            largeHoldingsRepositoryCustom.saveAll(largeHoldingsEntityList);
+            List<LargeHoldingsEntity> largeHoldingsEntityList = lhResponseDTO.toEntity();
+
+            Optional<LargeHoldingsDTO> optionalLargeHoldingsDTO = largeHoldingsRepositoryCustom.findLatestRecordBy(LargeHoldingsSearchCondition.builder()
+                                                                                                                                               .corpCode(dto.getCorpCode())
+                                                                                                                                               .orderColumn(LargeHoldingsEntity.Fields.rceptNo)
+                                                                                                                                               .isDescending(true)
+                                                                                                                                               .build());
+            if (optionalLargeHoldingsDTO.isEmpty()) {
+                largeHoldingsRepositoryCustom.saveAll(largeHoldingsEntityList);
+                if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
+                    this.updateScraping(largeHoldingsEntityList.stream()
+                                                               .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class).stream())
+                                                               .collect(Collectors.toList()));
+                }
+
+                pushService.sendMessage(MessageDto.builder()
+                                                  .message(largeHoldingsEntityList.get(0).getCorpName())
+                                                  .corpCode(largeHoldingsEntityList.get(0).getCorpCode())
+                                                  .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
+                                                  .build());
+                return;
+            }
+
+            LargeHoldingsEntity findLatestRecord = EntityToDtoMapper.mapEntityToDto(optionalLargeHoldingsDTO.get(), LargeHoldingsEntity.class).get();
+
+            Comparator<LargeHoldingsEntity> comparator = (o1, o2) -> {
+                String rceptNo_o1 = o1.getRceptNo();
+                String rceptNo_o2 = o2.getRceptNo();
+
+                if (!StringUtils.hasText(rceptNo_o1)) {
+                    return -1;
+                }
+
+                if (!StringUtils.hasText(rceptNo_o2)) {
+                    return 1;
+                }
+
+                return rceptNo_o1.compareTo(rceptNo_o2);
+            };
+
+            largeHoldingsEntityList.sort(comparator);
+
+            int findIndex = Collections.binarySearch(largeHoldingsEntityList, findLatestRecord, comparator);
+
+            List<LargeHoldingsEntity> insertEntity = largeHoldingsEntityList.subList(findIndex + 1, largeHoldingsEntityList.size());
+            largeHoldingsRepositoryCustom.saveAll(insertEntity);
+
             if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
                 this.updateScraping(largeHoldingsEntityList.stream()
-                                                           .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class).stream())
-                                                           .collect(Collectors.toList()));
+                                                           .map(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class))
+                                                           .flatMap(Optional::stream)
+                                                           .toList());
+            }
+
+            if (insertEntity.isEmpty()) {
+                return;
+            }
+
+            List<LargeHoldingsDTO> largeHoldingsDTOList = new ArrayList<>();
+            for (LargeHoldingsEntity entity : insertEntity) {
+                Optional<LargeHoldingsDTO> dtoOptional = EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class);
+                dtoOptional.ifPresent(largeHoldingsDTOList::add);
             }
 
             pushService.sendMessage(MessageDto.builder()
-                                              .message(largeHoldingsEntityList.get(0).getCorpName())
-                                              .corpCode(largeHoldingsEntityList.get(0).getCorpCode())
+                                              .message(insertEntity.get(0).getCorpName())
+                                              .corpCode(insertEntity.get(0).getCorpCode())
                                               .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
                                               .build());
-            return;
+
         }
-
-        LargeHoldingsEntity findLatestRecord = EntityToDtoMapper.mapEntityToDto(optionalLargeHoldingsDTO.get(), LargeHoldingsEntity.class).get();
-
-        Comparator<LargeHoldingsEntity> comparator = (o1, o2) -> {
-            String rceptNo_o1 = o1.getRceptNo();
-            String rceptNo_o2 = o2.getRceptNo();
-
-            if (!StringUtils.hasText(rceptNo_o1)) {
-                return -1;
-            }
-
-            if (!StringUtils.hasText(rceptNo_o2)) {
-                return 1;
-            }
-
-            return rceptNo_o1.compareTo(rceptNo_o2);
-        };
-
-        largeHoldingsEntityList.sort(comparator);
-
-        int findIndex = Collections.binarySearch(largeHoldingsEntityList, findLatestRecord, comparator);
-
-        List<LargeHoldingsEntity> insertEntity = largeHoldingsEntityList.subList(findIndex + 1, largeHoldingsEntityList.size());
-        largeHoldingsRepositoryCustom.saveAll(insertEntity);
-
-        if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
-            this.updateScraping(largeHoldingsEntityList.stream()
-                                                       .map(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class))
-                                                       .flatMap(Optional::stream)
-                                                       .toList());
-        }
-
-        if (insertEntity.isEmpty()) {
-            return;
-        }
-
-        List<LargeHoldingsDTO> largeHoldingsDTOList = new ArrayList<>();
-        for (LargeHoldingsEntity entity : insertEntity) {
-            Optional<LargeHoldingsDTO> dtoOptional = EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class);
-            dtoOptional.ifPresent(largeHoldingsDTOList::add);
-        }
-
-        pushService.sendMessage(MessageDto.builder()
-                                          .message(insertEntity.get(0).getCorpName())
-                                          .corpCode(insertEntity.get(0).getCorpCode())
-                                          .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
-                                          .build());
     }
 
     public ResponseEntity<?> getSearchPageLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {

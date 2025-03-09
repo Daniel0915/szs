@@ -43,31 +43,6 @@ public class StockController {
     private static final String SELL_OR_BUY_TYPE = "sellOrBuyType";
     private static final String EXEC_OWNERSHIP_NAME = "execOwnershipName";
 
-    @GetMapping("/update/large-holdings")
-    public Map<String, Object> updateLargeHoldings() throws InterruptedException {
-        List<String> execOwnershipCorpCodeList = Arrays.asList(
-                "00413046","00199252","00126256","00126478","00155319","00164788",
-                "00164830");
-
-        for (String corpCode : execOwnershipCorpCodeList) {
-            Thread.sleep(3000);
-            execOwnershipService.insertData(corpCode);
-        }
-
-        return ResUtil.makeResponse("", ResStatus.SUCCESS);
-    }
-
-    @GetMapping("/update/exec-ownership")
-    public Map<String, Object> updateExecOwnership() throws InterruptedException {
-        List<String> corpCodeList = Arrays.asList("00159023");
-        for (String corpCode : corpCodeList) {
-            Thread.sleep(3000);
-            execOwnershipService.insertData(corpCode);
-        }
-
-        return ResUtil.makeResponse("", ResStatus.SUCCESS);
-    }
-
     @GetMapping("/search/large-holdings")
     public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
         try {
