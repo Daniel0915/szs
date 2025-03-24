@@ -33,14 +33,14 @@ import java.util.Map;
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
     private final ExecOwnershipService execOwnershipService;
-    private final CorpInfoService corpInfoService;
-    private final ApiResponse apiResponse;
+    private final CorpInfoService      corpInfoService;
+    private final ApiResponse          apiResponse;
 
-    private static final String CORP_CODE = "corpCode";
     private static final String LARGE_HOLDINGS_NAME = "largeHoldingsName";
-    private static final String TRADE_DT_GOE = "tradeDtGoe";
-    private static final String TRADE_DT_LOE = "tradeDtLoe";
-    private static final String SELL_OR_BUY_TYPE = "sellOrBuyType";
+    private static final String CORP_CODE           = "corpCode";
+    private static final String TRADE_DT_GOE        = "tradeDtGoe";
+    private static final String TRADE_DT_LOE        = "tradeDtLoe";
+    private static final String SELL_OR_BUY_TYPE    = "sellOrBuyType";
     private static final String EXEC_OWNERSHIP_NAME = "execOwnershipName";
 
     @GetMapping("/search/large-holdings")

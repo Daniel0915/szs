@@ -4,13 +4,9 @@ import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.module.redis.RedisPublisher;
 import com.example.szs.module.redis.RedisSubscribeListener;
-import com.example.szs.service.stock.ExecOwnershipService;
-import com.example.szs.service.stock.LargeHoldingsService;
-import com.example.szs.service.stock.PushService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -29,9 +25,6 @@ public class RedisPubSubController {
     @PostMapping("/send")
     public void sendMessage(@RequestParam ChannelType channelType, @RequestBody MessageDto message) {
         log.info("Redis Pub MSG Channel = {}", channelType);
-//        execOwnershipService.insertData();
-//        largeHoldingsService.insertData();
-//        redisPubService.pubMsgChannel(channelType, message);
     }
 
     @PostMapping("/cancel")
