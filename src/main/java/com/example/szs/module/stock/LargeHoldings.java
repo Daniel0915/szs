@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -20,16 +21,22 @@ import java.util.Map;
 import java.util.Objects;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class LargeHoldings {
     private final RestClient restClient;
     private final ApiResponse apiResponse;
-
-    @Value("${api.key}")
     private String apiKey;
-    @Value("${pjt.server.url}")
     private String serverUrl;
+
+    @Autowired
+    public LargeHoldings(RestClient restClient, ApiResponse apiResponse,
+                         @Value("${api.key}") String apiKey,
+                         @Value("${pjt.server.url}") String serverUrl) {
+        this.restClient = restClient;
+        this.apiResponse = apiResponse;
+        this.apiKey = apiKey;
+        this.serverUrl = serverUrl;
+    }
 
     public ResponseEntity<?> apiCallUpdateLargeHoldingsDetail(List<LargeHoldingsDTO> requestBody) {
         if (CollectionUtils.isEmpty(requestBody)) {
