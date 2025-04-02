@@ -20,6 +20,9 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
+# 환경 변수 설정 (application-prod.yml 사용)
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # Copy the built JAR from the build stage
 COPY --from=build /app/build/libs/szs-0.0.1-SNAPSHOT.jar app.jar
 
