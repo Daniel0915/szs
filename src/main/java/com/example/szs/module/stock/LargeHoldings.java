@@ -25,17 +25,13 @@ import java.util.Objects;
 public class LargeHoldings {
     private final RestClient restClient;
     private final ApiResponse apiResponse;
-    private String apiKey;
-    private String serverUrl;
+    private final String apiKey = "2QCYMHBJbeH4wsI/QY/zCfAL7O7plxWM";
+    private final String serverUrl = "https://web-financial-server.onrender.com";
 
     @Autowired
-    public LargeHoldings(RestClient restClient, ApiResponse apiResponse,
-                         @Value("${api.key}") String apiKey,
-                         @Value("${pjt.server.url}") String serverUrl) {
+    public LargeHoldings(RestClient restClient, ApiResponse apiResponse) {
         this.restClient = restClient;
         this.apiResponse = apiResponse;
-        this.apiKey = apiKey;
-        this.serverUrl = serverUrl;
     }
 
     public ResponseEntity<?> apiCallUpdateLargeHoldingsDetail(List<LargeHoldingsDTO> requestBody) {
