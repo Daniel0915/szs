@@ -97,8 +97,6 @@ apiPrefix: /szs
 
 # Dart API INFO
 dart:
-  api:
-    key: 3298668f7dadcb0bde716342daa730b831ebd3f7
   host: opendart.fss.or.kr
   uri:
     base: https://opendart.fss.or.kr/api
