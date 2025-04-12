@@ -308,4 +308,102 @@ public class LargeHoldingsService {
                     ));
         };
     }
+
+    // TODO : 테스트 코드(추후 삭제)
+    public void insertDataTest() {
+        List<CorpInfoDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
+        corpInfoDTOList = corpInfoDTOList.stream()
+                                         .filter(a -> Objects.equals(a.getCorpCode(), "00126380"))
+                                         .toList();
+
+
+
+        for (CorpInfoDTO dto : corpInfoDTOList) {
+            WebClient webClient = WebClient.builder()
+                                           .baseUrl(baseUri)
+                                           .build();
+
+            Mono<LHResponseDTO> lhResponseDtoMono = webClient.get()
+                                                             .uri(uriBuilder -> uriBuilder.path(path)
+                                                                                          .queryParam(dartKey, dartValue)
+                                                                                          .queryParam(corpCodeKey, dto.getCorpCode())
+                                                                                          .build()).retrieve().bodyToMono(LHResponseDTO.class);
+
+            LHResponseDTO lhResponseDTO = lhResponseDtoMono.block();
+            if (lhResponseDTO == null) {
+                return;
+            }
+
+            List<LargeHoldingsEntity> largeHoldingsEntityList = lhResponseDTO.toEntity();
+
+            Optional<LargeHoldingsDTO> optionalLargeHoldingsDTO = largeHoldingsRepositoryCustom.findLatestRecordBy(LargeHoldingsSearchCondition.builder()
+                                                                                                                                               .corpCode(dto.getCorpCode())
+                                                                                                                                               .orderColumn(LargeHoldingsEntity.Fields.rceptNo)
+                                                                                                                                               .isDescending(true)
+                                                                                                                                               .build());
+            if (optionalLargeHoldingsDTO.isEmpty()) {
+                largeHoldingsRepositoryCustom.saveAll(largeHoldingsEntityList);
+                if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
+                    this.updateScraping(largeHoldingsEntityList.stream()
+                                                               .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class).stream())
+                                                               .collect(Collectors.toList()));
+                }
+
+                pushService.sendMessage(MessageDto.builder()
+                                                  .message(largeHoldingsEntityList.get(0).getCorpName())
+                                                  .corpCode(largeHoldingsEntityList.get(0).getCorpCode())
+                                                  .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
+                                                  .build());
+                return;
+            }
+
+            LargeHoldingsEntity findLatestRecord = EntityToDtoMapper.mapEntityToDto(optionalLargeHoldingsDTO.get(), LargeHoldingsEntity.class).get();
+
+            Comparator<LargeHoldingsEntity> comparator = (o1, o2) -> {
+                String rceptNo_o1 = o1.getRceptNo();
+                String rceptNo_o2 = o2.getRceptNo();
+
+                if (!StringUtils.hasText(rceptNo_o1)) {
+                    return -1;
+                }
+
+                if (!StringUtils.hasText(rceptNo_o2)) {
+                    return 1;
+                }
+
+                return rceptNo_o1.compareTo(rceptNo_o2);
+            };
+
+            largeHoldingsEntityList.sort(comparator);
+
+            int findIndex = Collections.binarySearch(largeHoldingsEntityList, findLatestRecord, comparator);
+
+            List<LargeHoldingsEntity> insertEntity = largeHoldingsEntityList.subList(findIndex + 1, largeHoldingsEntityList.size());
+            largeHoldingsRepositoryCustom.saveAll(insertEntity);
+
+            if (!CollectionUtils.isEmpty(largeHoldingsEntityList)) {
+                this.updateScraping(largeHoldingsEntityList.stream()
+                                                           .map(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class))
+                                                           .flatMap(Optional::stream)
+                                                           .toList());
+            }
+
+            if (insertEntity.isEmpty()) {
+                return;
+            }
+
+            List<LargeHoldingsDTO> largeHoldingsDTOList = new ArrayList<>();
+            for (LargeHoldingsEntity entity : insertEntity) {
+                Optional<LargeHoldingsDTO> dtoOptional = EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsDTO.class);
+                dtoOptional.ifPresent(largeHoldingsDTOList::add);
+            }
+
+            pushService.sendMessage(MessageDto.builder()
+                                              .message(insertEntity.get(0).getCorpName())
+                                              .corpCode(insertEntity.get(0).getCorpCode())
+                                              .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
+                                              .build());
+
+        }
+    }
 }

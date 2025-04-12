@@ -427,18 +427,17 @@ public class WebCrawling {
     }
 
     private WebDriver getSettingChromeDriver() {
-        // ChromeDriver 자동 설치
-        WebDriverManager.chromedriver().setup();
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver"); // Render에 설치될 경로
 
-        // Chrome 옵션 설정
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless"); // Headless 모드 활성화
-        options.addArguments("--disable-gpu"); // GPU 비활성화 (Linux에서 필요할 수 있음)
-        options.addArguments("--window-size=1920,1080"); // 가상 해상도 설정
-        options.addArguments("--no-sandbox"); // 리눅스 환경에서 필요
-        options.addArguments("--disable-dev-shm-usage"); // 공유 메모리 이슈 방지
+        options.setBinary("/usr/bin/chromium"); // Render 환경에서 설치된 chromium 실행파일 경로
 
-        // WebDriver 생성
+        options.addArguments("--headless");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+
         return new ChromeDriver(options);
     }
 }

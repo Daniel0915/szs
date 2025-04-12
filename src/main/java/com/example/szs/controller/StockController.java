@@ -265,4 +265,11 @@ public class StockController {
             return apiResponse.makeResponse(ResStatus.ERROR);
         }
     }
+
+    // TODO : 테스트 코드
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        largeHoldingsService.insertDataTest();
+        return apiResponse.makeResponse(ResStatus.ERROR);
+    }
 }

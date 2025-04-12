@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: selenium-scraper
+    env: java
+    plan: free
+    region: oregon  # or frankfurt
+    branch: main
+    buildCommand: ""  # 비워두기: 과금 방지
+    startCommand: "./start.sh"
+    autoDeploy: true
