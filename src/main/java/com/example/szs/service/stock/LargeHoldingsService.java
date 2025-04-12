@@ -310,7 +310,7 @@ public class LargeHoldingsService {
     }
 
     // TODO : 테스트 코드(추후 삭제)
-    public void insertDataTest() {
+    public void insertDataTest() throws Exception {
         List<CorpInfoDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
         corpInfoDTOList = corpInfoDTOList.stream()
                                          .filter(a -> Objects.equals(a.getCorpCode(), "00126380"))

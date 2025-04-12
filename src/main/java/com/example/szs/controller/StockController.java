@@ -269,7 +269,14 @@ public class StockController {
     // TODO : 테스트 코드
     @GetMapping("/test")
     public ResponseEntity<?> test() {
-        largeHoldingsService.insertDataTest();
-        return apiResponse.makeResponse(ResStatus.ERROR);
+        try {
+            largeHoldingsService.insertDataTest();
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            log.info("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+
+        return apiResponse.makeResponse(ResStatus.SUCCESS);
     }
 }
