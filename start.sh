@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "[start.sh] 실행 시작"
+
 # 1. 크롬드라이버 다운로드 (버전에 맞게 변경 가능)
 CHROMEDRIVER_VERSION=122.0.6261.111
 wget -N https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip
