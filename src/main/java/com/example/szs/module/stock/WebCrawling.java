@@ -427,16 +427,17 @@ public class WebCrawling {
     }
 
     private WebDriver getSettingChromeDriver() {
-        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver"); // Render에 설치될 경로
+        // Render에서 chromedriver 위치
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
 
         ChromeOptions options = new ChromeOptions();
-        options.setBinary("/usr/bin/chromium"); // Render 환경에서 설치된 chromium 실행파일 경로
+        options.setBinary("/usr/bin/chromium/chrome");
 
         options.addArguments("--headless");
         options.addArguments("--disable-gpu");
-        options.addArguments("--window-size=1920,1080");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--window-size=1920,1080");
 
         return new ChromeDriver(options);
     }
