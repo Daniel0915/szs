@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -33,19 +34,20 @@ public class ResUtil {
         result.put("data", t);
         return result;
     }
-//    public static <T> Map<String, Object> makeErrorResponse(Exception e) {
-//        e.printStackTrace();
-//        if (e instanceof CustomException) {
-//            CustomException customException = (CustomException) e;
-//            return ResUtil.makeResponse("", customException.getResStatus());
-//        }
-//
-//        if (e instanceof BadCredentialsException) {
-//            return ResUtil.makeResponse("", ResStatus.LOGIN_ERROR);
-//        }
-//
-//        return ResUtil.makeResponse("", ResStatus.ERROR);
-//    }
+
+    public static <T> Map<String, Object> makeErrorResponse(Exception e) {
+        e.printStackTrace();
+        if (e instanceof CustomException) {
+            CustomException customException = (CustomException) e;
+            return ResUtil.makeResponse("", customException.getResStatus());
+        }
+
+        if (e instanceof BadCredentialsException) {
+            return ResUtil.makeResponse("", ResStatus.LOGIN_ERROR);
+        }
+
+        return ResUtil.makeResponse("", ResStatus.ERROR);
+    }
 
     public static void makeForbiddenResponse(HttpServletResponse response, ResStatus resStatus) throws IOException {
         response.setStatus(HttpStatus.FORBIDDEN.value());

@@ -1,0 +1,132 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USER}
+    password: ${DATASOURCE_PASSWORD}
+  webflux:
+    session:
+      timeout: 60m # 세션 타임아웃 설정 (60분)
+  reactor:
+    netty:
+      http:
+        response-timeout: 60000 # 60초(밀리초 단위)
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  devtools:
+    restart:
+      enabled: false
+
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+
+
+logging.level:
+  com.example.szs: debug
+  org:
+    springframework:
+      security=TRACE:
+  org.hibernate.SQL: debug
+  org.hibernate.orm.jdbc.bind: trace
+
+server:
+  port: ${SERVER_PORT}
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  compression:
+    enabled: true
+    mime-types: text/html,text/plain,text/css,application/javascript,application/json
+    min-response-size: 100
+  session:
+    timeout: 1000m  # 2시간 (분 단위)
+  tomcat:
+    connection-timeout: 100000s  # 2시간 (초 단위)
+
+rsa:
+  private-key: classpath:certs/private-key.pem
+  public-key: classpath:certs/public-key.pem
+
+
+scrap:
+  url: ${SCRAP_URL}
+  header:
+    key: ${SCRAP_HEADER_KEY}
+    value: ${SCRAP_HEADER_VALUE}
+
+jwt:
+  secret: 8962312ec726ed9a9916057ee731530b24c24561083f0ba4156266dfbbfb6341
+
+ACCESS_TOKEN_EXPIRE_TIME: ${ACCESS_TOKEN_EXPIRE_TIME}
+
+REFRESH_TOKEN_EXPIRE_TIME: ${REFRESH_TOKEN_EXPIRE_TIME}
+
+REFRESH_TOKEN_REISSUE_TIME : ${REFRESH_TOKEN_REISSUE_TIME}
+
+
+logging:
+  level:
+    root: error
+    org.springframework.security: DEBUG
+    org.springframework.security.web.access.ExceptionTranslationFilter: TRACE
+    org.springframework.security.web.access.intercept.FilterSecurityInterceptor: TRACE
+    org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter: DEBUG
+
+
+# Swagger
+springdoc:
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: /3o3/swagger.html
+    enabled: true
+
+# prefix
+apiPrefix: /szs
+
+# Dart API INFO
+dart:
+  host: opendart.fss.or.kr
+  uri:
+    base: https://opendart.fss.or.kr/api
+    # 대량보유 상황보고(https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS004&apiId=2019021)
+    largeHoldings: /majorstock.json
+    # 임원ㆍ주요주주 소유보고(https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS004&apiId=2019022)
+    execOwnership: /elestock.json
+  key: ${DART_KEY}
+  value: ${DART_VALUE}
+
+# Dart 공시 대상 기업 key && 고유 넘버(value)
+corp:
+  code:
+    key: corp_code
+
+# Telegram INFO
+telegram:
+  api:
+    token: ${TELEGRAM_API_TOKEN}
+  base:
+    uri: ${TELEGRAM_BASE_URI}
+  channel:
+    id: ${TELEGRAM_CHANNEL_ID}
+
+# frontend
+frontend:
+  url: ${FRONTEND_URL}
+# server
+
+pjt:
+  server:
+    url: ${SERVER_URL}
+
+api:
+  key: ${API_KEY}

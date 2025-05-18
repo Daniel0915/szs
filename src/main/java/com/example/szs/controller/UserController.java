@@ -24,6 +24,4 @@ public class UserController {
     public SseEmitter connect(@PathVariable String clientId) {
         return userService.connect(clientId);
     }
-
-
 }
