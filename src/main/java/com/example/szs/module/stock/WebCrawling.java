@@ -270,7 +270,7 @@ public class WebCrawling {
                 // trim
                 rceptNo = rceptNo.trim();
                 corpCode= corpCode.trim();
-                corpName= rceptNo.trim();
+                corpName= corpName.trim();
                 largeHoldingsName = largeHoldingsName.trim();
                 birthDateOrBizRegNum = birthDateOrBizRegNum.trim();
 
@@ -427,18 +427,18 @@ public class WebCrawling {
     }
 
     private WebDriver getSettingChromeDriver() {
-        // Render에서 chromedriver 위치
-        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+        // ChromeDriver 자동 설치
+        WebDriverManager.chromedriver().setup();
 
+        // Chrome 옵션 설정
         ChromeOptions options = new ChromeOptions();
-        options.setBinary("/usr/bin/chromium/chrome");
+        options.addArguments("--headless"); // Headless 모드 활성화
+        options.addArguments("--disable-gpu"); // GPU 비활성화 (Linux에서 필요할 수 있음)
+        options.addArguments("--window-size=1920,1080"); // 가상 해상도 설정
+        options.addArguments("--no-sandbox"); // 리눅스 환경에서 필요
+        options.addArguments("--disable-dev-shm-usage"); // 공유 메모리 이슈 방지
 
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--window-size=1920,1080");
-
+        // WebDriver 생성
         return new ChromeDriver(options);
     }
 }
