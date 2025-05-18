@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("${apiPrefix}/signup")
+@RequestMapping("/signup")
 @RequiredArgsConstructor
 @Slf4j
 public class SignUpController {

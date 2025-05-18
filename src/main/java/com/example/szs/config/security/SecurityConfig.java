@@ -4,7 +4,6 @@ import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.module.jwt.JwtTokenProvider;
 import com.example.szs.service.auth.JpaMemberDetailService;
 import com.example.szs.utils.Response.ResUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -12,10 +11,8 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -34,14 +31,11 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    @Value("${apiPrefix}")
-    private String apiPrefix;
     private final JpaMemberDetailService userDetailsService;
     private final RsaKeyConfigProperties rsaKeyConfigProperties;
 
@@ -62,10 +56,10 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
-        List<String> permitAllPatterns = List.of(apiPrefix + "/login/**", apiPrefix + "/signup/**", "/marketing-mng/**", "/stock/**");
+        List<String> permitAllPatterns = List.of("/login/**", "/signup/**", "/marketing-mng/**", "/stock/**");
         String[] permitAllArray = permitAllPatterns.stream().toArray(String[]::new);
 
-        List<String> hasAuthPatterns = List.of(apiPrefix + "/scrap/**", apiPrefix + "/refund/**");
+        List<String> hasAuthPatterns = List.of("/scrap/**", "/refund/**");
         String[] hasAuthArray = hasAuthPatterns.stream().toArray(String[]::new);
 
         JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtEncoder(), jwtDecoder());
