@@ -3,23 +3,16 @@ package com.example.szs.insideTrade.application;
 import com.example.szs.insideTrade.domain.CorpInfo;
 import com.example.szs.insideTrade.domain.CorpInfoRepo;
 import com.example.szs.insideTrade.domain.LargeHoldings;
-import com.example.szs.insideTrade.domain.LargeHoldingsDetail;
-import com.example.szs.insideTrade.domain.LargeHoldingsDetailRepo;
 import com.example.szs.insideTrade.domain.LargeHoldingsRepo;
-import com.example.szs.insideTrade.domain.LargeHoldingsStkrt;
-import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
 import com.example.szs.insideTrade.infrastructure.client.Dart;
-import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsDetailCrawlingDTO;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsInsiderTradeApiRes;
-import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsStkrtCrawlingDTO;
 import com.example.szs.insideTrade.infrastructure.db.queryDSL.LargeHoldingsSearchCondition;
 import com.example.szs.insideTrade.infrastructure.push.SsePush;
 import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.utils.money.NumberUtils;
-import jakarta.annotation.Resource;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -27,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,18 +28,27 @@ import java.util.stream.IntStream;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
 @EnableScheduling
 public class LargeHoldingsService {
     private final ScrapingService scrapingService;
-    @Resource(name = "corpInfoJpaRepo")
     private final CorpInfoRepo corpInfoJpaRepo;
-    @Resource(name = "largeHoldingsQueryDSLRepo")
     private final LargeHoldingsRepo largeHoldingsRepo;
 
     private final Dart dart;
     private final SsePush ssePush;
+
+    public LargeHoldingsService(ScrapingService scrapingService,
+                                @Qualifier("corpInfoJpaRepo") CorpInfoRepo corpInfoJpaRepo,
+                                @Qualifier("largeHoldingsQueryDSLRepo") LargeHoldingsRepo largeHoldingsRepo,
+                                Dart dart,
+                                SsePush ssePush) {
+        this.scrapingService = scrapingService;
+        this.corpInfoJpaRepo = corpInfoJpaRepo;
+        this.largeHoldingsRepo = largeHoldingsRepo;
+        this.dart = dart;
+        this.ssePush = ssePush;
+    }
 
     @Transactional
     @Scheduled(cron = "0 0 9 * * ?")
