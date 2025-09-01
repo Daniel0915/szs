@@ -80,14 +80,8 @@ public class LargeHoldingsService {
                         break;
                     }
                 }
-
-                if (startIndex == -1) {
-                    largeHoldingList = resList; // 매칭 없음
-                } else if (startIndex + 1 >= resList.size()) {
-                    largeHoldingList = Collections.emptyList(); // 새로운 데이터 없음
-                } else {
-                    largeHoldingList = resList.subList(startIndex + 1, resList.size());
-                }
+                int skipCount = (startIndex == -1) ? 0 : startIndex + 1;
+                largeHoldingList = resList.stream().skip(skipCount).toList();
             } else {
                 largeHoldingList = resList;
             }
