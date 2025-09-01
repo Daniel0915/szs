@@ -2,7 +2,6 @@ package com.example.szs.repository.stock;
 
 import com.example.szs.insideTrade.domain.LargeHoldingsEntity;
 import com.example.szs.domain.stock.QLargeHoldingsEntity;
-import com.example.szs.insideTrade.domain.LargeHoldingsRepository;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 import com.example.szs.insideTrade.infrastructure.db.queryDSL.LargeHoldingsSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;

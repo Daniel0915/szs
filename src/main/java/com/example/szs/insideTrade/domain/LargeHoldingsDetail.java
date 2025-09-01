@@ -1,13 +1,11 @@
 package com.example.szs.insideTrade.domain;
 
+import com.example.szs.utils.time.TimeUtil;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
-@Builder(toBuilder = true)
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "large_holdings_detail")
 @Getter
 @FieldNameConstants
@@ -61,4 +59,26 @@ public class LargeHoldingsDetail {
 
     @Column(name = "reg_dt")
     private String regDt; // 등록일시
+
+    private LargeHoldingsDetail(String rceptNo, String corpCode, String corpName, String largeHoldingsName, String birthDateOrBizRegNum, String tradeDt, String tradeReason, String stockType, Long beforeStockAmount, Long changeStockAmount, Long afterStockAmount, Long unitStockPrice, String currencyType, Long totalStockPrice) {
+        this.rceptNo = rceptNo;
+        this.corpCode = corpCode;
+        this.corpName = corpName;
+        this.largeHoldingsName = largeHoldingsName;
+        this.birthDateOrBizRegNum = birthDateOrBizRegNum;
+        this.tradeDt = tradeDt;
+        this.tradeReason = tradeReason;
+        this.stockType = stockType;
+        this.beforeStockAmount = beforeStockAmount;
+        this.changeStockAmount = changeStockAmount;
+        this.afterStockAmount = afterStockAmount;
+        this.unitStockPrice = unitStockPrice;
+        this.currencyType = currencyType;
+        this.totalStockPrice = totalStockPrice;
+        this.regDt = TimeUtil.nowTime("yyyyMMddHHmmss");
+    }
+
+    public static LargeHoldingsDetail create(String rceptNo, String corpCode, String corpName, String largeHoldingsName, String birthDateOrBizRegNum, String tradeDt, String tradeReason, String stockType, Long beforeStockAmount, Long changeStockAmount, Long afterStockAmount, Long unitStockPrice, String currencyType, Long totalStockPrice) {
+        return new LargeHoldingsDetail(rceptNo, corpCode, corpName, largeHoldingsName, birthDateOrBizRegNum, tradeDt, tradeReason, stockType, beforeStockAmount, changeStockAmount, afterStockAmount, unitStockPrice, currencyType, totalStockPrice);
+    }
 }

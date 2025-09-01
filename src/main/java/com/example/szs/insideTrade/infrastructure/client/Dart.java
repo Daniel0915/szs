@@ -1,8 +1,9 @@
 package com.example.szs.insideTrade.infrastructure.client;
 
 import com.example.szs.insideTrade.domain.CorpInfo;
-import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsDetailCrawling;
+import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsDetailCrawlingDTO;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsInsiderTradeApiRes;
+import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsStkrtCrawlingDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsStkrtDTO;
 import com.example.szs.utils.money.NumberUtils;
 import com.example.szs.utils.time.TimeUtil;
@@ -63,11 +64,11 @@ public class Dart {
         return resMono.blockOptional();
     }
 
-    public List<LargeHoldingsDetailCrawling> getLargeHoldingsDetailCrawling(String rceptNo, String corpCode, String corpName) {
+    public List<LargeHoldingsDetailCrawlingDTO> getLargeHoldingsDetailCrawling(String rceptNo, String corpCode, String corpName) {
         assert ( StringUtils.hasText(rceptNo) && StringUtils.hasText(corpCode) && StringUtils.hasText(corpName) ) : "rceptNo, corpCode, corpName must be have value";
 
-        List<LargeHoldingsDetailCrawling> result = new ArrayList<>();
-        WebDriver                    driver = this.getSettingChromeDriver();
+        List<LargeHoldingsDetailCrawlingDTO> result = new ArrayList<>();
+        WebDriver                            driver = this.getSettingChromeDriver();
         try {
 
             driver.get(detailUrl + rceptNo);
@@ -161,22 +162,22 @@ public class Dart {
                     }
                 }
 
-                result.add(LargeHoldingsDetailCrawling.builder()
-                                                 .rceptNo(rceptNo)
-                                                 .corpCode(corpCode)
-                                                 .corpName(corpName)
-                                                 .largeHoldingsName(largeHoldingsName)
-                                                 .birthDateOrBizRegNum(birthDateOrBizRegNum)
-                                                 .tradeDt(tradeDt)
-                                                 .tradeReason(tradeReason)
-                                                 .stockType(stockType)
-                                                 .beforeStockAmount(beforeStockAmount)
-                                                 .changeStockAmount(changeStockAmount)
-                                                 .afterStockAmount(afterStockAmount)
-                                                 .unitStockPrice(unitStockPrice)
-                                                 .currencyType(currencyType)
-                                                 .totalStockPrice(totalStockPrice)
-                                                 .build());
+                result.add(LargeHoldingsDetailCrawlingDTO.builder()
+                                                         .rceptNo(rceptNo)
+                                                         .corpCode(corpCode)
+                                                         .corpName(corpName)
+                                                         .largeHoldingsName(largeHoldingsName)
+                                                         .birthDateOrBizRegNum(birthDateOrBizRegNum)
+                                                         .tradeDt(tradeDt)
+                                                         .tradeReason(tradeReason)
+                                                         .stockType(stockType)
+                                                         .beforeStockAmount(beforeStockAmount)
+                                                         .changeStockAmount(changeStockAmount)
+                                                         .afterStockAmount(afterStockAmount)
+                                                         .unitStockPrice(unitStockPrice)
+                                                         .currencyType(currencyType)
+                                                         .totalStockPrice(totalStockPrice)
+                                                         .build());
             }
         } catch (Exception e) {
             log.error("=============error [start]==============");
@@ -187,16 +188,16 @@ public class Dart {
             driver.quit();
         }
         return result.stream()
-                     .sorted(Comparator.comparing(LargeHoldingsDetailCrawling::getTradeDt))
+                     .sorted(Comparator.comparing(LargeHoldingsDetailCrawlingDTO::getTradeDt))
                      .collect(Collectors.toList());
     }
 
-    public List<LargeHoldingsStkrtDTO> getLargeHoldingsStkrtCrawling(String rceptNo, String corpCode, String corpName) {
+    public List<LargeHoldingsStkrtCrawlingDTO> getLargeHoldingsStkrtCrawling(String rceptNo, String corpCode, String corpName) {
         assert ( StringUtils.hasText(rceptNo) && StringUtils.hasText(corpCode) && StringUtils.hasText(corpName) ) : "rceptNo, corpCode, corpName must be have value";
 
         WebDriver driver = this.getSettingChromeDriver();
 
-        List<LargeHoldingsStkrtDTO> result = new ArrayList<>();
+        List<LargeHoldingsStkrtCrawlingDTO> result = new ArrayList<>();
         try {
             driver.get(detailUrl + rceptNo);
             // 페이지 로딩을 위한 대기 (명시적 대기)
@@ -310,15 +311,15 @@ public class Dart {
                     continue;
                 }
 
-                result.add(LargeHoldingsStkrtDTO.builder()
-                                                .rceptNo(rceptNo)
-                                                .corpCode(corpCode)
-                                                .corpName(corpName)
-                                                .largeHoldingsName(largeHoldingsName)
-                                                .birthDateOrBizRegNum(birthDateOrBizRegNum)
-                                                .totalStockAmount(totalStockAmount)
-                                                .stkrt(stkrt)
-                                                .build());
+                result.add(LargeHoldingsStkrtCrawlingDTO.builder()
+                                                        .rceptNo(rceptNo)
+                                                        .corpCode(corpCode)
+                                                        .corpName(corpName)
+                                                        .largeHoldingsName(largeHoldingsName)
+                                                        .birthDateOrBizRegNum(birthDateOrBizRegNum)
+                                                        .totalStockAmount(totalStockAmount)
+                                                        .stkrt(stkrt)
+                                                        .build());
             }
         } catch (Exception e) {
             log.error("=============error [start]==============");

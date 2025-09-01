@@ -1,6 +1,7 @@
 package com.example.szs.insideTrade.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-public interface LargeHoldingsStkrtRepo extends JpaRepository<LargeHoldingsStkrt, Long> {
+public interface LargeHoldingsStkrtRepo {
+    List<LargeHoldingsStkrt> saveAll(List<LargeHoldingsStkrt> entities);
 }

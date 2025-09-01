@@ -1,5 +1,6 @@
 package com.example.szs.insideTrade.domain;
 
+import com.example.szs.utils.time.TimeUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,10 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
-@Builder(toBuilder = true)
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "large_holdings_stkrt")
 @Getter
 @FieldNameConstants
@@ -43,4 +41,19 @@ public class LargeHoldingsStkrt {
 
     @Column(name = "reg_dt")
     private String regDt;
+
+    private LargeHoldingsStkrt(String rceptNo, String corpCode, String corpName, String largeHoldingsName, String birthDateOrBizRegNum, Long totalStockAmount, Float stkrt) {
+        this.rceptNo = rceptNo;
+        this.corpCode = corpCode;
+        this.corpName = corpName;
+        this.largeHoldingsName = largeHoldingsName;
+        this.birthDateOrBizRegNum = birthDateOrBizRegNum;
+        this.totalStockAmount = totalStockAmount;
+        this.stkrt = stkrt;
+        this.regDt = TimeUtil.nowTime("yyyyMMddHHmmss");
+    }
+
+    public static LargeHoldingsStkrt create(String rceptNo, String corpCode, String corpName, String largeHoldingsName, String birthDateOrBizRegNum, Long totalStockAmount, Float stkrt) {
+        return new LargeHoldingsStkrt(rceptNo, corpCode, corpName, largeHoldingsName, birthDateOrBizRegNum, totalStockAmount, stkrt);
+    }
 }

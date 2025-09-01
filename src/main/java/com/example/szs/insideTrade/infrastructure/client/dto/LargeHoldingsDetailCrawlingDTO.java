@@ -14,7 +14,7 @@ import lombok.experimental.FieldNameConstants;
 @AllArgsConstructor
 @JsonSerialize(using = NullToEmptySerializer.class)
 @FieldNameConstants
-public class LargeHoldingsDetailCrawling {
+public class LargeHoldingsDetailCrawlingDTO {
     private Long seq;
     private String rceptNo; // 접수 번호
     private String corpCode; // 회사코드
