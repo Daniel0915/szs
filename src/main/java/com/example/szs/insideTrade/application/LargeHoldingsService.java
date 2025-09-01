@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,16 +74,15 @@ public class LargeHoldingsService {
             List<LargeHoldingsInsiderTradeApiRes.LargeHolding> largeHoldingList = new ArrayList<>();
             if (optionalLargeHoldings.isPresent()) {
                 String lastRceptNo = optionalLargeHoldings.get().getRceptNo();
-                int startIndex = -1;
+                int startIndex = IntStream.range(0, resList.size())
+                                          .filter(index -> Objects.equals(resList.get(index).getRceptNo(), lastRceptNo))
+                                          .findFirst()
+                                          .orElse(-1);
 
-                for (int index = 0; index < resList.size(); index++) {
-                    if (Objects.equals(resList.get(index).getRceptNo(), lastRceptNo)) {
-                        startIndex = index;
-                        break;
-                    }
-                }
                 int skipCount = (startIndex == -1) ? 0 : startIndex + 1;
-                largeHoldingList = resList.stream().skip(skipCount).toList();
+                largeHoldingList = resList.stream()
+                                          .skip(skipCount)
+                                          .collect(Collectors.toList());
             } else {
                 largeHoldingList = resList;
             }
@@ -98,7 +99,7 @@ public class LargeHoldingsService {
                                                                      largeHolding.getReportResn(),
                                                                      largeHolding.getRceptDt()
                                                              ))
-                                                             .toList();
+                                                             .collect(Collectors.toList());
             largeHoldingsRepo.saveAll(insertList);
 
             // 웹 스크래핑
