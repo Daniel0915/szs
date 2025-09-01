@@ -1,4 +1,4 @@
-package com.example.szs.domain.stock;
+package com.example.szs.insideTrade.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldNameConstants;
 @Table(name = "large_holdings_detail")
 @Getter
 @FieldNameConstants
-public class LargeHoldingsDetailEntity {
+public class LargeHoldingsDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seq", nullable = false)

@@ -1,13 +1,11 @@
 package com.example.szs.repository.stock;
 
-import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
-import com.example.szs.domain.stock.LargeHoldingsEntity;
+import com.example.szs.insideTrade.domain.LargeHoldingsEntity;
 import com.example.szs.domain.stock.QLargeHoldingsEntity;
+import com.example.szs.insideTrade.domain.LargeHoldingsRepository;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
-import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
-import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
+import com.example.szs.insideTrade.infrastructure.db.queryDSL.LargeHoldingsSearchCondition;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
-import com.example.szs.utils.jpa.ListDivider;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -21,17 +19,14 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static com.example.szs.domain.stock.QLargeHoldingsDetailEntity.largeHoldingsDetailEntity;
 import static com.example.szs.domain.stock.QLargeHoldingsEntity.largeHoldingsEntity;
 import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 @Slf4j
 public class LargeHoldingsRepositoryCustom {
-    private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory         queryFactory;
     private final LargeHoldingsRepository largeHoldingsRepository;
 
     public LargeHoldingsRepositoryCustom(EntityManager em, LargeHoldingsRepository largeHoldingsRepository) {

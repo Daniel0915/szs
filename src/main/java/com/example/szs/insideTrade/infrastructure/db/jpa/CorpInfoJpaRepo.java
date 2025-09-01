@@ -1,0 +1,21 @@
+package com.example.szs.insideTrade.infrastructure.db.jpa;
+
+import com.example.szs.insideTrade.domain.CorpInfo;
+import com.example.szs.insideTrade.domain.CorpInfoRepo;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+@RequiredArgsConstructor
+@Slf4j
+public class CorpInfoJpaRepo implements CorpInfoRepo {
+    private final ICorpInfoJpaRepo iCorpInfoJpaRepo;
+
+    @Override
+    public List<CorpInfo> findAll() {
+        return iCorpInfoJpaRepo.findAll();
+    }
+}

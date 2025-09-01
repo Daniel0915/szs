@@ -1,7 +1,6 @@
-package com.example.szs.domain.stock;
+package com.example.szs.insideTrade.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -19,7 +18,7 @@ import lombok.experimental.FieldNameConstants;
 @Table(name = "exec_ownership")
 @Getter
 @FieldNameConstants
-public class ExecOwnershipEntity {
+public class ExecOwnership {
 
     @Id
     @Column(name = "rcept_no")

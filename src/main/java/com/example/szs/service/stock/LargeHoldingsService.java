@@ -1,7 +1,7 @@
 package com.example.szs.service.stock;
 
-import com.example.szs.domain.stock.LargeHoldingsDetailEntity;
-import com.example.szs.domain.stock.LargeHoldingsEntity;
+import com.example.szs.insideTrade.domain.LargeHoldingsDetailEntity;
+import com.example.szs.insideTrade.domain.LargeHoldingsEntity;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
 import com.example.szs.model.dto.largeHoldings.LHResponseDTO;
@@ -14,7 +14,7 @@ import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
-import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
+import com.example.szs.insideTrade.infrastructure.db.queryDSL.LargeHoldingsSearchCondition;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.module.stock.WebCrawling;
 import com.example.szs.repository.stock.CorpInfoRepositoryCustom;

@@ -1,6 +1,5 @@
 package com.example.szs.model.dto.execOwnership;
 
-import com.example.szs.domain.stock.ExecOwnershipEntity;
 import com.example.szs.utils.money.NumberUtils;
 import com.example.szs.utils.time.TimeUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -59,31 +58,31 @@ public class EOResponseDTO {
         private String rceptDt; // 접수 일자
     }
 
-    public List<ExecOwnershipEntity> toEntity() {
-        List<ExecOwnershipEntity> execOwnershipEntityList = new ArrayList<>();
+    public List<com.example.szs.insideTrade.domain.ExecOwnership> toEntity() {
+        List<com.example.szs.insideTrade.domain.ExecOwnership> execOwnershipList = new ArrayList<>();
 
         if (CollectionUtils.isEmpty(this.list)) {
             return new ArrayList<>();
         }
 
         for (ExecOwnership execOwnership : this.list) {
-            execOwnershipEntityList.add(ExecOwnershipEntity.builder()
-                                                           .rceptNo             (execOwnership.getRceptNo())
-                                                           .corpCode            (execOwnership.getCorpCode())
-                                                           .corpName            (execOwnership.getCorpName())
-                                                           .repror              (execOwnership.getRepror())
-                                                           .isuExctvRgistAt     (execOwnership.getIsuExctvRgistAt())
-                                                           .isuExctvOfcps       (execOwnership.getIsuExctvOfcps())
-                                                           .isuMainShrholdr     (execOwnership.getIsuMainShrholdr())
-                                                           .spStockLmpCnt       (NumberUtils.stringToLongConverter(execOwnership.getSpStockLmpCnt()))
-                                                           .spStockLmpIrdsCnt   (NumberUtils.stringToLongConverter(execOwnership.getSpStockLmpIrdsCnt()))
-                                                           .spStockLmpRate      (Float.valueOf(execOwnership.getSpStockLmpRate()))
-                                                           .spStockLmpIrdsRate  (Float.valueOf(execOwnership.getSpStockLmpIrdsRate()))
-                                                           .rceptDt             (execOwnership.getRceptDt())
-                                                           .regDt               (TimeUtil.nowTime("yyyyMMddHHmmss"))
-                                                           .build());
+            execOwnershipList.add(com.example.szs.insideTrade.domain.ExecOwnership.builder()
+                                                                                  .rceptNo             (execOwnership.getRceptNo())
+                                                                                  .corpCode            (execOwnership.getCorpCode())
+                                                                                  .corpName            (execOwnership.getCorpName())
+                                                                                  .repror              (execOwnership.getRepror())
+                                                                                  .isuExctvRgistAt     (execOwnership.getIsuExctvRgistAt())
+                                                                                  .isuExctvOfcps       (execOwnership.getIsuExctvOfcps())
+                                                                                  .isuMainShrholdr     (execOwnership.getIsuMainShrholdr())
+                                                                                  .spStockLmpCnt       (NumberUtils.stringToLongConverter(execOwnership.getSpStockLmpCnt()))
+                                                                                  .spStockLmpIrdsCnt   (NumberUtils.stringToLongConverter(execOwnership.getSpStockLmpIrdsCnt()))
+                                                                                  .spStockLmpRate      (Float.valueOf(execOwnership.getSpStockLmpRate()))
+                                                                                  .spStockLmpIrdsRate  (Float.valueOf(execOwnership.getSpStockLmpIrdsRate()))
+                                                                                  .rceptDt             (execOwnership.getRceptDt())
+                                                                                  .regDt               (TimeUtil.nowTime("yyyyMMddHHmmss"))
+                                                                                  .build());
         }
 
-        return execOwnershipEntityList;
+        return execOwnershipList;
     }
 }

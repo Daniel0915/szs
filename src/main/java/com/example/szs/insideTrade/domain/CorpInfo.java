@@ -1,4 +1,4 @@
-package com.example.szs.domain.stock;
+package com.example.szs.insideTrade.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +17,7 @@ import lombok.experimental.FieldNameConstants;
 @Table(name = "corp_info")
 @Getter
 @FieldNameConstants
-public class CorpInfoEntity {
+public class CorpInfo {
     @Id
     @Column(name = "corp_code")
     private String corpCode; // 회사코드

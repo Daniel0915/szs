@@ -1,14 +1,14 @@
 package com.example.szs.repository.stock;
 
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
-import com.example.szs.model.queryDSLSearch.LargeHoldingsSearchCondition;
+import com.example.szs.insideTrade.infrastructure.db.queryDSL.LargeHoldingsSearchCondition;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.szs.domain.stock.LargeHoldingsEntity.Fields.stkqy;
+import static com.example.szs.insideTrade.domain.LargeHoldingsEntity.Fields.stkqy;
 
 import org.assertj.core.api.Assertions;
 

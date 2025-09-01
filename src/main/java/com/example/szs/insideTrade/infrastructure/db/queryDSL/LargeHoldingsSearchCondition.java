@@ -1,4 +1,4 @@
-package com.example.szs.model.queryDSLSearch;
+package com.example.szs.insideTrade.infrastructure.db.queryDSL;
 
 import lombok.Getter;
 import lombok.Builder;
