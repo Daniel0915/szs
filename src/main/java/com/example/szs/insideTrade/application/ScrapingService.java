@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,14 +32,16 @@ public class ScrapingService {
         this.largeHoldingsStkrtRepo = largeHoldingsStkrtRepo;
     }
 
-    public void updateScrapingData(List<LargeHoldings> insertList) {
+    @Transactional
+    public void updateLargeHoldingsScrapingData(List<LargeHoldings> insertList) {
         for (LargeHoldings entity : insertList) {
-            saveDetailData(entity);
-            saveStkrtData(entity);
+            saveLargeHoldingsDetailData(entity);
+            saveLargeHoldingsStkrtData(entity);
         }
     }
 
-    private void saveDetailData(LargeHoldings entity) {
+
+    private void saveLargeHoldingsDetailData(LargeHoldings entity) {
         List<LargeHoldingsDetailCrawlingDTO> detailList = dart.getLargeHoldingsDetailCrawling(entity.getRceptNo(), entity.getCorpCode(), entity.getCorpName());
 
         List<LargeHoldingsDetail> entities = detailList.stream()
@@ -59,11 +62,10 @@ public class ScrapingService {
                                                                largeHoldingsDetailCrawlingDTO.getTotalStockPrice()
                                                        ))
                                                        .toList();
-
         largeHoldingsDetailRepo.saveAll(entities);
     }
 
-    private void saveStkrtData(LargeHoldings entity) {
+    private void saveLargeHoldingsStkrtData(LargeHoldings entity) {
         List<LargeHoldingsStkrtCrawlingDTO> stkrtList = dart.getLargeHoldingsStkrtCrawling(entity.getRceptNo(), entity.getCorpCode(), entity.getCorpName());
 
         List<LargeHoldingsStkrt> entities = stkrtList.stream()
@@ -78,7 +80,6 @@ public class ScrapingService {
                                                              )
                                                      )
                                                      .toList();
-
         largeHoldingsStkrtRepo.saveAll(entities);
     }
 }
