@@ -1,46 +1,30 @@
-//package com.example.szs.controller;
-//
-//import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
-//import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
-//import com.example.szs.model.eNum.ResStatus;
-//import com.example.szs.model.eNum.stock.SellOrBuyType;
-//import com.example.szs.model.eNum.stock.ShareDisclosure;
-//import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
-//import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
-//import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
-//import com.example.szs.module.ApiResponse;
-//import com.example.szs.service.stock.CorpInfoService;
-//import com.example.szs.service.stock.ExecOwnershipService;
-//import com.example.szs.service.stock.LargeHoldingsService;
-//import com.example.szs.utils.error.ErrorMsgUtil;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.util.StringUtils;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//
-//@RestController
-//@RequestMapping("/stock")
-//@RequiredArgsConstructor
-//@Slf4j
-//public class StockController {
-//    private final LargeHoldingsService largeHoldingsService;
-//    private final ExecOwnershipService execOwnershipService;
-//    private final CorpInfoService      corpInfoService;
-//    private final ApiResponse          apiResponse;
-//
-//    private static final String LARGE_HOLDINGS_NAME = "largeHoldingsName";
-//    private static final String CORP_CODE           = "corpCode";
-//    private static final String TRADE_DT_GOE        = "tradeDtGoe";
-//    private static final String TRADE_DT_LOE        = "tradeDtLoe";
-//    private static final String SELL_OR_BUY_TYPE    = "sellOrBuyType";
-//    private static final String EXEC_OWNERSHIP_NAME = "execOwnershipName";
-//
+package com.example.szs.insideTrade.presentation;
+
+import com.example.szs.insideTrade.application.LargeHoldingsService;
+import com.example.szs.model.eNum.ResStatus;
+import com.example.szs.module.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/stock")
+@RequiredArgsConstructor
+@Slf4j
+public class StockController {
+    private final LargeHoldingsService largeHoldingsService;
+    private final ApiResponse          apiResponse;
+
+    private static final String LARGE_HOLDINGS_NAME = "largeHoldingsName";
+    private static final String CORP_CODE           = "corpCode";
+    private static final String TRADE_DT_GOE        = "tradeDtGoe";
+    private static final String TRADE_DT_LOE        = "tradeDtLoe";
+    private static final String SELL_OR_BUY_TYPE    = "sellOrBuyType";
+    private static final String EXEC_OWNERSHIP_NAME = "execOwnershipName";
+
 //    @GetMapping("/search/large-holdings")
 //    public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
 //        try {
@@ -263,18 +247,17 @@
 //            return apiResponse.makeResponse(ResStatus.ERROR);
 //        }
 //    }
-//
-//    // TODO : 테스트 코드
-//    @GetMapping("/test")
-//    public ResponseEntity<?> test() {
-//        try {
-//            largeHoldingsService.insertDataTest();
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            log.info("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//
-//        return apiResponse.makeResponse(ResStatus.SUCCESS);
-//    }
-//}
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        // TODO : 데이터 정확히 들어오는지 테스트 하기
+        try {
+            largeHoldingsService.insertData();
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            log.info("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+
+        return apiResponse.makeResponse(ResStatus.SUCCESS);
+    }
+}

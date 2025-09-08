@@ -2,6 +2,7 @@ package com.example.szs.insideTrade.domain;
 
 import com.example.szs.utils.time.TimeUtil;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.experimental.FieldNameConstants;
 @Table(name = "large_holdings_stkrt")
 @Getter
 @FieldNameConstants
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LargeHoldingsStkrt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

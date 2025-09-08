@@ -1,6 +1,7 @@
 package com.example.szs.insideTrade.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import lombok.experimental.FieldNameConstants;
 @Builder(toBuilder = true)
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "exec_ownership_detail")
 @Getter
 @FieldNameConstants

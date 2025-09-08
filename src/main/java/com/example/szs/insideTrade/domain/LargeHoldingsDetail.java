@@ -9,6 +9,7 @@ import lombok.experimental.FieldNameConstants;
 @Table(name = "large_holdings_detail")
 @Getter
 @FieldNameConstants
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LargeHoldingsDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

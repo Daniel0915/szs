@@ -5,13 +5,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
 @Entity
 @Table(name = "large_holdings")
 @Getter
 @FieldNameConstants
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LargeHoldings {
     @Id
     @Column(name = "rcept_no")
@@ -47,7 +50,8 @@ public class LargeHoldings {
     @Column(name = "reg_dt")
     private String regDt;
 
-    private LargeHoldings(String corpCode, String corpName, String repror, Long stkqy, Long stkqyIrds, Float stkrt, Float stkrtIrds, String reportResn, String rceptDt) {
+    private LargeHoldings(String rceptNo, String corpCode, String corpName, String repror, Long stkqy, Long stkqyIrds, Float stkrt, Float stkrtIrds, String reportResn, String rceptDt) {
+        this.rceptNo = rceptNo;
         this.corpCode = corpCode;
         this.corpName = corpName;
         this.repror = repror;
@@ -60,7 +64,7 @@ public class LargeHoldings {
         this.regDt = TimeUtil.nowTime("yyyyMMddHHmmss");
     }
 
-    public static LargeHoldings create(String corpCode, String corpName, String repror, Long stkqy, Long stkqyIrds, Float stkrt, Float stkrtIrds, String reportResn, String rceptDt) {
-        return new LargeHoldings(corpCode, corpName, repror, stkqy, stkqyIrds, stkrt, stkrtIrds, reportResn, rceptDt);
+    public static LargeHoldings create(String rceptNo, String corpCode, String corpName, String repror, Long stkqy, Long stkqyIrds, Float stkrt, Float stkrtIrds, String reportResn, String rceptDt) {
+        return new LargeHoldings(rceptNo, corpCode, corpName, repror, stkqy, stkqyIrds, stkrt, stkrtIrds, reportResn, rceptDt);
     }
 }

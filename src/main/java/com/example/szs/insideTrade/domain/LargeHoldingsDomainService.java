@@ -66,6 +66,7 @@ public class LargeHoldingsDomainService {
 
         List<LargeHoldings> insertList = largeHoldingList.stream()
                                                          .map(largeHolding -> LargeHoldings.create(
+                                                                 largeHolding.getRceptNo(),
                                                                  largeHolding.getCorpCode(),
                                                                  largeHolding.getCorpName(),
                                                                  largeHolding.getRepror(),
