@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,16 +31,18 @@ public class LargeHoldingsDomainService {
         this.dart = dart;
     }
 
-    @Transactional
-    public List<LargeHoldings> saveRecentLargeHoldings(CorpInfo corpInfo) {
+    @Transactional(rollbackFor = Exception.class)
+    public List<LargeHoldings> saveRecentLargeHoldings(CorpInfo corpInfo) throws Exception {
         // 회사별 지분공시 외부 Dart 호출로 조회 [외부 호출]
         Optional<LargeHoldingsInsiderTradeApiRes> resOptional = dart.findLargeHoldingsInsiderTrade(corpInfo);
 
-        if (resOptional.isEmpty() || CollectionUtils.isEmpty(resOptional.get().getList())) {
+        if (resOptional.isEmpty() || CollectionUtils.isEmpty(resOptional.get()
+                                                                        .getList())) {
             return new ArrayList<>();
         }
 
-        List<LargeHoldingsInsiderTradeApiRes.LargeHolding> resList = resOptional.get().getList();
+        List<LargeHoldingsInsiderTradeApiRes.LargeHolding> resList = resOptional.get()
+                                                                                .getList();
 
         // 가장 최근 내부 DB에 저장된 지분 공시 데이터 조회
         Optional<LargeHoldings> optionalLargeHoldings = largeHoldingsRepo.findLatestRecordBy(LargeHoldingsSearchCondition.builder()
@@ -50,9 +53,11 @@ public class LargeHoldingsDomainService {
         // 외부 호출 과 내부 DB 데이터 비교 후, 내부 DB 에 없는 데이터 저장
         List<LargeHoldingsInsiderTradeApiRes.LargeHolding> largeHoldingList = new ArrayList<>();
         if (optionalLargeHoldings.isPresent()) {
-            String lastRceptNo = optionalLargeHoldings.get().getRceptNo();
+            String lastRceptNo = optionalLargeHoldings.get()
+                                                      .getRceptNo();
             int startIndex = IntStream.range(0, resList.size())
-                                      .filter(index -> Objects.equals(resList.get(index).getRceptNo(), lastRceptNo))
+                                      .filter(index -> Objects.equals(resList.get(index)
+                                                                             .getRceptNo(), lastRceptNo))
                                       .findFirst()
                                       .orElse(-1);
 
@@ -78,6 +83,9 @@ public class LargeHoldingsDomainService {
                                                                  largeHolding.getRceptDt()
                                                          ))
                                                          .collect(Collectors.toList());
-        return largeHoldingsRepo.saveAll(insertList);
+
+        largeHoldingsRepo.insertNativeBatch(insertList, 500);
+        return insertList;
+
     }
 }

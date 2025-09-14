@@ -1,0 +1,85 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/postgres
+    username: postgres
+    password: dlatldyddla1!
+  jpa:
+    hibernate:
+      ddl-auto: none  # 테스트용으로 필요하면 update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    jdbc:
+      batch_size: 50
+      order_inserts: true
+      order_updates: true
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  webflux:
+    session:
+      timeout: 60m
+  reactor:
+    netty:
+      http:
+        response-timeout: 60000
+
+server:
+  port: 8082  # 테스트용 서버 포트
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  session:
+    timeout: 1000m
+  tomcat:
+    connection-timeout: 100000s
+
+logging:
+  level:
+    root: error
+    com.example.szs: debug
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
+
+jwt:
+  secret: 8962312ec726ed9a9916057ee731530b24c24561083f0ba4156266dfbbfb6341
+
+ACCESS_TOKEN_EXPIRE_TIME: 21600000
+REFRESH_TOKEN_EXPIRE_TIME: 5184000000
+REFRESH_TOKEN_REISSUE_TIME: 1209600000
+
+dart:
+  key: crtfc_key
+  value: 171b6517b5d71630512aab071f2872984d81cfc0
+
+telegram:
+  api:
+    token: 6338464795:AAGTFliu_wXzVo6-hFHGyGg8UNNDjBl5JBI
+  base:
+    uri: https://api.telegram.org/bot6338464795:AAGTFliu_wXzVo6-hFHGyGg8UNNDjBl5JBI
+  channel:
+    id: -1001871857326
+
+frontend:
+  url: http://127.0.0.1:5173
+
+pjt:
+  server:
+    url: http://127.0.0.1:8082
+
+api:
+  key: 2QCYMHBJbeH4wsI/QY/zCfAL7O7plxWM
+
+scrap:
+  url: https://codetest-v4.3o3.co.kr/scrap
+  header:
+    key: X-API-KEY
+    value: fQL4PtoGRRgj6Q1OZG1WpQ==

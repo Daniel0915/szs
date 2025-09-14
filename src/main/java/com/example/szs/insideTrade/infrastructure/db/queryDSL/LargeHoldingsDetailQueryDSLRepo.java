@@ -21,4 +21,9 @@ public class LargeHoldingsDetailQueryDSLRepo implements LargeHoldingsDetailRepo 
     public List<LargeHoldingsDetail> saveAll(List<LargeHoldingsDetail> entities) {
         return iLargeHoldingsDetailJpaRepo.saveAll(entities);
     }
+
+    @Override
+    public void insertNativeBatch(List<LargeHoldingsDetail> entities, int batchSize) {
+        assert false : "사용하지 마세요. JPA 에서 처리됩니다.";
+    }
 }

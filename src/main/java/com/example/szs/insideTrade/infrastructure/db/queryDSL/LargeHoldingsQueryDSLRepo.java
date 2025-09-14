@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +28,6 @@ import static org.springframework.util.StringUtils.hasText;
 @Slf4j
 public class LargeHoldingsQueryDSLRepo implements LargeHoldingsRepo {
     private final JPAQueryFactory queryFactory;
-    private final ILargeHoldingsJpaRepo iLargeHoldingsJpaRepo;
 
     @Override
     public Optional<LargeHoldings> findLatestRecordBy(LargeHoldingsSearchCondition condition) {
@@ -42,7 +42,13 @@ public class LargeHoldingsQueryDSLRepo implements LargeHoldingsRepo {
 
     @Override
     public List<LargeHoldings> saveAll(List<LargeHoldings> largeHoldings) {
-        return iLargeHoldingsJpaRepo.saveAll(largeHoldings);
+        assert false : "사용하지 마세요. JPA 에서 처리됩니다.";
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void insertNativeBatch(List<LargeHoldings> largeHoldings, int batchSize) {
+        assert false : "사용하지 마세요. JPA 에서 처리됩니다.";
     }
 
     private BooleanExpression rceptNoEq(String rceptNo) {

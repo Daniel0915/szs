@@ -62,7 +62,8 @@ public class ScrapingService {
                                                                largeHoldingsDetailCrawlingDTO.getTotalStockPrice()
                                                        ))
                                                        .toList();
-        largeHoldingsDetailRepo.saveAll(entities);
+        largeHoldingsDetailRepo.insertNativeBatch(entities, 500);
+
     }
 
     private void saveLargeHoldingsStkrtData(LargeHoldings entity) {
@@ -80,6 +81,7 @@ public class ScrapingService {
                                                              )
                                                      )
                                                      .toList();
+        // TODO : 배치 단위 저장
         largeHoldingsStkrtRepo.saveAll(entities);
     }
 }

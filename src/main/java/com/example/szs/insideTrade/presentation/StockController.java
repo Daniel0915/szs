@@ -1,14 +1,26 @@
 package com.example.szs.insideTrade.presentation;
 
 import com.example.szs.insideTrade.application.LargeHoldingsService;
+import com.example.szs.insideTrade.domain.LargeHoldings;
+import com.example.szs.insideTrade.domain.LargeHoldingsDetail;
+import com.example.szs.insideTrade.domain.LargeHoldingsDetailRepo;
+import com.example.szs.insideTrade.domain.LargeHoldingsRepo;
+import com.example.szs.insideTrade.domain.LargeHoldingsStkrt;
+import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.module.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/stock")
@@ -18,6 +30,13 @@ public class StockController {
     private final LargeHoldingsService largeHoldingsService;
     private final ApiResponse          apiResponse;
 
+    @Qualifier("largeHoldingsJpaRepo")
+    private final LargeHoldingsRepo      largeHoldingsJpaRepo;
+    @Qualifier("largeHoldingsStkrtJpaRepo")
+    private final LargeHoldingsStkrtRepo  largeHoldingsStkrtJpaRepo;
+    @Qualifier("largeHoldingsDetailJpaRepo")
+    private final LargeHoldingsDetailRepo largeHoldingsDetailJpaRepo;
+
     private static final String LARGE_HOLDINGS_NAME = "largeHoldingsName";
     private static final String CORP_CODE           = "corpCode";
     private static final String TRADE_DT_GOE        = "tradeDtGoe";
@@ -25,7 +44,7 @@ public class StockController {
     private static final String SELL_OR_BUY_TYPE    = "sellOrBuyType";
     private static final String EXEC_OWNERSHIP_NAME = "execOwnershipName";
 
-//    @GetMapping("/search/large-holdings")
+    //    @GetMapping("/search/large-holdings")
 //    public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
 //        try {
 //            return largeHoldingsService.getSearchPageLargeHoldingsDetail(condition, pageable);
@@ -259,5 +278,105 @@ public class StockController {
         }
 
         return apiResponse.makeResponse(ResStatus.SUCCESS);
+    }
+
+    @GetMapping("/compare")
+    @Transactional
+    public String comparePerformance(@RequestParam int count, @RequestParam int batchSize) throws Exception {
+        List<LargeHoldings> testList = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            testList.add(LargeHoldings.create(
+                    "R" + i,
+                    "C" + i,
+                    "기업" + i,
+                    "주주" + i,
+                    1000L + i,
+                    200L + i,
+                    5.5f,
+                    0.3f,
+                    "취득",
+                    "20250912"
+            ));
+        }
+
+        List<LargeHoldings> testList2 = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            testList2.add(LargeHoldings.create(
+                    "R" + i + "batch",
+                    "C" + i,
+                    "기업" + i,
+                    "주주" + i,
+                    1000L + i,
+                    200L + i,
+                    5.5f,
+                    0.3f,
+                    "취득",
+                    "20250912"
+            ));
+        }
+
+        // saveAll
+        long start1 = System.currentTimeMillis();
+        largeHoldingsJpaRepo.saveAll(testList);
+        long end1 = System.currentTimeMillis();
+
+        // saveAllInBatch
+        long start2 = System.currentTimeMillis();
+        largeHoldingsJpaRepo.insertNativeBatch(testList2, batchSize);
+        long end2 = System.currentTimeMillis();
+
+        return String.format("saveAll: %d ms,\nsaveAllInBatch(batchSize=%d): %d ms",
+                (end1 - start1), batchSize, (end2 - start2));
+    }
+
+    @GetMapping("/compare/stkrt")
+    @Transactional
+    public String comparePerformanceStkrt(@RequestParam int count, @RequestParam int batchSize) throws Exception {
+        List<LargeHoldingsStkrt> dummyList = new ArrayList<>();
+
+        for (int i = 1; i <= count; i++) { // 10개 더미 데이터
+            LargeHoldingsStkrt entity = LargeHoldingsStkrt.create(
+                    "R" + i,
+                    "C" + i,
+                    "Company" + i,
+                    "Holder" + i,
+                    "1990010" + i,
+                    1000L * i,
+                    1.5f * i
+            );
+            dummyList.add(entity);
+        }
+
+        largeHoldingsStkrtJpaRepo.insertNativeBatch(dummyList, batchSize);
+        return "su";
+    }
+
+    @GetMapping("/compare/detail")
+    @Transactional
+    public String comparePerformanceDetail(@RequestParam int count, @RequestParam int batchSize) throws Exception {
+        List<LargeHoldingsDetail> dummyList = new ArrayList<>();
+
+        for (int i = 1; i <= count; i++) { // 10개 더미 데이터
+            LargeHoldingsDetail entity = LargeHoldingsDetail.create(
+                    "R" + i,                       // rceptNo
+                    "C" + i,                       // corpCode
+                    "Company" + i,                 // corpName
+                    "Holder" + i,                  // largeHoldingsName
+                    "1990010" + i,                 // birthDateOrBizRegNum
+                    "20250914",                     // tradeDt
+                    "Reason" + i,                  // tradeReason
+                    "Type" + i,                     // stockType
+                    1000L * i,                     // beforeStockAmount
+                    200L * i,                       // changeStockAmount
+                    1200L * i,                      // afterStockAmount
+                    5000L * i,                      // unitStockPrice
+                    "KRW",                          // currencyType
+                    6000000L * i                   // totalStockPrice
+            );
+            dummyList.add(entity);
+        }
+
+        largeHoldingsDetailJpaRepo.insertNativeBatch(dummyList, batchSize);
+        return "su";
     }
 }

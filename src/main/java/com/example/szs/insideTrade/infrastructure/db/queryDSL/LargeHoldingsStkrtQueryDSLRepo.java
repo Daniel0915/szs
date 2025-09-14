@@ -21,4 +21,9 @@ public class LargeHoldingsStkrtQueryDSLRepo implements LargeHoldingsStkrtRepo {
     public List<LargeHoldingsStkrt> saveAll(List<LargeHoldingsStkrt> entities) {
         return iLargeHoldingsStkrtJpaRepo.saveAll(entities);
     }
+
+    @Override
+    public void insertNativeBatch(List<LargeHoldingsStkrt> entities, int batchSize) {
+        assert false : "사용하지 마세요. JPA 에서 처리됩니다.";
+    }
 }

@@ -64,6 +64,7 @@ public class LargeHoldings {
         this.regDt = TimeUtil.nowTime("yyyyMMddHHmmss");
     }
 
+    // TODO : 매개변수가 길어서, 차라리 메서드 명칭을 변경 && 매개변수를 객체로 변경
     public static LargeHoldings create(String rceptNo, String corpCode, String corpName, String repror, Long stkqy, Long stkqyIrds, Float stkrt, Float stkrtIrds, String reportResn, String rceptDt) {
         return new LargeHoldings(rceptNo, corpCode, corpName, repror, stkqy, stkqyIrds, stkrt, stkrtIrds, reportResn, rceptDt);
     }
