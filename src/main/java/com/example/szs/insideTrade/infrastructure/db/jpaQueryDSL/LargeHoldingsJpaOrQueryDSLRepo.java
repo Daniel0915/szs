@@ -1,9 +1,9 @@
-package com.example.szs.insideTrade.infrastructure.db.queryDSL;
+package com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL;
 
 import com.example.szs.insideTrade.domain.LargeHoldings;
 import com.example.szs.insideTrade.domain.LargeHoldingsRepo;
 import com.example.szs.insideTrade.domain.QLargeHoldings;
-import com.example.szs.insideTrade.infrastructure.db.jpa.ILargeHoldingsJpaRepo;
+import com.example.szs.utils.batch.JdbcBatchUtil;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -11,11 +11,11 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,8 +26,10 @@ import static org.springframework.util.StringUtils.hasText;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class LargeHoldingsQueryDSLRepo implements LargeHoldingsRepo {
-    private final JPAQueryFactory queryFactory;
+public class LargeHoldingsJpaOrQueryDSLRepo implements LargeHoldingsRepo {
+    private final ILargeHoldingsJpaRepo iLargeHoldingsJpaRepo;
+    private final JPAQueryFactory       queryFactory;
+    private final JdbcTemplate          jdbcTemplate;
 
     @Override
     public Optional<LargeHoldings> findLatestRecordBy(LargeHoldingsSearchCondition condition) {
@@ -42,13 +44,35 @@ public class LargeHoldingsQueryDSLRepo implements LargeHoldingsRepo {
 
     @Override
     public List<LargeHoldings> saveAll(List<LargeHoldings> largeHoldings) {
-        assert false : "사용하지 마세요. JPA 에서 처리됩니다.";
-        return new ArrayList<>();
+        return iLargeHoldingsJpaRepo.saveAll(largeHoldings);
     }
 
     @Override
-    public void insertNativeBatch(List<LargeHoldings> largeHoldings, int batchSize) {
-        assert false : "사용하지 마세요. JPA 에서 처리됩니다.";
+    public void insertNativeBatch(List<LargeHoldings> largeHoldings, int batchSize) throws Exception {
+        // TODO : 테스트 코드
+        log.info("jdbcTemplate 메모리 위치 확인, jdbcTemplate : {}", jdbcTemplate);
+        // TODO : 테스트 코드
+
+        String sql = """
+                INSERT INTO large_holdings
+                    (rcept_no, corp_code, corp_name, repror, stkqy, stkqy_irds, stkrt, stkrt_irds, report_resn, rcept_dt, reg_dt)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
+
+
+        JdbcBatchUtil.executeBatch(jdbcTemplate, largeHoldings, batchSize, sql, (ps, largeHolding) -> {
+            ps.setString(1, largeHolding.getRceptNo());
+            ps.setString(2, largeHolding.getCorpCode());
+            ps.setString(3, largeHolding.getCorpName());
+            ps.setString(4, largeHolding.getRepror());
+            ps.setObject(5, largeHolding.getStkqy());
+            ps.setObject(6, largeHolding.getStkqyIrds());
+            ps.setObject(7, largeHolding.getStkrt());
+            ps.setObject(8, largeHolding.getStkrtIrds());
+            ps.setString(9, largeHolding.getReportResn());
+            ps.setString(10, largeHolding.getRceptDt());
+            ps.setString(11, largeHolding.getRegDt());
+        });
     }
 
     private BooleanExpression rceptNoEq(String rceptNo) {

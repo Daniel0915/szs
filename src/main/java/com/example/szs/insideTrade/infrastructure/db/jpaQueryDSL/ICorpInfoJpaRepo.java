@@ -1,4 +1,4 @@
-package com.example.szs.insideTrade.infrastructure.db.jpa;
+package com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL;
 
 import com.example.szs.insideTrade.domain.CorpInfo;
 import org.springframework.data.jpa.repository.JpaRepository;

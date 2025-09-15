@@ -1,6 +1,7 @@
 package com.example.szs.insideTrade.infrastructure.db.jpa;
 
 import com.example.szs.insideTrade.domain.LargeHoldings;
+import com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL.ILargeHoldingsJpaRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -9,8 +10,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

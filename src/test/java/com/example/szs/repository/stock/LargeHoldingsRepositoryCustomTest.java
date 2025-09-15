@@ -1,7 +1,7 @@
 //package com.example.szs.repository.stock;
 //
 //import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
-//import com.example.szs.insideTrade.infrastructure.db.queryDSL.LargeHoldingsSearchCondition;
+//import com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL.LargeHoldingsSearchCondition;
 //import jakarta.persistence.EntityManager;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;

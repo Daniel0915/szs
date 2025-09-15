@@ -2,15 +2,14 @@ package com.example.szs.insideTrade.domain;
 
 import com.example.szs.insideTrade.infrastructure.client.Dart;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsInsiderTradeApiRes;
-import com.example.szs.insideTrade.infrastructure.db.queryDSL.LargeHoldingsSearchCondition;
+import com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL.LargeHoldingsSearchCondition;
 import com.example.szs.utils.money.NumberUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,17 +18,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
 public class LargeHoldingsDomainService {
     private final LargeHoldingsRepo largeHoldingsRepo;
     private final Dart              dart;
-
-    public LargeHoldingsDomainService(@Qualifier("largeHoldingsQueryDSLRepo") LargeHoldingsRepo largeHoldingsRepo,
-                                      Dart dart) {
-        this.largeHoldingsRepo = largeHoldingsRepo;
-        this.dart = dart;
-    }
 
     @Transactional(rollbackFor = Exception.class)
     public List<LargeHoldings> saveRecentLargeHoldings(CorpInfo corpInfo) throws Exception {

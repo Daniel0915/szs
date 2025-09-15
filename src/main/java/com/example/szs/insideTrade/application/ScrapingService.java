@@ -8,29 +8,20 @@ import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
 import com.example.szs.insideTrade.infrastructure.client.Dart;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsDetailCrawlingDTO;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsStkrtCrawlingDTO;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class ScrapingService {
     private final Dart dart;
     private final LargeHoldingsDetailRepo largeHoldingsDetailRepo;
     private final LargeHoldingsStkrtRepo largeHoldingsStkrtRepo;
-
-    public ScrapingService(Dart dart,
-                           @Qualifier("largeHoldingsDetailQueryDSLRepo") LargeHoldingsDetailRepo largeHoldingsDetailRepo,
-                           @Qualifier("largeHoldingsStkrtQueryDSLRepo") LargeHoldingsStkrtRepo largeHoldingsStkrtRepo) {
-        this.dart = dart;
-        this.largeHoldingsDetailRepo = largeHoldingsDetailRepo;
-        this.largeHoldingsStkrtRepo = largeHoldingsStkrtRepo;
-    }
 
     @Transactional
     public void updateLargeHoldingsScrapingData(List<LargeHoldings> insertList) {

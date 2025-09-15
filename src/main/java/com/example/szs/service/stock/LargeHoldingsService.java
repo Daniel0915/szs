@@ -14,7 +14,7 @@
 //import com.example.szs.model.eNum.stock.SellOrBuyType;
 //import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
 //import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
-//import com.example.szs.insideTrade.infrastructure.db.queryDSL.LargeHoldingsSearchCondition;
+//import com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL.LargeHoldingsSearchCondition;
 //import com.example.szs.module.ApiResponse;
 //import com.example.szs.module.stock.WebCrawling;
 //import com.example.szs.repository.stock.CorpInfoRepositoryCustom;

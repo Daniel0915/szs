@@ -1,4 +1,4 @@
-package com.example.szs.insideTrade.infrastructure.db.jpa;
+package com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL;
 
 import com.example.szs.insideTrade.domain.LargeHoldingsStkrt;
 import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
@@ -8,10 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 
 @Repository

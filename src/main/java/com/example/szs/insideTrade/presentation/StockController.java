@@ -29,12 +29,8 @@ import java.util.List;
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
     private final ApiResponse          apiResponse;
-
-    @Qualifier("largeHoldingsJpaRepo")
     private final LargeHoldingsRepo      largeHoldingsJpaRepo;
-    @Qualifier("largeHoldingsStkrtJpaRepo")
     private final LargeHoldingsStkrtRepo  largeHoldingsStkrtJpaRepo;
-    @Qualifier("largeHoldingsDetailJpaRepo")
     private final LargeHoldingsDetailRepo largeHoldingsDetailJpaRepo;
 
     private static final String LARGE_HOLDINGS_NAME = "largeHoldingsName";
