@@ -81,7 +81,7 @@ public class ScrapingService {
                                                              )
                                                      )
                                                      .toList();
-        // TODO : 배치 단위 저장
-        largeHoldingsStkrtRepo.saveAll(entities);
+
+        largeHoldingsStkrtRepo.insertNativeBatch(entities, 500);
     }
 }

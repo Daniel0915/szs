@@ -37,10 +37,8 @@ public class LargeHoldingsService {
 
     @Scheduled(cron = "0 0 9 * * ?")
     public void insertData() throws Exception {
-        // TODO : 도메인 간접 참조 사용해보기
         List<CorpInfo> findCorpInfoList = corpInfoJpaRepo.findAll();
         for (CorpInfo corpInfo : findCorpInfoList) {
-            // TODO : 배치 단위 저장
             // TODO : 예외 발생 시, 로그 처리(Global exception 처리 고민 해보기)
             // TODO : p.148 의 벨류 컬렉션 구현해보기
             // 1. 전체 회사를 조회 [내부 DB] + 회사별 외부 다트 호출해서, 지분공시 변경 데이터 조회 [외부 호출] + 내부 DB 와 외부 다트 비교, 새로운 데이터를 내부 DB 저장(외부 호출에 대한 데이터 저장) [내부 DB]
