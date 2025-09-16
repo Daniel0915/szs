@@ -1,6 +1,9 @@
 package com.example.szs.insideTrade.domain;
 
 
+import com.example.szs.insideTrade.infrastructure.client.dto.ExecOwnershipInsiderTradeApiRes;
+import com.example.szs.utils.money.NumberUtils;
+import com.example.szs.utils.time.TimeUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -12,13 +15,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
-@Builder(toBuilder = true)
+import java.util.List;
+
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "exec_ownership")
 @Getter
 @FieldNameConstants
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExecOwnership {
 
     @Id
@@ -60,4 +63,45 @@ public class ExecOwnership {
 
     @Column(name = "reg_dt")
     private String regDt;
+
+    private ExecOwnership(String rceptNo,
+                          String corpCode,
+                          String corpName,
+                          String repror,
+                          String isuExctvRgistAt,
+                          String isuExctvOfcps,
+                          String isuMainShrholdr,
+                          Long spStockLmpCnt,
+                          Long spStockLmpIrdsCnt,
+                          Float spStockLmpRate,
+                          Float spStockLmpIrdsRate) {
+        this.rceptNo = rceptNo;
+        this.corpCode = corpCode;
+        this.corpName = corpName;
+        this.repror = repror;
+        this.isuExctvRgistAt = isuExctvRgistAt;
+        this.isuExctvOfcps = isuExctvOfcps;
+        this.isuMainShrholdr = isuMainShrholdr;
+        this.spStockLmpCnt = spStockLmpCnt;
+        this.spStockLmpIrdsCnt = spStockLmpIrdsCnt;
+        this.spStockLmpRate = spStockLmpRate;
+        this.spStockLmpIrdsRate = spStockLmpIrdsRate;
+        this.regDt = TimeUtil.nowTime("yyyyMMddHHmmss");
+    }
+
+    public static ExecOwnership create(ExecOwnershipInsiderTradeApiRes.ExecOwnership execOwnership) {
+        return new ExecOwnership(
+                execOwnership.getRceptNo(),
+                execOwnership.getCorpCode(),
+                execOwnership.getCorpName(),
+                execOwnership.getRepror(),
+                execOwnership.getIsuExctvRgistAt(),
+                execOwnership.getIsuExctvOfcps(),
+                execOwnership.getIsuMainShrholdr(),
+                NumberUtils.stringToLongConverter(execOwnership.getSpStockLmpCnt()),
+                NumberUtils.stringToLongConverter(execOwnership.getSpStockLmpIrdsCnt()),
+                NumberUtils.stringToFloatConverter(execOwnership.getSpStockLmpIrdsCnt()),
+                NumberUtils.stringToFloatConverter(execOwnership.getSpStockLmpIrdsRate())
+                );
+    }
 }

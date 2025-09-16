@@ -1,6 +1,7 @@
 package com.example.szs.insideTrade.infrastructure.client;
 
 import com.example.szs.insideTrade.domain.CorpInfo;
+import com.example.szs.insideTrade.infrastructure.client.dto.ExecOwnershipInsiderTradeApiRes;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsDetailCrawlingDTO;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsInsiderTradeApiRes;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsStkrtCrawlingDTO;
@@ -40,7 +41,9 @@ public class Dart {
     @Value("${dart.uri.base}")
     private String baseUri;
     @Value("${dart.uri.largeHoldings}")
-    private String path;
+    private String pathLargeHoldings;
+    @Value("${dart.uri.execOwnership}")
+    private String pathExecOwnership;
     @Value("${corp.code.key}")
     private String corpCodeKey;
     @Value("${dart.key}")
@@ -55,12 +58,27 @@ public class Dart {
                                        .build();
         // TODO : 왜 Mono 를 사용했는지 작성해보자~
         Mono<LargeHoldingsInsiderTradeApiRes> resMono = webClient.get()
-                                                                 .uri(uriBuilder -> uriBuilder.path(path)
+                                                                 .uri(uriBuilder -> uriBuilder.path(pathLargeHoldings)
                                                                                               .queryParam(dartKey, dartValue)
                                                                                               .queryParam(corpCodeKey, corpInfo.getCorpCode())
                                                                                               .build())
                                                                  .retrieve()
                                                                  .bodyToMono(LargeHoldingsInsiderTradeApiRes.class);
+        return resMono.blockOptional();
+    }
+
+    public Optional<ExecOwnershipInsiderTradeApiRes> findExecOwnershipInsiderTrade(CorpInfo corpInfo) {
+        WebClient webClient = WebClient.builder()
+                                       .baseUrl(baseUri)
+                                       .build();
+        // TODO : 왜 Mono 를 사용했는지 작성해보자~
+        Mono<ExecOwnershipInsiderTradeApiRes> resMono = webClient.get()
+                                                                 .uri(uriBuilder -> uriBuilder.path(pathExecOwnership)
+                                                                                              .queryParam(dartKey, dartValue)
+                                                                                              .queryParam(corpCodeKey, corpInfo.getCorpCode())
+                                                                                              .build())
+                                                                 .retrieve()
+                                                                 .bodyToMono(ExecOwnershipInsiderTradeApiRes.class);
         return resMono.blockOptional();
     }
 

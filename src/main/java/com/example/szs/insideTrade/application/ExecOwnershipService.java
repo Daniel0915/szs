@@ -1,6 +1,11 @@
-package com.example.szs.service.stock;
+package com.example.szs.insideTrade.application;
 
+import com.example.szs.insideTrade.domain.CorpInfo;
+import com.example.szs.insideTrade.domain.CorpInfoRepo;
 import com.example.szs.insideTrade.domain.ExecOwnership;
+import com.example.szs.insideTrade.domain.ExecOwnershipDomainService;
+import com.example.szs.insideTrade.domain.ExecOwnershipRepository;
+import com.example.szs.insideTrade.infrastructure.client.Dart;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
 import com.example.szs.model.dto.execOwnership.EOResponseDTO;
@@ -16,8 +21,8 @@ import com.example.szs.module.ApiResponse;
 import com.example.szs.module.stock.WebCrawling;
 import com.example.szs.repository.stock.CorpInfoRepositoryCustom;
 import com.example.szs.repository.stock.ExecOwnershipDetailRepositoryCustom;
-import com.example.szs.insideTrade.domain.ExecOwnershipRepository;
 import com.example.szs.repository.stock.ExecOwnershipRepositoryCustom;
+import com.example.szs.service.stock.PushService;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -40,7 +45,12 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.tcp.TcpClient;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -59,10 +69,12 @@ public class ExecOwnershipService {
     @Value("${dart.value}")
     private String dartValue;
 
+    private final CorpInfoRepo corpInfoRepo;
+    private final ExecOwnershipDomainService execOwnershipDomainService;
+
     private final ExecOwnershipRepository execOwnershipRepository;
     private final ExecOwnershipRepositoryCustom execOwnershipRepositoryCustom;
     private final ExecOwnershipDetailRepositoryCustom execOwnershipDetailRepositoryCustom;
-    private final CorpInfoRepositoryCustom corpInfoRepositoryCustom;
 
     private final PushService pushService;
     private final ApiResponse apiResponse;
@@ -70,28 +82,23 @@ public class ExecOwnershipService {
 
     @Transactional
     @Scheduled(cron = "0 0 9 * * ?")
-    public void insertData() {
-        List<CorpInfoDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
+    public void insertData() throws Exception {
+        List<CorpInfo> findCorpInfoList = corpInfoRepo.findAll();
+        /**
+         * TODO
+         *  1. ExecOwnershipDomainService 구현 + 인프라 속하는 외부 호출 메서드 구현
+         *  2. 스크래핑 service 구현
+         *  3. SSE send 메시지
+         */
 
-        for (CorpInfoDTO dto : corpInfoDTOList) {
-            TcpClient tcpClient = TcpClient.create()
-                                           .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000 * 6)  // 연결 타임아웃 (60초)
-                                           .doOnConnected(conn ->
-                                                   conn.addHandlerLast(new ReadTimeoutHandler(60 * 5))   // 읽기 타임아웃 (5분)
-                                                       .addHandlerLast(new WriteTimeoutHandler(3600))  // 쓰기 타임아웃 (30초)
-                                           );
+        for (CorpInfo corpInfo : findCorpInfoList) {
+            // 1. 전체 회사를 조회 [내부 DB] + 회사별 외부 다트 호출해서, 지분공시 변경 데이터 조회 [외부 호출] + 내부 DB 와 외부 다트 비교, 새로운 데이터를 내부 DB 저장(외부 호출에 대한 데이터 저장) [내부 DB]
+            List<ExecOwnership> insertList = execOwnershipDomainService.saveRecentLExecOwnership(corpInfo);
+            // TODO : 1번 데이터는 정확하지 않기 떄문에, 지분 공시의 고유 넘버를 가지고, 외부 다트 공시 웹 크롤링 [외부 호출] + 크롤링 데이터를 내부 DB 저장 [내부 DB]
+            // TODO : scrapingService.updateExecOwnershipsScrapingData 만들어야함
 
 
-            WebClient webClient = WebClient.builder()
-                                           .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
-                                           .baseUrl(baseUri)
-                                           .build();
 
-            Mono<EOResponseDTO> eoResponseDTOMono = webClient.get()
-                                                             .uri(uriBuilder -> uriBuilder.path(path)
-                                                                                          .queryParam(dartKey, dartValue)
-                                                                                          .queryParam(corpCodeKey, dto.getCorpCode())
-                                                                                          .build()).retrieve().bodyToMono(EOResponseDTO.class);
 
             EOResponseDTO eoResponseDTO = eoResponseDTOMono.block();
             if (eoResponseDTO == null) {

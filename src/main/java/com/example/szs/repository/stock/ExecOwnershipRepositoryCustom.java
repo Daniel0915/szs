@@ -1,6 +1,6 @@
 //package com.example.szs.repository.stock;
 //
-//import com.example.szs.domain.stock.QExecOwnershipEntity;
+//import com.example.szs.insideTrade.domain.QExecOwnership;
 //import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 //import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 //import com.example.szs.utils.jpa.EntityToDtoMapper;
@@ -20,7 +20,7 @@
 //import java.util.*;
 //import java.util.stream.Collectors;
 //
-//import static com.example.szs.domain.stock.QExecOwnershipEntity.execOwnershipEntity;
+//import static com.example.szs.insideTrade.domain.QExecOwnership.execOwnership;
 //import static org.springframework.util.StringUtils.hasText;
 //
 //@Repository
@@ -33,7 +33,7 @@
 //    }
 //
 //    public Optional<ExecOwnershipDTO> findLatestRecordBy(ExecOwnershipSearchCondition condition) {
-//        return Optional.ofNullable(queryFactory.selectFrom(execOwnershipEntity)
+//        return Optional.ofNullable(queryFactory.selectFrom(execOwnership)
 //                                               .where(
 //                                                       rceptNoEq    (condition.getRceptNo()),
 //                                                       corpCodeEq   (condition.getCorpCode())
@@ -44,7 +44,7 @@
 //    }
 //
 //    private BooleanExpression rceptNoEq(String rceptNo) {
-//        return hasText(rceptNo) ? execOwnershipEntity.rceptNo.eq(rceptNo) : null;
+//        return hasText(rceptNo) ? execOwnership.rceptNo.eq(rceptNo) : null;
 //    }
 //
 //    public List<ExecOwnershipDTO> getExecOwnershipOrderSpStockLmpCnt(String corpCode) {
@@ -52,10 +52,10 @@
 //            return new ArrayList<>();
 //        }
 //
-//        List<String> reprorList = queryFactory.select(execOwnershipEntity.repror) // 반환 타입을 지정.from(execOwnershipEntity)
-//                                              .from(execOwnershipEntity)
+//        List<String> reprorList = queryFactory.select(execOwnership.repror) // 반환 타입을 지정.from(execOwnership)
+//                                              .from(execOwnership)
 //                                              .where(corpCodeEq(corpCode))
-//                                              .groupBy(execOwnershipEntity.repror)
+//                                              .groupBy(execOwnership.repror)
 //                                              .fetch();
 //        if (CollectionUtils.isEmpty(reprorList)) {
 //            return new ArrayList<>();
@@ -64,10 +64,10 @@
 //        List<String> recentRceptNoList = new ArrayList<>();
 //        for (List<String> divisionReprorList : ListDivider.getDivisionList(reprorList, 300)) {
 //            recentRceptNoList.addAll(queryFactory
-//                    .select(execOwnershipEntity.rceptNo.max())
-//                    .from(execOwnershipEntity)
-//                    .where(execOwnershipEntity.repror.in(divisionReprorList))
-//                    .groupBy(execOwnershipEntity.repror)
+//                    .select(execOwnership.rceptNo.max())
+//                    .from(execOwnership)
+//                    .where(execOwnership.repror.in(divisionReprorList))
+//                    .groupBy(execOwnership.repror)
 //                    .fetch());
 //        }
 //
@@ -78,8 +78,8 @@
 //        List<ExecOwnershipDTO> execOwnershipDTOList = new ArrayList<>();
 //
 //        for (List<String> divisionRceptNoList : ListDivider.getDivisionList(recentRceptNoList, 300)) {
-//            execOwnershipDTOList.addAll(queryFactory.selectFrom(execOwnershipEntity)
-//                                                    .where(execOwnershipEntity.rceptNo.in(divisionRceptNoList))
+//            execOwnershipDTOList.addAll(queryFactory.selectFrom(execOwnership)
+//                                                    .where(execOwnership.rceptNo.in(divisionRceptNoList))
 //                                                    .fetch()
 //                                                    .stream()
 //                                                    .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, ExecOwnershipDTO.class).stream())
@@ -94,24 +94,24 @@
 //    }
 //
 //    private BooleanExpression corpCodeEq(String corpCode) {
-//        return hasText(corpCode) ? execOwnershipEntity.corpCode.eq(corpCode) : null;
+//        return hasText(corpCode) ? execOwnership.corpCode.eq(corpCode) : null;
 //    }
 //
 //    private OrderSpecifier<?> dynamicOrder(ExecOwnershipSearchCondition condition) {
 //        if (!hasText(condition.getOrderColumn())) {
-//            return execOwnershipEntity.rceptNo.asc();
+//            return execOwnership.rceptNo.asc();
 //        }
 //
 //        String orderColumn = condition.getOrderColumn();
 //        boolean isDescending = condition.isDescending();
 //
-//        Class<?> clazz = QExecOwnershipEntity.class;
+//        Class<?> clazz = QExecOwnership.class;
 //
 //        Field[] fields = clazz.getDeclaredFields();
 //        for (Field field : fields) {
 //            if (Objects.equals(orderColumn, field.getName())) {
 //                // PathBuilder를 사용하여 필드 동적 참조
-//                PathBuilder<?> pathBuilder = new PathBuilder<>(execOwnershipEntity.getType(), execOwnershipEntity.getMetadata());
+//                PathBuilder<?> pathBuilder = new PathBuilder<>(execOwnership.getType(), execOwnership.getMetadata());
 //
 //                StringPath path = pathBuilder.getString(field.getName());
 //                return isDescending ? path.desc() : path.asc();
@@ -119,6 +119,6 @@
 //        }
 //
 //        // 필드 네임을 찾지 못하면 pk 오름차순
-//        return execOwnershipEntity.rceptNo.asc();
+//        return execOwnership.rceptNo.asc();
 //    }
 //}

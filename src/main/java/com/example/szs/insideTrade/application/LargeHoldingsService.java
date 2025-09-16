@@ -7,6 +7,7 @@ import com.example.szs.insideTrade.domain.LargeHoldingsDomainService;
 import com.example.szs.insideTrade.infrastructure.push.SsePush;
 import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -16,28 +17,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 @EnableScheduling
 public class LargeHoldingsService {
     private final LargeHoldingsDomainService largeHoldingsDomainService;
     private final ScrapingService scrapingService;
     private final SsePush ssePush;
-    private final CorpInfoRepo corpInfoJpaRepo;
-
-    public LargeHoldingsService(LargeHoldingsDomainService largeHoldingsDomainService,
-                                ScrapingService scrapingService,
-                                SsePush ssePush,
-                                @Qualifier("corpInfoJpaRepo") CorpInfoRepo corpInfoJpaRepo
-    ) {
-        this.largeHoldingsDomainService = largeHoldingsDomainService;
-        this.scrapingService = scrapingService;
-        this.ssePush = ssePush;
-        this.corpInfoJpaRepo = corpInfoJpaRepo;
-    }
+    private final CorpInfoRepo corpInfoRepo;
 
     @Scheduled(cron = "0 0 9 * * ?")
     public void insertData() throws Exception {
-        List<CorpInfo> findCorpInfoList = corpInfoJpaRepo.findAll();
+        List<CorpInfo> findCorpInfoList = corpInfoRepo.findAll();
         for (CorpInfo corpInfo : findCorpInfoList) {
             // TODO : 예외 발생 시, 로그 처리(Global exception 처리 고민 해보기)
             // TODO : p.148 의 벨류 컬렉션 구현해보기
