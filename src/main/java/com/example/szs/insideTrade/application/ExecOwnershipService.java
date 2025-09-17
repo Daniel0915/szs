@@ -80,12 +80,6 @@ public class ExecOwnershipService {
     @Scheduled(cron = "0 0 9 * * ?")
     public void insertData() throws Exception {
         List<CorpInfo> findCorpInfoList = corpInfoRepo.findAll();
-        /**
-         * TODO
-         *  1. ExecOwnershipDomainService 구현 + 인프라 속하는 외부 호출 메서드 구현
-         *  2. 스크래핑 service 구현
-         *  3. SSE send 메시지
-         */
 
         for (CorpInfo corpInfo : findCorpInfoList) {
             // 1. 전체 회사를 조회 [내부 DB] + 회사별 외부 다트 호출해서, 지분공시 변경 데이터 조회 [외부 호출] + 내부 DB 와 외부 다트 비교, 새로운 데이터를 내부 DB 저장(외부 호출에 대한 데이터 저장) [내부 DB]
