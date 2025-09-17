@@ -71,14 +71,10 @@ public class ExecOwnershipService {
 
     private final CorpInfoRepo corpInfoRepo;
     private final ExecOwnershipDomainService execOwnershipDomainService;
-
-    private final ExecOwnershipRepository execOwnershipRepository;
-    private final ExecOwnershipRepositoryCustom execOwnershipRepositoryCustom;
-    private final ExecOwnershipDetailRepositoryCustom execOwnershipDetailRepositoryCustom;
+    private final ScrapingService scrapingService;
 
     private final PushService pushService;
     private final ApiResponse apiResponse;
-    private final WebCrawling webCrawling;
 
     @Transactional
     @Scheduled(cron = "0 0 9 * * ?")
@@ -94,103 +90,18 @@ public class ExecOwnershipService {
         for (CorpInfo corpInfo : findCorpInfoList) {
             // 1. 전체 회사를 조회 [내부 DB] + 회사별 외부 다트 호출해서, 지분공시 변경 데이터 조회 [외부 호출] + 내부 DB 와 외부 다트 비교, 새로운 데이터를 내부 DB 저장(외부 호출에 대한 데이터 저장) [내부 DB]
             List<ExecOwnership> insertList = execOwnershipDomainService.saveRecentLExecOwnership(corpInfo);
-            // TODO : 1번 데이터는 정확하지 않기 떄문에, 지분 공시의 고유 넘버를 가지고, 외부 다트 공시 웹 크롤링 [외부 호출] + 크롤링 데이터를 내부 DB 저장 [내부 DB]
-            // TODO : scrapingService.updateExecOwnershipsScrapingData 만들어야함
+            // 2. 1번 데이터는 정확하지 않기 떄문에, 지분 공시의 고유 넘버를 가지고, 외부 다트 공시 웹 크롤링 [외부 호출] + 크롤링 데이터를 내부 DB 저장 [내부 DB]
+            scrapingService.updateExecOwnershipsScrapingData(insertList);
 
-
-
-
-            EOResponseDTO eoResponseDTO = eoResponseDTOMono.block();
-            if (eoResponseDTO == null) {
-                return;
-            }
-
-            List<ExecOwnership> execOwnershipList = eoResponseDTO.toEntity();
-
-            Optional<ExecOwnershipDTO> optionalExecOwnershipDTO = execOwnershipRepositoryCustom.findLatestRecordBy(ExecOwnershipSearchCondition.builder()
-                                                                                                                                               .corpCode(dto.getCorpCode())
-                                                                                                                                               .orderColumn(ExecOwnership.Fields.rceptNo)
-                                                                                                                                               .isDescending(true)
-                                                                                                                                               .build());
-            if (optionalExecOwnershipDTO.isEmpty()) {
-                execOwnershipRepository.saveAll(execOwnershipList);
-                if (!CollectionUtils.isEmpty(execOwnershipList)) {
-                    List<ExecOwnershipDetailDTO> insertExecExecOwnershipDetailDTOList = new ArrayList<>();
-                    for (ExecOwnership entity : execOwnershipList) {
-                        insertExecExecOwnershipDetailDTOList.addAll(webCrawling.getExecOwnershipDetailCrawling(
-                                entity.getRceptNo(),
-                                entity.getCorpCode(),
-                                entity.getCorpName(),
-                                entity.getRepror(),
-                                entity.getIsuExctvRgistAt(),
-                                entity.getIsuExctvOfcps(),
-                                entity.getIsuMainShrholdr()
-                        ));
-                    }
-                    execOwnershipDetailRepositoryCustom.saveAll(insertExecExecOwnershipDetailDTOList);
-                }
-                pushService.sendMessage(MessageDto.builder()
-                                                  .message(execOwnershipList.get(0).getCorpName())
-                                                  .corpCode(execOwnershipList.get(0).getCorpCode())
-                                                  .channelType(ChannelType.STOCK_CHANGE_NOTIFY_LARGE_HOLDINGS)
-                                                  .build());
-                return;
-            }
-
-            ExecOwnership findLatestRecord = EntityToDtoMapper.mapEntityToDto(optionalExecOwnershipDTO.get(), ExecOwnership.class).get();
-
-            Comparator<ExecOwnership> comparator = (o1, o2) -> {
-                String rceptNo_o1 = o1.getRceptNo();
-                String rceptNo_o2 = o2.getRceptNo();
-
-                if (!StringUtils.hasText(rceptNo_o1)) {
-                    return -1;
-                }
-
-                if (!StringUtils.hasText(rceptNo_o2)) {
-                    return 1;
-                }
-
-                return rceptNo_o1.compareTo(rceptNo_o2);
-            };
-
-            execOwnershipList.sort(comparator);
-
-            int findIndex = Collections.binarySearch(execOwnershipList, findLatestRecord, comparator);
-
-            List<ExecOwnership> insertEntity = execOwnershipList.subList(findIndex + 1, execOwnershipList.size());
-
-            if (insertEntity.isEmpty()) {
-                return;
-            }
-
-            execOwnershipRepository.saveAll(insertEntity);
-
-            List<ExecOwnershipDetailDTO> updateExecExecOwnershipDetailDTOList = new ArrayList<>();
-            for (ExecOwnership entity : insertEntity) {
-                updateExecExecOwnershipDetailDTOList.addAll(webCrawling.getExecOwnershipDetailCrawling(entity.getRceptNo(),
-                        entity.getCorpCode(),
-                        entity.getCorpName(),
-                        entity.getRepror(),
-                        entity.getIsuExctvRgistAt(),
-                        entity.getIsuExctvOfcps(),
-                        entity.getIsuMainShrholdr()));
-            }
-            execOwnershipDetailRepositoryCustom.saveAll(updateExecExecOwnershipDetailDTOList);
-
-            List<ExecOwnershipDTO> execOwnershipDTOList = new ArrayList<>();
-            for (ExecOwnership entity : insertEntity) {
-                Optional<ExecOwnershipDTO> dtoOptional = EntityToDtoMapper.mapEntityToDto(entity, ExecOwnershipDTO.class);
-                dtoOptional.ifPresent(execOwnershipDTOList::add);
-            }
-
+            // 3. 저장된 데이터는 고객들에게 PUSH 전송 [내부 푸시 전송]
             pushService.sendMessage(MessageDto.builder()
-                                              .message(insertEntity.get(0).getCorpName())
-                                              .corpCode(insertEntity.get(0).getCorpCode())
+                                              .message(corpInfo.getCorpName())
+                                              .corpCode(corpInfo.getCorpCode())
                                               .channelType(ChannelType.STOCK_CHANGE_EXECOWNERSHIP)
                                               .build());
         }
     }
+
     public ResponseEntity<?> getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchCondition condition, Pageable pageable) {
         Page<ExecOwnershipDetailDTO> page = execOwnershipDetailRepositoryCustom.searchPage(condition, pageable);
 

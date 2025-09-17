@@ -1,11 +1,15 @@
 package com.example.szs.insideTrade.application;
 
+import com.example.szs.insideTrade.domain.ExecOwnership;
+import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
+import com.example.szs.insideTrade.domain.ExecOwnershipDetailRepo;
 import com.example.szs.insideTrade.domain.LargeHoldings;
 import com.example.szs.insideTrade.domain.LargeHoldingsDetail;
 import com.example.szs.insideTrade.domain.LargeHoldingsDetailRepo;
 import com.example.szs.insideTrade.domain.LargeHoldingsStkrt;
 import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
 import com.example.szs.insideTrade.infrastructure.client.Dart;
+import com.example.szs.insideTrade.infrastructure.client.dto.ExecOwnershipDetailCrawlingDTO;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsDetailCrawlingDTO;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsStkrtCrawlingDTO;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +28,7 @@ public class ScrapingService {
     private final Dart dart;
     private final LargeHoldingsDetailRepo largeHoldingsDetailRepo;
     private final LargeHoldingsStkrtRepo largeHoldingsStkrtRepo;
+    private final ExecOwnershipDetailRepo execOwnershipDetailRepo;
 
     @Transactional
     public void updateLargeHoldingsScrapingData(List<LargeHoldings> insertList) {
@@ -29,6 +36,30 @@ public class ScrapingService {
             saveLargeHoldingsDetailData(entity);
             saveLargeHoldingsStkrtData(entity);
         }
+    }
+
+    @Transactional
+    public void updateExecOwnershipsScrapingData(List<ExecOwnership> insertList) {
+        for (ExecOwnership entity : insertList) {
+            saveExecOwnershipsDetailData(entity);
+        }
+    }
+
+    private void saveExecOwnershipsDetailData(ExecOwnership entity) {
+        List<ExecOwnershipDetailCrawlingDTO> detailList = dart.getExecOwnershipDetailCrawling(
+                entity.getRceptNo(),
+                entity.getCorpCode(),
+                entity.getCorpName(),
+                entity.getRepror(),
+                entity.getIsuExctvRgistAt(),
+                entity.getIsuExctvOfcps(),
+                entity.getIsuMainShrholdr()
+        );
+
+        List<ExecOwnershipDetail> entities = detailList.stream()
+                                                       .map(ExecOwnershipDetail::create)
+                                                       .collect(Collectors.toCollection(() -> new ArrayList<>(detailList.size())));
+        execOwnershipDetailRepo.insertNativeBatch(entities, 500);
     }
 
 
@@ -52,9 +83,8 @@ public class ScrapingService {
                                                                largeHoldingsDetailCrawlingDTO.getCurrencyType(),
                                                                largeHoldingsDetailCrawlingDTO.getTotalStockPrice()
                                                        ))
-                                                       .toList();
+                                                       .collect(Collectors.toCollection(() -> new ArrayList<>(detailList.size())));
         largeHoldingsDetailRepo.insertNativeBatch(entities, 500);
-
     }
 
     private void saveLargeHoldingsStkrtData(LargeHoldings entity) {
@@ -71,7 +101,7 @@ public class ScrapingService {
                                                                      largeHoldingsStkrtCrawlingDTO.getStkrt()
                                                              )
                                                      )
-                                                     .toList();
+                                                     .collect(Collectors.toCollection(() -> new ArrayList<>(stkrtList.size())));
 
         largeHoldingsStkrtRepo.insertNativeBatch(entities, 500);
     }

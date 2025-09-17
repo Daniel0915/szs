@@ -1,20 +1,23 @@
 package com.example.szs.insideTrade.domain;
 
-import jakarta.persistence.*;
+import com.example.szs.insideTrade.infrastructure.client.dto.ExecOwnershipDetailCrawlingDTO;
+import com.example.szs.utils.time.TimeUtil;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
-@Builder(toBuilder = true)
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "exec_ownership_detail")
 @Getter
 @FieldNameConstants
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExecOwnershipDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,4 +68,54 @@ public class ExecOwnershipDetail {
 
     @Column(name = "reg_dt")
     private String regDt; // 등록일시
+
+    private ExecOwnershipDetail(String rceptNo,
+                                String corpCode,
+                                String corpName,
+                                String execOwnershipName,
+                                String isuExctvRgistAt,
+                                String isuExctvOfcps,
+                                String isuMainShrholdr,
+                                String tradeDt,
+                                String tradeReason,
+                                String stockType,
+                                Long beforeStockAmount,
+                                Long changeStockAmount,
+                                Long afterStockAmount,
+                                String unitStockPrice) {
+        this.rceptNo = rceptNo;
+        this.corpCode = corpCode;
+        this.corpName = corpName;
+        this.execOwnershipName = execOwnershipName;
+        this.isuExctvRgistAt = isuExctvRgistAt;
+        this.isuExctvOfcps = isuExctvOfcps;
+        this.isuMainShrholdr = isuMainShrholdr;
+        this.tradeDt = tradeDt;
+        this.tradeReason = tradeReason;
+        this.stockType = stockType;
+        this.beforeStockAmount = beforeStockAmount;
+        this.changeStockAmount = changeStockAmount;
+        this.afterStockAmount = afterStockAmount;
+        this.unitStockPrice = unitStockPrice;
+        this.regDt = TimeUtil.nowTime("yyyyMMddHHmmss");
+    }
+
+    public static ExecOwnershipDetail create(ExecOwnershipDetailCrawlingDTO create) {
+        return new ExecOwnershipDetail(
+                create.getRceptNo(),
+                create.getCorpCode(),
+                create.getCorpName(),
+                create.getExecOwnershipName(),
+                create.getIsuExctvRgistAt(),
+                create.getIsuExctvOfcps(),
+                create.getIsuMainShrholdr(),
+                create.getTradeDt(),
+                create.getTradeReason(),
+                create.getStockType(),
+                create.getBeforeStockAmount(),
+                create.getChangeStockAmount(),
+                create.getAfterStockAmount(),
+                create.getUnitStockPrice()
+        );
+    }
 }

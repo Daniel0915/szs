@@ -1,6 +1,7 @@
 package com.example.szs.insideTrade.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-public interface ExecOwnershipDetailRepo extends JpaRepository<ExecOwnershipDetail, Long> {
+public interface ExecOwnershipDetailRepo {
+    void insertNativeBatch(List<ExecOwnershipDetail> entities, int batchSize);
 }
