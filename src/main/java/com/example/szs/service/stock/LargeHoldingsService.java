@@ -13,7 +13,7 @@
 //import com.example.szs.model.eNum.redis.ChannelType;
 //import com.example.szs.model.eNum.stock.SellOrBuyType;
 //import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
-//import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
+//import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
 //import com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL.LargeHoldingsSearchCondition;
 //import com.example.szs.module.ApiResponse;
 //import com.example.szs.module.stock.WebCrawling;
@@ -160,7 +160,7 @@
 //        }
 //    }
 //
-//    public ResponseEntity<?> getSearchPageLargeHoldingsDetail(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
+//    public ResponseEntity<?> getSearchPageLargeHoldingsDetail(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable) {
 //        Page<LargeHoldingsDetailDTO> page = largeHoldingsDetailRepositoryCustom.searchPage(condition, pageable);
 //
 //        PageDTO pageDTO = PageDTO.builder()
@@ -233,7 +233,7 @@
 //    }
 //
 //    public ResponseEntity<?> getLargeHoldingsTradeDtBy(String corpCode, String largeHoldingsName) {
-//        List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = largeHoldingsDetailRepositoryCustom.getLargeHoldingsDetailDTOListBy(LargeHoldingsDetailSearchCondition.builder()
+//        List<LargeHoldingsDetailDTO> largeHoldingsDetailDTOList = largeHoldingsDetailRepositoryCustom.getLargeHoldingsDetailDTOListBy(LargeHoldingsDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                        .corpCodeEq(corpCode)
 //                                                                                                                                                                        .largeHoldingsNameEq(largeHoldingsName)
 //                                                                                                                                                                        .orderColumn(LargeHoldingsDetailEntity.Fields.tradeDt)
@@ -246,7 +246,7 @@
 //    public List<LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse> getTop5StockTrade(String tradeDtGoe, String tradeDtLoe) {
 //        LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse buy = LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                                                                 .sellOrBuyType(SellOrBuyType.BUY.getCode())
-//                                                                                                                 .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchCondition.builder()
+//                                                                                                                 .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                                                                 .changeStockAmountGt(0L)
@@ -256,7 +256,7 @@
 //
 //        LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse sell = LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                                                                 .sellOrBuyType(SellOrBuyType.SELL.getCode())
-//                                                                                                                 .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchCondition.builder()
+//                                                                                                                 .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                                                                 .changeStockAmountLt(0L)
@@ -272,7 +272,7 @@
 //            case BUY ->
 //                    apiResponse.makeResponse(ResStatus.SUCCESS, LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                                                                 .sellOrBuyType(SellOrBuyType.BUY.getCode())
-//                                                                                                                 .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchCondition.builder()
+//                                                                                                                 .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                                                                 .changeStockAmountGt(0L)
@@ -281,7 +281,7 @@
 //            case SELL ->
 //                    apiResponse.makeResponse(ResStatus.SUCCESS, LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                                                                 .sellOrBuyType(SellOrBuyType.SELL.getCode())
-//                                                                                                                 .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchCondition.builder()
+//                                                                                                                 .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                                                                 .changeStockAmountLt(0L)
@@ -291,7 +291,7 @@
 //                    apiResponse.makeResponse(ResStatus.SUCCESS, Arrays.asList(
 //                            LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                             .sellOrBuyType(SellOrBuyType.BUY.getCode())
-//                                                                             .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchCondition.builder()
+//                                                                             .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                             .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                             .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                             .changeStockAmountGt(0L)
@@ -299,7 +299,7 @@
 //                                                                             .build(),
 //                            LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                             .sellOrBuyType(SellOrBuyType.SELL.getCode())
-//                                                                             .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchCondition.builder()
+//                                                                             .top5StockDetailDTOList(largeHoldingsDetailRepositoryCustom.getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                             .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                             .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                             .changeStockAmountLt(0L)

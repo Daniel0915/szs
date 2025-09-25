@@ -4,7 +4,7 @@
 //import com.example.szs.domain.stock.QLargeHoldingsDetailEntity;
 //import com.example.szs.insideTrade.domain.LargeHoldingsDetailRepository;
 //import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
-//import com.example.szs.model.queryDSLSearch.LargeHoldingsDetailSearchCondition;
+//import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
 //import com.example.szs.utils.jpa.EntityToDtoMapper;
 //import com.example.szs.utils.jpa.ListDivider;
 //import com.example.szs.utils.jpa.Param;
@@ -45,7 +45,7 @@
 //        this.largeHoldingsDetailRepository = largeHoldingsDetailRepository;
 //    }
 //
-//    public Page<LargeHoldingsDetailDTO> searchPage(LargeHoldingsDetailSearchCondition condition, Pageable pageable) {
+//    public Page<LargeHoldingsDetailDTO> searchPage(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable) {
 //        List<LargeHoldingsDetailDTO> content = queryFactory.selectFrom(largeHoldingsDetailEntity)
 //                                                           .where(
 //                                                                   searchPageWhereCondition(condition)
@@ -92,7 +92,7 @@
 //                           .fetch();
 //    }
 //
-//    public List<LargeHoldingsDetailDTO> getLargeHoldingsDetailDTOListBy(LargeHoldingsDetailSearchCondition condition) {
+//    public List<LargeHoldingsDetailDTO> getLargeHoldingsDetailDTOListBy(LargeHoldingsDetailSearchConditionReqDTO condition) {
 //        return queryFactory.selectFrom(largeHoldingsDetailEntity)
 //                           .where(
 //                                   largeHoldingsNameEq(condition.getLargeHoldingsNameEq()),
@@ -124,7 +124,7 @@
 //
 //    }
 //
-//    public List<LargeHoldingsDetailDTO.TopStockDetailDTO> getTopStockDetail(LargeHoldingsDetailSearchCondition condition) {
+//    public List<LargeHoldingsDetailDTO.TopStockDetailDTO> getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO condition) {
 //        JPAQuery<LargeHoldingsDetailDTO.TopStockDetailDTO> query = queryFactory.select(Projections.constructor(LargeHoldingsDetailDTO.TopStockDetailDTO.class,
 //                                                largeHoldingsDetailEntity.corpCode.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpCode),
 //                                               largeHoldingsDetailEntity.corpName.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpName),
@@ -246,7 +246,7 @@
 //        return StringUtils.hasText(stockType) ? largeHoldingsDetailEntity.stockType.contains(stockType) : null;
 //    }
 //
-//    private OrderSpecifier<?> dynamicOrder(LargeHoldingsDetailSearchCondition condition) {
+//    private OrderSpecifier<?> dynamicOrder(LargeHoldingsDetailSearchConditionReqDTO condition) {
 //        if (!hasText(condition.getOrderColumn())) {
 //            return largeHoldingsDetailEntity.rceptNo.asc();
 //        }
@@ -322,7 +322,7 @@
 //        return afterStockAmountLoe != null ? largeHoldingsDetailEntity.afterStockAmount.loe(afterStockAmountLoe): null;
 //    }
 //
-//    private BooleanBuilder searchPageWhereCondition(LargeHoldingsDetailSearchCondition condition) {
+//    private BooleanBuilder searchPageWhereCondition(LargeHoldingsDetailSearchConditionReqDTO condition) {
 //        BooleanBuilder builder = new BooleanBuilder();
 //
 //        builder.and(largeHoldingsNameEq(condition.getLargeHoldingsNameEq()));

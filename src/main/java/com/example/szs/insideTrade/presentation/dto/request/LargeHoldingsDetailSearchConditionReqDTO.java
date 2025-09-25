@@ -1,4 +1,4 @@
-package com.example.szs.model.queryDSLSearch;
+package com.example.szs.insideTrade.presentation.dto.request;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class LargeHoldingsDetailSearchCondition {
+public class LargeHoldingsDetailSearchConditionReqDTO {
     private String orderColumn;
     private Boolean isDescending;
 
