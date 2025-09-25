@@ -3,54 +3,31 @@ package com.example.szs.insideTrade.application;
 import com.example.szs.insideTrade.domain.CorpInfo;
 import com.example.szs.insideTrade.domain.CorpInfoRepo;
 import com.example.szs.insideTrade.domain.ExecOwnership;
+import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
+import com.example.szs.insideTrade.domain.ExecOwnershipDetailRepo;
 import com.example.szs.insideTrade.domain.ExecOwnershipDomainService;
-import com.example.szs.insideTrade.domain.ExecOwnershipRepository;
-import com.example.szs.insideTrade.infrastructure.client.Dart;
+import com.example.szs.insideTrade.domain.ExecOwnershipRepo;
 import com.example.szs.model.dto.MessageDto;
-import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
-import com.example.szs.model.dto.execOwnership.EOResponseDTO;
-import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
 import com.example.szs.model.dto.page.PageDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
-import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 import com.example.szs.module.ApiResponse;
-import com.example.szs.module.stock.WebCrawling;
-import com.example.szs.repository.stock.CorpInfoRepositoryCustom;
-import com.example.szs.repository.stock.ExecOwnershipDetailRepositoryCustom;
-import com.example.szs.repository.stock.ExecOwnershipRepositoryCustom;
 import com.example.szs.service.stock.PushService;
-import com.example.szs.utils.jpa.EntityToDtoMapper;
-import io.netty.channel.ChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
-import reactor.netty.tcp.TcpClient;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -58,20 +35,11 @@ import java.util.Optional;
 @Slf4j
 @EnableScheduling
 public class ExecOwnershipService {
-    @Value("${dart.uri.base}")
-    private String baseUri;
-    @Value("${dart.uri.execOwnership}")
-    private String path;
-    @Value("${corp.code.key}")
-    private String corpCodeKey;
-    @Value("${dart.key}")
-    private String dartKey;
-    @Value("${dart.value}")
-    private String dartValue;
-
     private final CorpInfoRepo corpInfoRepo;
     private final ExecOwnershipDomainService execOwnershipDomainService;
     private final ScrapingService scrapingService;
+    private final ExecOwnershipDetailRepo execOwnershipDetailRepo;
+    private final ExecOwnershipRepo execOwnershipRepo;
 
     private final PushService pushService;
     private final ApiResponse apiResponse;
@@ -97,7 +65,7 @@ public class ExecOwnershipService {
     }
 
     public ResponseEntity<?> getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchCondition condition, Pageable pageable) {
-        Page<ExecOwnershipDetailDTO> page = execOwnershipDetailRepositoryCustom.searchPage(condition, pageable);
+        Page<ExecOwnershipDetail> page = execOwnershipDetailRepo.searchPage(condition, pageable);
 
         PageDTO pageDTO = PageDTO.builder()
                                  .content(page.getContent())
@@ -108,21 +76,21 @@ public class ExecOwnershipService {
     }
 
     public ResponseEntity<?> getStockCntTop5(String corpCode) {
-        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipOrderSpStockLmpCnt(corpCode).stream().limit(5));
+        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepo.getExecOwnershipOrderSpStockLmpCnt(corpCode).stream().limit(5));
     }
 
     public ResponseEntity<?> getRatio(String corpCode) {
-        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipOrderSpStockLmpCnt(corpCode));
+        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepo.getExecOwnershipOrderSpStockLmpCnt(corpCode));
     }
 
     public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchCondition condition) {
-        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipDetailRepositoryCustom.getExecOwnershipDetailDTOList(condition));
+        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipDetailRepo.getExecOwnershipDetailList(condition));
     }
 
     public List<ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse> getTop5StockTrade(String tradeDtGoe, String tradeDtLoe) {
         ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse buy = ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                                                                  .sellOrBuyType(SellOrBuyType.BUY.getCode())
-                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
                                                                                                                                                                                                                                  .tradeDtGoe(tradeDtGoe)
                                                                                                                                                                                                                                  .tradeDtLoe(tradeDtLoe)
                                                                                                                                                                                                                                  .changeStockAmountGt(0L)
@@ -132,7 +100,7 @@ public class ExecOwnershipService {
 
         ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse sell = ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                                                                   .sellOrBuyType(SellOrBuyType.SELL.getCode())
-                                                                                                                  .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+                                                                                                                  .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
                                                                                                                                                                                                                                   .tradeDtGoe(tradeDtGoe)
                                                                                                                                                                                                                                   .tradeDtLoe(tradeDtLoe)
                                                                                                                                                                                                                                   .changeStockAmountLt(0L)
@@ -148,7 +116,7 @@ public class ExecOwnershipService {
             case BUY ->
                     apiResponse.makeResponse(ResStatus.SUCCESS, ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                                                                  .sellOrBuyType(SellOrBuyType.BUY.getCode())
-                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
                                                                                                                                                                                                                                  .tradeDtGoe(tradeDtGoe)
                                                                                                                                                                                                                                  .tradeDtLoe(tradeDtLoe)
                                                                                                                                                                                                                                  .changeStockAmountGt(0L)
@@ -157,7 +125,7 @@ public class ExecOwnershipService {
             case SELL ->
                     apiResponse.makeResponse(ResStatus.SUCCESS, ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                                                                  .sellOrBuyType(SellOrBuyType.SELL.getCode())
-                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
                                                                                                                                                                                                                                  .tradeDtGoe(tradeDtGoe)
                                                                                                                                                                                                                                  .tradeDtLoe(tradeDtLoe)
                                                                                                                                                                                                                                  .changeStockAmountLt(0L)
@@ -167,7 +135,7 @@ public class ExecOwnershipService {
                     apiResponse.makeResponse(ResStatus.SUCCESS, Arrays.asList(
                             ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                              .sellOrBuyType(SellOrBuyType.BUY.getCode())
-                                                                             .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
                                                                                                                                                                                              .tradeDtGoe(tradeDtGoe)
                                                                                                                                                                                              .tradeDtLoe(tradeDtLoe)
                                                                                                                                                                                              .changeStockAmountGt(0L)
@@ -175,7 +143,7 @@ public class ExecOwnershipService {
                                                                              .build(),
                             ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                              .sellOrBuyType(SellOrBuyType.SELL.getCode())
-                                                                             .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
                                                                                                                                                                                              .tradeDtGoe(tradeDtGoe)
                                                                                                                                                                                              .tradeDtLoe(tradeDtLoe)
                                                                                                                                                                                              .changeStockAmountLt(0L)
@@ -190,13 +158,13 @@ public class ExecOwnershipService {
         // 매월 매도건수
         ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse sell = ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse.builder()
                                                                                                                         .sellOrBuyType(SellOrBuyType.SELL.getCode())
-                                                                                                                        .monthlyCountDTOList(execOwnershipDetailRepositoryCustom.getMonthlyTradeCnt(corpCode, true))
+                                                                                                                        .monthlyCountDTOList(execOwnershipDetailRepo.getMonthlyTradeCnt(corpCode, true))
                                                                                                                         .build();
 
         // 매월 매수건수
         ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse buy = ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse.builder()
                                                                                                                        .sellOrBuyType(SellOrBuyType.BUY.getCode())
-                                                                                                                       .monthlyCountDTOList(execOwnershipDetailRepositoryCustom.getMonthlyTradeCnt(corpCode, false))
+                                                                                                                       .monthlyCountDTOList(execOwnershipDetailRepo.getMonthlyTradeCnt(corpCode, false))
                                                                                                                        .build();
 
 

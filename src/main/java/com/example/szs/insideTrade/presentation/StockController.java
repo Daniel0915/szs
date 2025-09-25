@@ -1,5 +1,6 @@
 package com.example.szs.insideTrade.presentation;
 
+import com.example.szs.insideTrade.application.ExecOwnershipService;
 import com.example.szs.insideTrade.application.LargeHoldingsService;
 import com.example.szs.insideTrade.domain.LargeHoldings;
 import com.example.szs.insideTrade.domain.LargeHoldingsDetail;
@@ -11,7 +12,6 @@ import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.module.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +28,7 @@ import java.util.List;
 @Slf4j
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
+    private final ExecOwnershipService execOwnershipService;
     private final ApiResponse          apiResponse;
     private final LargeHoldingsRepo      largeHoldingsJpaRepo;
     private final LargeHoldingsStkrtRepo  largeHoldingsStkrtJpaRepo;
@@ -264,9 +265,8 @@ public class StockController {
 //    }
     @GetMapping("/test")
     public ResponseEntity<?> test() {
-        // TODO : 데이터 정확히 들어오는지 테스트 하기
         try {
-            largeHoldingsService.insertData();
+            execOwnershipService.insertData();
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             log.info("예상하지 못한 예외 에러 발생 : ", e);

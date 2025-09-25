@@ -1,6 +1,5 @@
 package com.example.szs.insideTrade.infrastructure.client.dto;
 
-import com.example.szs.model.dto.execOwnership.EOResponseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

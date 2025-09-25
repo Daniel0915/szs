@@ -43,8 +43,7 @@ public class ExecOwnershipDomainService {
                                                                                                                             .build());
 
         // TODO : 외부 호출 과 내부 DB 데이터 비교 후, 내부 DB 에 없는 데이터 저장
-        // TODO : 데이터 크기 확인 후, initialCapacity 추가
-        List<ExecOwnershipInsiderTradeApiRes.ExecOwnership> execOwnershipList = new ArrayList<>(100);
+        List<ExecOwnershipInsiderTradeApiRes.ExecOwnership> execOwnershipList = new ArrayList<>();
         if (optionalExecOwnership.isPresent()) {
             String lastRceptNo = optionalExecOwnership.get().getRceptNo();
             int startIndex = IntStream.range(0, resList.size())
@@ -55,14 +54,15 @@ public class ExecOwnershipDomainService {
             int skipCount = (startIndex == -1) ? 0 : startIndex + 1;
             execOwnershipList = resList.stream()
                                       .skip(skipCount)
-                                      .collect(Collectors.toList());
+                                      .collect(Collectors.toCollection(() -> new ArrayList<>(resList.size())));
         } else {
             execOwnershipList = resList;
         }
 
+        int capacity = execOwnershipList.size();
         List<ExecOwnership> insertList = execOwnershipList.stream()
                                                           .map(ExecOwnership::create)
-                                                          .collect(Collectors.toList());
+                                                          .collect(Collectors.toCollection(() -> new ArrayList<>(capacity)));
 
         execOwnershipRepo.insertNativeBatch(insertList, 500);
         return insertList;
