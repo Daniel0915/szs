@@ -1,6 +1,6 @@
 //package com.example.szs;
 //
-//import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
+//import com.example.szs.insideTrade.application.dto.LargeHoldingsDetailDTO;
 //import com.example.szs.repository.stock.LargeHoldingsDetailRepositoryCustom;
 //import jakarta.persistence.EntityManager;
 //import org.junit.jupiter.api.Test;

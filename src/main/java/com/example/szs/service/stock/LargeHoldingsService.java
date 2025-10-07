@@ -6,7 +6,7 @@
 //import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
 //import com.example.szs.model.dto.largeHoldings.LHResponseDTO;
 //import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
-//import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
+//import com.example.szs.insideTrade.application.dto.LargeHoldingsDetailDTO;
 //import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
 //import com.example.szs.model.dto.page.PageDTO;
 //import com.example.szs.model.eNum.ResStatus;

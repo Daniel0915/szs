@@ -6,7 +6,6 @@ import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
-import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.module.ApiResponse;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -188,22 +186,22 @@ public class StockController {
         }
     }
 
-//    @GetMapping("/large-holdings-monthly-trade-cnt")
-//    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(@RequestParam(required = false) String corpCode) {
-//        if (!StringUtils.hasText(corpCode)) {
-//            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
-//            log.error(ErrorMsgUtil.paramErrorMessage(params));
-//            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
-//        }
-//
-//        try {
-//            return largeHoldingsService.getLargeHoldingsMonthlyTradeCnt(corpCode);
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
-//
+    @GetMapping("/large-holdings-monthly-trade-cnt")
+    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(@RequestParam(required = false) String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
+            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return apiResponse.makeResponse(ResStatus.SUCCESS, largeHoldingsService.getLargeHoldingsMonthlyTradeCnt(corpCode));
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
 //
 //    @GetMapping("/large-holdings-top-5")
 //    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(@RequestParam(required = false) String corpCode) {

@@ -1,21 +1,18 @@
 package com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL;
 
+import com.example.szs.insideTrade.application.dto.LargeHoldingsDetailDTO;
 import com.example.szs.insideTrade.domain.LargeHoldingsDetail;
 import com.example.szs.insideTrade.domain.LargeHoldingsDetailRepo;
 import com.example.szs.insideTrade.domain.QLargeHoldingsDetail;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
-import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.utils.batch.JdbcBatchUtil;
-import com.example.szs.utils.jpa.EntityToDtoMapper;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +27,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.example.szs.insideTrade.domain.QLargeHoldingsDetail.largeHoldingsDetail;
 import static org.springframework.util.StringUtils.hasText;
@@ -123,30 +119,31 @@ public class LargeHoldingsDetailJpaOrQueryDSLRepo implements LargeHoldingsDetail
 //        return new PageImpl<>(content, pageable, totalCount);
 //    }
 //
-//    public List<LargeHoldingsDetailDTO.MonthlyCountDTO> getLargeHoldingsMonthlyTradeCnt(String corpCode, boolean isSell) {
-//        if (corpCode == null) {
-//            return new ArrayList<>();
-//        }
-//
-//        StringExpression subStringTradeDt = largeHoldingsDetail.tradeDt.stringValue().substring(0, 6);
-//
-//        return queryFactory.select(Projections.constructor(LargeHoldingsDetailDTO.MonthlyCountDTO.class,
-//                                   subStringTradeDt.as(LargeHoldingsDetailDTO.MonthlyCountDTO.Fields.month),
-//                                   largeHoldingsDetail.corpCode.count().as(LargeHoldingsDetailDTO.MonthlyCountDTO.Fields.count)
-//                           )).
-//                           from(largeHoldingsDetail)
-//                           .where(
-//                                   corpCodeEq(corpCode),
-//                                   changeStockAmountLt(isSell ? 0L : null), // 매도
-//                                   changeStockAmountGt(!isSell ? 0L : null), // 매수
-//                                   largeHoldingsDetail.tradeDt.isNotNull(),
-//                                   largeHoldingsDetail.tradeDt.isNotEmpty(),
-//                                   largeHoldingsDetail.tradeDt.ne("-")
-//                           )
-//                           .groupBy(subStringTradeDt)
-//                           .orderBy(subStringTradeDt.asc())
-//                           .fetch();
-//    }
+    @Override
+    public List<LargeHoldingsDetailDTO.MonthlyCountDTO> getLargeHoldingsMonthlyTradeCnt(String corpCode, boolean isSell) {
+        if (corpCode == null) {
+            return new ArrayList<>();
+        }
+
+        StringExpression subStringTradeDt = largeHoldingsDetail.tradeDt.stringValue().substring(0, 6);
+
+        return queryFactory.select(Projections.constructor(LargeHoldingsDetailDTO.MonthlyCountDTO.class,
+                                   subStringTradeDt.as(LargeHoldingsDetailDTO.MonthlyCountDTO.Fields.month),
+                                   largeHoldingsDetail.corpCode.count().as(LargeHoldingsDetailDTO.MonthlyCountDTO.Fields.count)
+                           )).
+                           from(largeHoldingsDetail)
+                           .where(
+                                   corpCodeEq(corpCode),
+                                   changeStockAmountLt(isSell ? 0L : null), // 매도
+                                   changeStockAmountGt(!isSell ? 0L : null), // 매수
+                                   largeHoldingsDetail.tradeDt.isNotNull(),
+                                   largeHoldingsDetail.tradeDt.isNotEmpty(),
+                                   largeHoldingsDetail.tradeDt.ne("-")
+                           )
+                           .groupBy(subStringTradeDt)
+                           .orderBy(subStringTradeDt.asc())
+                           .fetch();
+    }
 //
 //    public List<LargeHoldingsDetailDTO> getLargeHoldingsDetailDTOListBy(LargeHoldingsDetailSearchConditionReqDTO condition) {
 //        return queryFactory.selectFrom(largeHoldingsDetail)

@@ -1,4 +1,4 @@
-package com.example.szs.model.dto.largeHoldings;
+package com.example.szs.insideTrade.application.dto;
 
 import com.example.szs.config.json.NullToEmptySerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

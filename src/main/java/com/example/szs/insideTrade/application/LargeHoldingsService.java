@@ -1,5 +1,6 @@
 package com.example.szs.insideTrade.application;
 
+import com.example.szs.insideTrade.application.dto.LargeHoldingsDetailDTO;
 import com.example.szs.insideTrade.domain.CorpInfo;
 import com.example.szs.insideTrade.domain.CorpInfoRepo;
 import com.example.szs.insideTrade.domain.LargeHoldings;
@@ -15,6 +16,7 @@ import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailS
 import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
 import com.example.szs.insideTrade.presentation.dto.response.PageResDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
+import com.example.szs.model.eNum.stock.SellOrBuyType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,4 +101,21 @@ public class LargeHoldingsService {
                                          .collect(Collectors.toList());
     }
 
+    public List<LargeHoldingsDetailDTO.SellOrBuyMonthlyCountResponse> getLargeHoldingsMonthlyTradeCnt(String corpCode) {
+        assert (corpCode != null) : "corpCode not null";
+
+        // 매월 매도건수
+        LargeHoldingsDetailDTO.SellOrBuyMonthlyCountResponse sell = LargeHoldingsDetailDTO.SellOrBuyMonthlyCountResponse.builder()
+                                                                                                                        .sellOrBuyType(SellOrBuyType.SELL.getCode())
+                                                                                                                        .monthlyCountDTOList(largeHoldingsDetailRepo.getLargeHoldingsMonthlyTradeCnt(corpCode, true))
+                                                                                                                        .build();
+
+        // 매월 매수건수
+        LargeHoldingsDetailDTO.SellOrBuyMonthlyCountResponse buy = LargeHoldingsDetailDTO.SellOrBuyMonthlyCountResponse.builder()
+                                                                                                                       .sellOrBuyType(SellOrBuyType.BUY.getCode())
+                                                                                                                       .monthlyCountDTOList(largeHoldingsDetailRepo.getLargeHoldingsMonthlyTradeCnt(corpCode, false))
+                                                                                                                       .build();
+
+        return Arrays.asList(sell, buy);
+    }
 }
