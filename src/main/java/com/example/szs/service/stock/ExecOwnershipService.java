@@ -2,7 +2,7 @@
 //
 //import com.example.szs.insideTrade.domain.ExecOwnership;
 //import com.example.szs.model.dto.MessageDto;
-//import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
+//import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
 //import com.example.szs.model.dto.execOwnership.EOResponseDTO;
 //import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 //import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
@@ -71,9 +71,9 @@
 //    @Transactional
 //    @Scheduled(cron = "0 0 9 * * ?")
 //    public void insertData() {
-//        List<CorpInfoDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
+//        List<CorpInfoResDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
 //
-//        for (CorpInfoDTO dto : corpInfoDTOList) {
+//        for (CorpInfoResDTO dto : corpInfoDTOList) {
 //            TcpClient tcpClient = TcpClient.create()
 //                                           .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000 * 6)  // 연결 타임아웃 (60초)
 //                                           .doOnConnected(conn ->

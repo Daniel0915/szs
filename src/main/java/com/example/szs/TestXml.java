@@ -3,7 +3,7 @@ package com.example.szs;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
+import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
 import org.w3c.dom.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class TestXml {
             // <list> 엘리먼트들을 가져오기
             NodeList listNodes = rootElement.getElementsByTagName("list");
 
-            List<CorpInfoDTO> corpInfoList = new ArrayList<>();
+            List<CorpInfoResDTO> corpInfoList = new ArrayList<>();
 
             for (int i = 0; i < listNodes.getLength(); i++) {
                 Node listNode = listNodes.item(i);
@@ -39,11 +39,11 @@ public class TestXml {
                     String corpCode = listElement.getElementsByTagName("corp_code").item(0).getTextContent();
                     String corpName = listElement.getElementsByTagName("corp_name").item(0).getTextContent().trim();
 
-                    corpInfoList.add(new CorpInfoDTO(corpCode, corpName));
+                    corpInfoList.add(new CorpInfoResDTO(corpCode, corpName));
                 }
             }
 
-            for (CorpInfoDTO corpInfo : corpInfoList) {
+            for (CorpInfoResDTO corpInfo : corpInfoList) {
                 System.out.println(corpInfo.toString());
             }
 

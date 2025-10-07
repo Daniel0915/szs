@@ -3,7 +3,7 @@
 //import com.example.szs.insideTrade.domain.LargeHoldingsDetailEntity;
 //import com.example.szs.insideTrade.domain.LargeHoldingsEntity;
 //import com.example.szs.model.dto.MessageDto;
-//import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
+//import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
 //import com.example.szs.model.dto.largeHoldings.LHResponseDTO;
 //import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 //import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
@@ -69,9 +69,9 @@
 //    @Transactional
 //    @Scheduled(cron = "0 0 9 * * ?")
 //    public void insertData() {
-//        List<CorpInfoDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
+//        List<CorpInfoResDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
 //
-//        for (CorpInfoDTO dto : corpInfoDTOList) {
+//        for (CorpInfoResDTO dto : corpInfoDTOList) {
 //            WebClient webClient = WebClient.builder()
 //                                           .baseUrl(baseUri)
 //                                           .build();
@@ -312,14 +312,14 @@
 //    // TODO : 테스트 코드(추후 삭제)
 //    @Transactional
 //    public void insertDataTest() throws Exception {
-//        List<CorpInfoDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
+//        List<CorpInfoResDTO> corpInfoDTOList = corpInfoRepositoryCustom.getAllCorpInfoDTOList();
 //        corpInfoDTOList = corpInfoDTOList.stream()
 //                                         .filter(a -> Objects.equals(a.getCorpCode(), "01204056"))
 //                                         .toList();
 //
 //
 //
-//        for (CorpInfoDTO dto : corpInfoDTOList) {
+//        for (CorpInfoResDTO dto : corpInfoDTOList) {
 //            WebClient webClient = WebClient.builder()
 //                                           .baseUrl(baseUri)
 //                                           .build();

@@ -8,10 +8,12 @@ import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
+import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
 import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
 import com.example.szs.insideTrade.presentation.dto.response.PageResDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.module.ApiResponse;
+import com.example.szs.service.stock.CorpInfoService;
 import com.example.szs.utils.error.ErrorMsgUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +34,14 @@ import java.util.Map;
 public class StockController {
     private final LargeHoldingsService largeHoldingsService;
     private final ExecOwnershipService execOwnershipService;
+    private final CorpInfoService corpInfoService;
     private final ApiResponse          apiResponse;
 
     @GetMapping("/search/large-holdings")
     public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable) {
         try {
-            PageResDTO res = largeHoldingsService.getSearchPageLargeHoldingsDetail(condition, pageable);
-            return apiResponse.makeResponse(ResStatus.SUCCESS, res);
+            PageResDTO response = largeHoldingsService.getSearchPageLargeHoldingsDetail(condition, pageable);
+            return apiResponse.makeResponse(ResStatus.SUCCESS, response);
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);
@@ -55,12 +58,6 @@ public class StockController {
         }
     }
 
-//    @PostMapping("/update-scraping")
-//    public ResponseEntity<?> updateScraping(@RequestBody List<LargeHoldingsDTO> largeHoldingsDTOList) {
-//        // TODO : header 체크 필요
-//        return largeHoldingsService.updateScraping(largeHoldingsDTOList);
-//    }
-
     @GetMapping("/large-holdings-stock-ratio")
     public ResponseEntity<?> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchConditionReqDTO condition) {
         if (condition.getCorpCode() == null) {
@@ -70,8 +67,8 @@ public class StockController {
         }
 
         try {
-            List<LargeHoldingsStkrtResDTO> res = largeHoldingsService.getLargeHoldingsStockRatio(condition);
-            return apiResponse.makeResponse(ResStatus.SUCCESS, res);
+            List<LargeHoldingsStkrtResDTO> response = largeHoldingsService.getLargeHoldingsStockRatio(condition);
+            return apiResponse.makeResponse(ResStatus.SUCCESS, response);
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);
@@ -203,15 +200,16 @@ public class StockController {
 //        }
 //    }
 //
-//    @GetMapping("/corp-info-all")
-//    public ResponseEntity<?> getAllCorpInfoDTOList() {
-//        try {
-//            return corpInfoService.getAllCorpInfoDTOList();
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
+    @GetMapping("/corp-info-all")
+    public ResponseEntity<?> getAllCorpInfoList() {
+        try {
+            List<CorpInfoResDTO> response = corpInfoService.getAllCorpInfoDTOList();
+            return apiResponse.makeResponse(ResStatus.SUCCESS, response);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
 //
 //
 //    @GetMapping("/trade-top-5")

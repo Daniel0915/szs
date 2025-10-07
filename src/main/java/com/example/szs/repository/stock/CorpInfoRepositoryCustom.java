@@ -2,7 +2,7 @@
 //
 //import com.example.szs.insideTrade.domain.CorpInfo;
 //import com.example.szs.insideTrade.domain.CorpInfoRepository;
-//import com.example.szs.model.dto.corpInfo.CorpInfoDTO;
+//import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
 //import com.example.szs.utils.jpa.EntityToDtoMapper;
 //import com.example.szs.utils.jpa.Param;
 //import com.example.szs.utils.time.TimeUtil;
@@ -30,23 +30,23 @@
 //        this.corpInfoRepository = corpInfoRepository;
 //    }
 //
-//    public List<CorpInfoDTO> getAllCorpInfoDTOList() {
+//    public List<CorpInfoResDTO> getAllCorpInfoDTOList() {
 //        return queryFactory.selectFrom(corpInfoEntity)
 //                           .fetch()
 //                           .stream()
-//                           .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, CorpInfoDTO.class)
+//                           .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, CorpInfoResDTO.class)
 //                                                               .stream()).collect(Collectors.toList());
 //
 //    }
 //
-//    public void saveAll(List<CorpInfoDTO> corpInfoDTOList) {
+//    public void saveAll(List<CorpInfoResDTO> corpInfoDTOList) {
 //        if (CollectionUtils.isEmpty(corpInfoDTOList)) {
 //            return;
 //        }
 //
 //        List<CorpInfo> insertOrUpdateEntityList = new ArrayList<>();
 //
-//        for (CorpInfoDTO dto : corpInfoDTOList) {
+//        for (CorpInfoResDTO dto : corpInfoDTOList) {
 //            Optional<CorpInfo.CorpInfoBuilder> optional = Param.getSaveEntityToBuilder(dto, new CorpInfo(), new CorpInfo().toBuilder());
 //            optional.ifPresent(value -> insertOrUpdateEntityList.add(value.build()
 //                                                                          .toBuilder()

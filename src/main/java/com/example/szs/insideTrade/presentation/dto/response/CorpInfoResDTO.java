@@ -1,4 +1,4 @@
-package com.example.szs.model.dto.corpInfo;
+package com.example.szs.insideTrade.presentation.dto.response;
 
 import com.example.szs.config.json.NullToEmptySerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldNameConstants;
 @AllArgsConstructor
 @JsonSerialize(using = NullToEmptySerializer.class)
 @FieldNameConstants
-public class CorpInfoDTO {
+public class CorpInfoResDTO {
     private String corpCode;
     private String corpName;
 }

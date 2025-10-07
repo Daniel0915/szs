@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class CorpInfoJpaRepo implements CorpInfoRepo {
+public class CorpInfoJpaQueryDSLRepo implements CorpInfoRepo {
     private final ICorpInfoJpaRepo iCorpInfoJpaRepo;
 
     @Override
