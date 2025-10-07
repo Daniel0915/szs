@@ -8,7 +8,9 @@ import com.example.szs.insideTrade.domain.ExecOwnershipDetailRepo;
 import com.example.szs.insideTrade.domain.ExecOwnershipDomainService;
 import com.example.szs.insideTrade.domain.ExecOwnershipRepo;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
+import com.example.szs.insideTrade.presentation.dto.response.ExecOwnershipResDTO;
 import com.example.szs.model.dto.MessageDto;
+import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
 import com.example.szs.model.dto.page.PageDTO;
 import com.example.szs.model.eNum.ResStatus;
@@ -16,6 +18,7 @@ import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.service.stock.PushService;
+import com.example.szs.utils.jpa.EntityToDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,8 +29,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -64,23 +69,37 @@ public class ExecOwnershipService {
         }
     }
 
-    public ResponseEntity<?> getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchConditionReqDTO condition, Pageable pageable) {
+    public PageDTO getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchConditionReqDTO condition, Pageable pageable) {
         Page<ExecOwnershipDetail> page = execOwnershipDetailRepo.searchPage(condition, pageable);
-
-        PageDTO pageDTO = PageDTO.builder()
-                                 .content(page.getContent())
-                                 .totalElements(page.getTotalElements())
-                                 .totalPages(page.getTotalPages())
-                                 .build();
-        return apiResponse.makeResponse(ResStatus.SUCCESS, pageDTO);
+        return PageDTO.builder()
+                      .content(page.getContent())
+                      .totalElements(page.getTotalElements())
+                      .totalPages(page.getTotalPages())
+                      .build();
     }
 
-    public ResponseEntity<?> getStockCntTop5(String corpCode) {
-        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepo.getExecOwnershipOrderSpStockLmpCnt(corpCode).stream().limit(5));
+    public List<ExecOwnershipResDTO> getStockCntTop5(String corpCode) {
+        List<ExecOwnership>       execOwnershipList = execOwnershipRepo.getExecOwnershipOrderSpStockLmpCnt(corpCode);
+        List<ExecOwnershipResDTO> response          = new ArrayList<>(execOwnershipList.size());
+
+        for (ExecOwnership execOwnership : execOwnershipList) {
+            EntityToDtoMapper.mapEntityToDto(execOwnership, ExecOwnershipResDTO.class).ifPresent(response::add);
+        }
+
+        return response.stream()
+                       .limit(5)
+                       .toList();
     }
 
-    public ResponseEntity<?> getRatio(String corpCode) {
-        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepo.getExecOwnershipOrderSpStockLmpCnt(corpCode));
+    public List<ExecOwnershipResDTO> getRatio(String corpCode) {
+        List<ExecOwnership>       execOwnershipList = execOwnershipRepo.getExecOwnershipOrderSpStockLmpCnt(corpCode);
+        List<ExecOwnershipResDTO> response          = new ArrayList<>(execOwnershipList.size());
+
+        for (ExecOwnership execOwnership : execOwnershipList) {
+            EntityToDtoMapper.mapEntityToDto(execOwnership, ExecOwnershipResDTO.class).ifPresent(response::add);
+        }
+
+        return response;
     }
 
     public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchConditionReqDTO condition) {

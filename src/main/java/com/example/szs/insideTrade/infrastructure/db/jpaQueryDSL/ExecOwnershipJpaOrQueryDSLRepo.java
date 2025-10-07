@@ -52,12 +52,12 @@ public class ExecOwnershipJpaOrQueryDSLRepo implements ExecOwnershipRepo {
     }
 
     @Override
-    public List<ExecOwnershipDTO> getExecOwnershipOrderSpStockLmpCnt(String corpCode) {
+    public List<ExecOwnership> getExecOwnershipOrderSpStockLmpCnt(String corpCode) {
         if (!StringUtils.hasText(corpCode)) {
             return new ArrayList<>();
         }
 
-        List<String> reprorList = queryFactory.select(execOwnership.repror) // 반환 타입을 지정.from(execOwnership)
+        List<String> reprorList = queryFactory.select(execOwnership.repror)
                                               .from(execOwnership)
                                               .where(corpCodeEq(corpCode))
                                               .groupBy(execOwnership.repror)
@@ -80,22 +80,23 @@ public class ExecOwnershipJpaOrQueryDSLRepo implements ExecOwnershipRepo {
             return new ArrayList<>();
         }
 
-        List<ExecOwnershipDTO> execOwnershipDTOList = new ArrayList<>();
+        List<ExecOwnership> execOwnershipList = new ArrayList<>();
 
         for (List<String> divisionRceptNoList : ListDivider.getDivisionList(recentRceptNoList, 300)) {
-            execOwnershipDTOList.addAll(queryFactory.selectFrom(execOwnership)
-                                                    .where(execOwnership.rceptNo.in(divisionRceptNoList))
-                                                    .fetch()
-                                                    .stream()
-                                                    .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, ExecOwnershipDTO.class).stream())
-                                                    .collect(Collectors.toList()));
+            execOwnershipList.addAll(
+                    queryFactory.selectFrom(execOwnership)
+                                .where(execOwnership.rceptNo.in(divisionRceptNoList))
+                                .fetch()
+            );
         }
 
-        if (CollectionUtils.isEmpty(execOwnershipDTOList)) {
+        if (CollectionUtils.isEmpty(execOwnershipList)) {
             return new ArrayList<>();
         }
 
-        return execOwnershipDTOList.stream().sorted(Comparator.comparing(ExecOwnershipDTO::getSpStockLmpCnt).reversed()).collect(Collectors.toList());
+        return execOwnershipList.stream()
+                                .sorted(Comparator.comparing(ExecOwnership::getSpStockLmpCnt).reversed())
+                                .collect(Collectors.toList());
     }
 
     @Override

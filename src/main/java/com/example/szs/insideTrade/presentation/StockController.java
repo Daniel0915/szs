@@ -2,15 +2,10 @@ package com.example.szs.insideTrade.presentation;
 
 import com.example.szs.insideTrade.application.ExecOwnershipService;
 import com.example.szs.insideTrade.application.LargeHoldingsService;
-import com.example.szs.insideTrade.domain.LargeHoldingsDetailRepo;
-import com.example.szs.insideTrade.domain.LargeHoldingsRepo;
-import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
-import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
-import com.example.szs.insideTrade.presentation.dto.response.PageResDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.service.stock.CorpInfoService;
@@ -19,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -37,11 +34,12 @@ public class StockController {
     private final CorpInfoService corpInfoService;
     private final ApiResponse          apiResponse;
 
+    private static final String CORP_CODE = "corpCode";
+
     @GetMapping("/search/large-holdings")
     public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable) {
         try {
-            PageResDTO response = largeHoldingsService.getSearchPageLargeHoldingsDetail(condition, pageable);
-            return apiResponse.makeResponse(ResStatus.SUCCESS, response);
+            return apiResponse.makeResponse(ResStatus.SUCCESS, largeHoldingsService.getSearchPageLargeHoldingsDetail(condition, pageable));
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);
@@ -51,7 +49,7 @@ public class StockController {
     @GetMapping("/search/exec-ownership")
     public ResponseEntity<?> searchExecOwnershipDetail(ExecOwnershipDetailSearchConditionReqDTO condition, Pageable pageable) {
         try {
-            return execOwnershipService.getSearchPageExecOwnershipDetail(condition, pageable);
+            return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipService.getSearchPageExecOwnershipDetail(condition, pageable));
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);
@@ -67,30 +65,44 @@ public class StockController {
         }
 
         try {
-            List<LargeHoldingsStkrtResDTO> response = largeHoldingsService.getLargeHoldingsStockRatio(condition);
-            return apiResponse.makeResponse(ResStatus.SUCCESS, response);
+            return apiResponse.makeResponse(ResStatus.SUCCESS, largeHoldingsService.getLargeHoldingsStockRatio(condition));
         } catch (Exception e) {
             log.error("예상하지 못한 예외 에러 발생 : ", e);
             return apiResponse.makeResponse(ResStatus.ERROR);
         }
     }
 
-    // TODO : controller 부분 작성
-//    @GetMapping("/exec-ownership-ratio")
-//    public ResponseEntity<?> getExecOwnershipRatio(@RequestParam(required = false) String corpCode) {
-//        if (!StringUtils.hasText(corpCode)) {
-//            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
-//            log.error(ErrorMsgUtil.paramErrorMessage(params));
-//            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
-//        }
-//
-//        try {
-//            return execOwnershipService.getRatio(corpCode);
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
+    @GetMapping("/exec-ownership-ratio")
+    public ResponseEntity<?> getExecOwnershipRatio(@RequestParam(required = false) String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
+            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipService.getRatio(corpCode));
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/exec-ownership-top-5")
+    public ResponseEntity<?> getStockCntTop5(@RequestParam(required = false) String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
+            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipService.getStockCntTop5(corpCode));
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
 //
 //    @GetMapping("/large-holdings-monthly-trade-cnt")
 //    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(@RequestParam(required = false) String corpCode) {
@@ -140,21 +152,6 @@ public class StockController {
 //        }
 //    }
 //
-//    @GetMapping("/exec-ownership-top-5")
-//    public ResponseEntity<?> getStockCntTop5(@RequestParam(required = false) String corpCode) {
-//        if (!StringUtils.hasText(corpCode)) {
-//            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
-//            log.error(ErrorMsgUtil.paramErrorMessage(params));
-//            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
-//        }
-//
-//        try {
-//            return execOwnershipService.getStockCntTop5(corpCode);
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
 //
 //    @GetMapping("/exec-ownership-trade-list")
 //    public ResponseEntity<?> getExecOwnershipTradeList(@RequestParam(required = false) String corpCode,

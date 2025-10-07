@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ExecOwnershipRepo {
     Optional<ExecOwnershipDTO> findLatestRecordBy(ExecOwnershipSearchCondition condition);
-    List<ExecOwnershipDTO> getExecOwnershipOrderSpStockLmpCnt(String corpCode);
+    List<ExecOwnership> getExecOwnershipOrderSpStockLmpCnt(String corpCode);
     void insertNativeBatch(List<ExecOwnership> execOwnerships, int batchSize);
 
 }
