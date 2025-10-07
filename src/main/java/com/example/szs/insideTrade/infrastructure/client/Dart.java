@@ -6,8 +6,6 @@ import com.example.szs.insideTrade.infrastructure.client.dto.ExecOwnershipInside
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsDetailCrawlingDTO;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsInsiderTradeApiRes;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsStkrtCrawlingDTO;
-import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
-import com.example.szs.model.dto.largeHoldings.LargeHoldingsStkrtDTO;
 import com.example.szs.utils.money.NumberUtils;
 import com.example.szs.utils.time.TimeUtil;
 import io.github.bonigarcia.wdm.WebDriverManager;

@@ -7,13 +7,13 @@ import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
 import com.example.szs.insideTrade.domain.ExecOwnershipDetailRepo;
 import com.example.szs.insideTrade.domain.ExecOwnershipDomainService;
 import com.example.szs.insideTrade.domain.ExecOwnershipRepo;
+import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
 import com.example.szs.model.dto.page.PageDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
-import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.service.stock.PushService;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +64,7 @@ public class ExecOwnershipService {
         }
     }
 
-    public ResponseEntity<?> getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchCondition condition, Pageable pageable) {
+    public ResponseEntity<?> getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchConditionReqDTO condition, Pageable pageable) {
         Page<ExecOwnershipDetail> page = execOwnershipDetailRepo.searchPage(condition, pageable);
 
         PageDTO pageDTO = PageDTO.builder()
@@ -83,29 +83,29 @@ public class ExecOwnershipService {
         return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepo.getExecOwnershipOrderSpStockLmpCnt(corpCode));
     }
 
-    public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchCondition condition) {
+    public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchConditionReqDTO condition) {
         return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipDetailRepo.getExecOwnershipDetailList(condition));
     }
 
     public List<ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse> getTop5StockTrade(String tradeDtGoe, String tradeDtLoe) {
         ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse buy = ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                                                                  .sellOrBuyType(SellOrBuyType.BUY.getCode())
-                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
-                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                                                                 .changeStockAmountGt(0L)
-                                                                                                                                                                                                                                 .limit(5L)
-                                                                                                                                                                                                                                 .build()))
+                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
+                                                                                                                                                                                                                           .tradeDtGoe(tradeDtGoe)
+                                                                                                                                                                                                                           .tradeDtLoe(tradeDtLoe)
+                                                                                                                                                                                                                           .changeStockAmountGt(0L)
+                                                                                                                                                                                                                           .limit(5L)
+                                                                                                                                                                                                                           .build()))
                                                                                                                  .build();
 
         ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse sell = ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                                                                   .sellOrBuyType(SellOrBuyType.SELL.getCode())
-                                                                                                                  .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
-                                                                                                                                                                                                                                  .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                                                                  .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                                                                  .changeStockAmountLt(0L)
-                                                                                                                                                                                                                                  .limit(5L)
-                                                                                                                                                                                                                                  .build()))
+                                                                                                                  .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
+                                                                                                                                                                                                                            .tradeDtGoe(tradeDtGoe)
+                                                                                                                                                                                                                            .tradeDtLoe(tradeDtLoe)
+                                                                                                                                                                                                                            .changeStockAmountLt(0L)
+                                                                                                                                                                                                                            .limit(5L)
+                                                                                                                                                                                                                            .build()))
                                                                                                                   .build();
 
         return Arrays.asList(sell, buy);
@@ -116,38 +116,38 @@ public class ExecOwnershipService {
             case BUY ->
                     apiResponse.makeResponse(ResStatus.SUCCESS, ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                                                                  .sellOrBuyType(SellOrBuyType.BUY.getCode())
-                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
-                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                                                                 .changeStockAmountGt(0L)
-                                                                                                                                                                                                                                 .build()))
+                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
+                                                                                                                                                                                                                           .tradeDtGoe(tradeDtGoe)
+                                                                                                                                                                                                                           .tradeDtLoe(tradeDtLoe)
+                                                                                                                                                                                                                           .changeStockAmountGt(0L)
+                                                                                                                                                                                                                           .build()))
                                                                                                                  .build());
             case SELL ->
                     apiResponse.makeResponse(ResStatus.SUCCESS, ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                                                                  .sellOrBuyType(SellOrBuyType.SELL.getCode())
-                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
-                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                                                                 .changeStockAmountLt(0L)
-                                                                                                                                                                                                                                 .build()))
+                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
+                                                                                                                                                                                                                           .tradeDtGoe(tradeDtGoe)
+                                                                                                                                                                                                                           .tradeDtLoe(tradeDtLoe)
+                                                                                                                                                                                                                           .changeStockAmountLt(0L)
+                                                                                                                                                                                                                           .build()))
                                                                                                                  .build());
             case ALL ->
                     apiResponse.makeResponse(ResStatus.SUCCESS, Arrays.asList(
                             ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                              .sellOrBuyType(SellOrBuyType.BUY.getCode())
-                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
-                                                                                                                                                                                             .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                             .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                             .changeStockAmountGt(0L)
-                                                                                                                                                                                             .build()))
+                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
+                                                                                                                                                                                       .tradeDtGoe(tradeDtGoe)
+                                                                                                                                                                                       .tradeDtLoe(tradeDtLoe)
+                                                                                                                                                                                       .changeStockAmountGt(0L)
+                                                                                                                                                                                       .build()))
                                                                              .build(),
                             ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                              .sellOrBuyType(SellOrBuyType.SELL.getCode())
-                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
-                                                                                                                                                                                             .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                             .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                             .changeStockAmountLt(0L)
-                                                                                                                                                                                             .build()))
+                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
+                                                                                                                                                                                       .tradeDtGoe(tradeDtGoe)
+                                                                                                                                                                                       .tradeDtLoe(tradeDtLoe)
+                                                                                                                                                                                       .changeStockAmountLt(0L)
+                                                                                                                                                                                       .build()))
                                                                              .build()
                     ));
         };

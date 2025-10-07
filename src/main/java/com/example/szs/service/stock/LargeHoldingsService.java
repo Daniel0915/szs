@@ -7,12 +7,12 @@
 //import com.example.szs.model.dto.largeHoldings.LHResponseDTO;
 //import com.example.szs.model.dto.largeHoldings.LargeHoldingsDTO;
 //import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
-//import com.example.szs.model.dto.largeHoldings.LargeHoldingsStkrtDTO;
+//import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
 //import com.example.szs.model.dto.page.PageDTO;
 //import com.example.szs.model.eNum.ResStatus;
 //import com.example.szs.model.eNum.redis.ChannelType;
 //import com.example.szs.model.eNum.stock.SellOrBuyType;
-//import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
+//import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSearchConditionReqDTO;
 //import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
 //import com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL.LargeHoldingsSearchCondition;
 //import com.example.szs.module.ApiResponse;
@@ -180,7 +180,7 @@
 //                largeHoldingsDetailRepositoryCustom.saveAll(largeHoldingsDetailDTOList);
 //
 //                // TODO : LargeHoldingsDetail <-> LargeHoldingsStkrt 일대일 관계 매핑해야함.
-//                List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList = webCrawling.getLargeHoldingsStkrtCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
+//                List<LargeHoldingsStkrtResDTO> largeHoldingsStkrtDTOList = webCrawling.getLargeHoldingsStkrtCrawling(dto.getRceptNo(), dto.getCorpCode(), dto.getCorpName());
 //                largeHoldingsStkrtRepositoryCustom.saveAll(largeHoldingsStkrtDTOList);
 //            } catch (Exception e) {
 //                e.printStackTrace();
@@ -190,12 +190,12 @@
 //        return apiResponse.makeResponse(ResStatus.SUCCESS);
 //    }
 //
-//    public ResponseEntity<?> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition condition) {
-//        List<LargeHoldingsStkrtDTO> findLargeHoldingsStockRatioList = largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(condition.toBuilder()
+//    public ResponseEntity<?> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchConditionReqDTO condition) {
+//        List<LargeHoldingsStkrtResDTO> findLargeHoldingsStockRatioList = largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(condition.toBuilder()
 //                                                                                                                                             .limit(1L)
 //                                                                                                                                             .build());
 //
-//        List<LargeHoldingsStkrtDTO> filteredStkrtExcNullOrInit = findLargeHoldingsStockRatioList.stream()
+//        List<LargeHoldingsStkrtResDTO> filteredStkrtExcNullOrInit = findLargeHoldingsStockRatioList.stream()
 //                                                                                                .filter(dto -> dto.getStkrt() != null && dto.getStkrt() != 0.0F)
 //                                                                                                .collect(Collectors.toList());
 //        return apiResponse.makeResponse(ResStatus.SUCCESS, filteredStkrtExcNullOrInit);
@@ -221,12 +221,12 @@
 //    }
 //
 //    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(String corpCode) {
-//        List<LargeHoldingsStkrtDTO> findLargeHoldingsStockRatioList = largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition.builder()
+//        List<LargeHoldingsStkrtResDTO> findLargeHoldingsStockRatioList = largeHoldingsStkrtRepositoryCustom.getLargeHoldingsStockRatio(LargeHoldingStkrtSearchConditionReqDTO.builder()
 //                                                                                                                                                                    .corpCode(corpCode)
 //                                                                                                                                                                    .limit(1L)
 //                                                                                                                                                                    .build());
 //
-//        List<LargeHoldingsStkrtDTO> top5List = findLargeHoldingsStockRatioList.size() > 5 ? findLargeHoldingsStockRatioList.stream().limit(5).collect(Collectors.toList()) : findLargeHoldingsStockRatioList;
+//        List<LargeHoldingsStkrtResDTO> top5List = findLargeHoldingsStockRatioList.size() > 5 ? findLargeHoldingsStockRatioList.stream().limit(5).collect(Collectors.toList()) : findLargeHoldingsStockRatioList;
 //
 //
 //        return apiResponse.makeResponse(ResStatus.SUCCESS, top5List);

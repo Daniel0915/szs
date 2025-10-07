@@ -3,8 +3,8 @@
 //import com.example.szs.insideTrade.domain.LargeHoldingsStkrtEntity;
 //import com.example.szs.domain.stock.QLargeHoldingsStkrtEntity;
 //import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
-//import com.example.szs.model.dto.largeHoldings.LargeHoldingsStkrtDTO;
-//import com.example.szs.model.queryDSLSearch.LargeHoldingStkrtSearchCondition;
+//import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
+//import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSearchConditionReqDTO;
 //import com.example.szs.utils.jpa.EntityToDtoMapper;
 //import com.example.szs.utils.jpa.ListDivider;
 //import com.example.szs.utils.jpa.Param;
@@ -39,7 +39,7 @@
 //        this.largeHoldingsStkrtRepository = largeHoldingsStkrtRepository;
 //    }
 //
-//    public List<LargeHoldingsStkrtDTO> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchCondition condition) {
+//    public List<LargeHoldingsStkrtResDTO> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchConditionReqDTO condition) {
 //        if (condition.getCorpCode() == null) {
 //            return new ArrayList<>();
 //        }
@@ -74,28 +74,28 @@
 //                                   dynamicOrder(LargeHoldingsStkrtEntity.Fields.stkrt, true)
 //                           )
 //                           .stream()
-//                           .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsStkrtDTO.class).stream())
+//                           .flatMap(entity -> EntityToDtoMapper.mapEntityToDto(entity, LargeHoldingsStkrtResDTO.class).stream())
 //                           .toList();
 //    }
 //
-//    public void saveAll(List<LargeHoldingsStkrtDTO> largeHoldingsStkrtDTOList) {
+//    public void saveAll(List<LargeHoldingsStkrtResDTO> largeHoldingsStkrtDTOList) {
 //        if (CollectionUtils.isEmpty(largeHoldingsStkrtDTOList)) {
 //            return;
 //        }
-//        Map<Boolean, List<LargeHoldingsStkrtDTO>> partitioned = largeHoldingsStkrtDTOList.stream()
+//        Map<Boolean, List<LargeHoldingsStkrtResDTO>> partitioned = largeHoldingsStkrtDTOList.stream()
 //                                                                                           .collect(Collectors.partitioningBy(dto -> dto.getSeq() == null || dto.getSeq() == 0L));
 //
 //        update(partitioned.get(false));
 //        insert(partitioned.get(true));
 //    }
 //
-//    private void insert(List<LargeHoldingsStkrtDTO> insertDTOList) {
+//    private void insert(List<LargeHoldingsStkrtResDTO> insertDTOList) {
 //        if (CollectionUtils.isEmpty(insertDTOList)) {
 //            return;
 //        }
 //        List<LargeHoldingsStkrtEntity> insertEntityList = new ArrayList<>();
 //
-//        for (LargeHoldingsStkrtDTO dto : insertDTOList) {
+//        for (LargeHoldingsStkrtResDTO dto : insertDTOList) {
 //            Optional<LargeHoldingsStkrtEntity.LargeHoldingsStkrtEntityBuilder> optional = Param.getSaveEntityToBuilder(dto, new LargeHoldingsStkrtEntity(), new LargeHoldingsStkrtEntity().toBuilder());
 //            optional.ifPresent(value -> insertEntityList.add(value.build()
 //                                                                  .toBuilder()
@@ -106,12 +106,12 @@
 //        largeHoldingsStkrtRepository.saveAll(insertEntityList);
 //    }
 //
-//    private void update(List<LargeHoldingsStkrtDTO> updateDTOList) {
+//    private void update(List<LargeHoldingsStkrtResDTO> updateDTOList) {
 //        if (CollectionUtils.isEmpty(updateDTOList)) {
 //            return;
 //        }
 //        List<Long> distinctSeqList = updateDTOList.stream()
-//                                          .map(LargeHoldingsStkrtDTO::getSeq)
+//                                          .map(LargeHoldingsStkrtResDTO::getSeq)
 //                                          .collect(Collectors.toSet())
 //                                          .stream()
 //                                          .collect(Collectors.toList());
@@ -128,7 +128,7 @@
 //
 //        List<LargeHoldingsStkrtEntity> updateEntityList = new ArrayList<>();
 //
-//        for (LargeHoldingsStkrtDTO dto : updateDTOList) {
+//        for (LargeHoldingsStkrtResDTO dto : updateDTOList) {
 //            LargeHoldingsStkrtEntity findUpdateEntity = findUpdateEntityMap.getOrDefault(dto.getSeq(), null);
 //
 //            if (findUpdateEntity == null) {

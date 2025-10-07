@@ -3,7 +3,7 @@ package com.example.szs.module.stock;
 
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
-import com.example.szs.model.dto.largeHoldings.LargeHoldingsStkrtDTO;
+import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
 import com.example.szs.utils.money.NumberUtils;
 import com.example.szs.utils.time.TimeUtil;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -159,12 +159,12 @@ public class WebCrawling {
                      .collect(Collectors.toList());
     }
 
-    public List<LargeHoldingsStkrtDTO> getLargeHoldingsStkrtCrawling(String rceptNo, String corpCode, String corpName) {
+    public List<LargeHoldingsStkrtResDTO> getLargeHoldingsStkrtCrawling(String rceptNo, String corpCode, String corpName) {
         assert ( StringUtils.hasText(rceptNo) && StringUtils.hasText(corpCode) && StringUtils.hasText(corpName) ) : "rceptNo, corpCode, corpName must be have value";
 
         WebDriver driver = this.getSettingChromeDriver();
 
-        List<LargeHoldingsStkrtDTO> result = new ArrayList<>();
+        List<LargeHoldingsStkrtResDTO> result = new ArrayList<>();
         try {
             driver.get(detailUrl + rceptNo);
             // 페이지 로딩을 위한 대기 (명시적 대기)
@@ -278,15 +278,15 @@ public class WebCrawling {
                     continue;
                 }
 
-                result.add(LargeHoldingsStkrtDTO.builder()
-                                                .rceptNo(rceptNo)
-                                                .corpCode(corpCode)
-                                                .corpName(corpName)
-                                                .largeHoldingsName(largeHoldingsName)
-                                                .birthDateOrBizRegNum(birthDateOrBizRegNum)
-                                                .totalStockAmount(totalStockAmount)
-                                                .stkrt(stkrt)
-                                                .build());
+                result.add(LargeHoldingsStkrtResDTO.builder()
+                                                   .rceptNo(rceptNo)
+                                                   .corpCode(corpCode)
+                                                   .corpName(corpName)
+                                                   .largeHoldingsName(largeHoldingsName)
+                                                   .birthDateOrBizRegNum(birthDateOrBizRegNum)
+                                                   .totalStockAmount(totalStockAmount)
+                                                   .stkrt(stkrt)
+                                                   .build());
             }
         } catch (Exception e) {
             log.error("=============error [start]==============");

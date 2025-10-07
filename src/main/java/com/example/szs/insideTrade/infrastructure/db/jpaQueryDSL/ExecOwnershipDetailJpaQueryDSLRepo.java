@@ -3,9 +3,9 @@ package com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL;
 import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
 import com.example.szs.insideTrade.domain.ExecOwnershipDetailRepo;
 import com.example.szs.insideTrade.domain.QExecOwnershipDetail;
+import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
-import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
 import com.example.szs.utils.batch.JdbcBatchUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
@@ -77,7 +77,7 @@ public class ExecOwnershipDetailJpaQueryDSLRepo implements ExecOwnershipDetailRe
     }
 
     @Override
-    public Page<ExecOwnershipDetail> searchPage(ExecOwnershipDetailSearchCondition condition, Pageable pageable) {
+    public Page<ExecOwnershipDetail> searchPage(ExecOwnershipDetailSearchConditionReqDTO condition, Pageable pageable) {
         List<ExecOwnershipDetail> content = queryFactory.selectFrom(execOwnershipDetail)
                                                            .where(searchPageWhereCondition(condition))
                                                            .orderBy(dynamicOrder(condition))
@@ -97,7 +97,7 @@ public class ExecOwnershipDetailJpaQueryDSLRepo implements ExecOwnershipDetailRe
     }
 
     @Override
-    public List<ExecOwnershipDetail> getExecOwnershipDetailList(ExecOwnershipDetailSearchCondition condition) {
+    public List<ExecOwnershipDetail> getExecOwnershipDetailList(ExecOwnershipDetailSearchConditionReqDTO condition) {
         return queryFactory.selectFrom(execOwnershipDetail)
                            .where(
                                    corpCodeEq(condition.getCorpCodeEq()),
@@ -136,7 +136,7 @@ public class ExecOwnershipDetailJpaQueryDSLRepo implements ExecOwnershipDetailRe
     }
 
     @Override
-    public List<ExecOwnershipDetailDTO.TopStockDetailDTO> getTopStockDetail(ExecOwnershipDetailSearchCondition condition) {
+    public List<ExecOwnershipDetailDTO.TopStockDetailDTO> getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO condition) {
         JPAQuery<ExecOwnershipDetailDTO.TopStockDetailDTO> query = queryFactory.select(Projections.constructor(ExecOwnershipDetailDTO.TopStockDetailDTO.class,
                                                                                        execOwnershipDetail.corpCode.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpCode),
                                                                                        execOwnershipDetail.corpName.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpName),
@@ -184,7 +184,7 @@ public class ExecOwnershipDetailJpaQueryDSLRepo implements ExecOwnershipDetailRe
         return StringUtils.hasText(stockType) ? execOwnershipDetail.stockType.contains(stockType) : null;
     }
 
-    private OrderSpecifier<?> dynamicOrder(ExecOwnershipDetailSearchCondition condition) {
+    private OrderSpecifier<?> dynamicOrder(ExecOwnershipDetailSearchConditionReqDTO condition) {
         if (!hasText(condition.getOrderColumn())) {
             return execOwnershipDetail.rceptNo.asc();
         }
@@ -251,7 +251,7 @@ public class ExecOwnershipDetailJpaQueryDSLRepo implements ExecOwnershipDetailRe
         return afterStockAmountLoe != null ? execOwnershipDetail.afterStockAmount.loe(afterStockAmountLoe): null;
     }
 
-    private BooleanBuilder searchPageWhereCondition(ExecOwnershipDetailSearchCondition condition) {
+    private BooleanBuilder searchPageWhereCondition(ExecOwnershipDetailSearchConditionReqDTO condition) {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(execOwnershipNameEq(condition.getExecOwnershipNameEq()));

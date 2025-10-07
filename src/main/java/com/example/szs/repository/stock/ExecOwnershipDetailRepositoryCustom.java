@@ -5,7 +5,7 @@
 //import com.example.szs.insideTrade.domain.ExecOwnershipDetailRepository;
 //import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
 //import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
-//import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
+//import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 //import com.example.szs.utils.jpa.EntityToDtoMapper;
 //import com.example.szs.utils.jpa.ListDivider;
 //import com.example.szs.utils.jpa.Param;
@@ -46,7 +46,7 @@
 //        this.execOwnershipDetailRepository = execOwnershipDetailRepository;
 //    }
 //
-//    public Page<ExecOwnershipDetailDTO> searchPage(ExecOwnershipDetailSearchCondition condition, Pageable pageable) {
+//    public Page<ExecOwnershipDetailDTO> searchPage(ExecOwnershipDetailSearchConditionReqDTO condition, Pageable pageable) {
 //        List<ExecOwnershipDetailDTO> content = queryFactory.selectFrom(execOwnershipDetailEntity)
 //                                                           .where(searchPageWhereCondition(condition))
 //                                                           .orderBy(dynamicOrder(condition))
@@ -67,7 +67,7 @@
 //        return new PageImpl<>(content, pageable, totalCount);
 //    }
 //
-//    public List<ExecOwnershipDetailDTO> getExecOwnershipDetailDTOList(ExecOwnershipDetailSearchCondition condition) {
+//    public List<ExecOwnershipDetailDTO> getExecOwnershipDetailDTOList(ExecOwnershipDetailSearchConditionReqDTO condition) {
 //        return queryFactory.selectFrom(execOwnershipDetailEntity)
 //                           .where(
 //                                   corpCodeEq(condition.getCorpCodeEq()),
@@ -173,7 +173,7 @@
 //        execOwnershipDetailRepository.saveAll(updateEntityList);
 //    }
 //
-//    public List<ExecOwnershipDetailDTO.TopStockDetailDTO> getTopStockDetail(ExecOwnershipDetailSearchCondition condition) {
+//    public List<ExecOwnershipDetailDTO.TopStockDetailDTO> getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO condition) {
 //        JPAQuery<ExecOwnershipDetailDTO.TopStockDetailDTO> query = queryFactory.select(Projections.constructor(ExecOwnershipDetailDTO.TopStockDetailDTO.class,
 //                                                                                       execOwnershipDetailEntity.corpCode.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpCode),
 //                                                                                       execOwnershipDetailEntity.corpName.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpName),
@@ -221,7 +221,7 @@
 //        return StringUtils.hasText(stockType) ? execOwnershipDetailEntity.stockType.contains(stockType) : null;
 //    }
 //
-//    private OrderSpecifier<?> dynamicOrder(ExecOwnershipDetailSearchCondition condition) {
+//    private OrderSpecifier<?> dynamicOrder(ExecOwnershipDetailSearchConditionReqDTO condition) {
 //        if (!hasText(condition.getOrderColumn())) {
 //            return execOwnershipDetailEntity.rceptNo.asc();
 //        }
@@ -288,7 +288,7 @@
 //        return afterStockAmountLoe != null ? execOwnershipDetailEntity.afterStockAmount.loe(afterStockAmountLoe): null;
 //    }
 //
-//    private BooleanBuilder searchPageWhereCondition(ExecOwnershipDetailSearchCondition condition) {
+//    private BooleanBuilder searchPageWhereCondition(ExecOwnershipDetailSearchConditionReqDTO condition) {
 //        BooleanBuilder builder = new BooleanBuilder();
 //
 //        builder.and(execOwnershipNameEq(condition.getExecOwnershipNameEq()));

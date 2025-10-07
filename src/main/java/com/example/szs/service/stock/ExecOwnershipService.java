@@ -10,7 +10,7 @@
 //import com.example.szs.model.eNum.ResStatus;
 //import com.example.szs.model.eNum.redis.ChannelType;
 //import com.example.szs.model.eNum.stock.SellOrBuyType;
-//import com.example.szs.model.queryDSLSearch.ExecOwnershipDetailSearchCondition;
+//import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 //import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 //import com.example.szs.module.ApiResponse;
 //import com.example.szs.module.stock.WebCrawling;
@@ -184,7 +184,7 @@
 //                                              .build());
 //        }
 //    }
-//    public ResponseEntity<?> getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchCondition condition, Pageable pageable) {
+//    public ResponseEntity<?> getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchConditionReqDTO condition, Pageable pageable) {
 //        Page<ExecOwnershipDetailDTO> page = execOwnershipDetailRepositoryCustom.searchPage(condition, pageable);
 //
 //        PageDTO pageDTO = PageDTO.builder()
@@ -203,14 +203,14 @@
 //        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipRepositoryCustom.getExecOwnershipOrderSpStockLmpCnt(corpCode));
 //    }
 //
-//    public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchCondition condition) {
+//    public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchConditionReqDTO condition) {
 //        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipDetailRepositoryCustom.getExecOwnershipDetailDTOList(condition));
 //    }
 //
 //    public List<ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse> getTop5StockTrade(String tradeDtGoe, String tradeDtLoe) {
 //        ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse buy = ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                                                                 .sellOrBuyType(SellOrBuyType.BUY.getCode())
-//                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+//                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                                                                 .changeStockAmountGt(0L)
@@ -220,7 +220,7 @@
 //
 //        ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse sell = ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                                                                  .sellOrBuyType(SellOrBuyType.SELL.getCode())
-//                                                                                                                  .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+//                                                                                                                  .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                                                                  .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                                                                  .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                                                                  .changeStockAmountLt(0L)
@@ -236,7 +236,7 @@
 //            case BUY ->
 //                    apiResponse.makeResponse(ResStatus.SUCCESS, ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                                                                 .sellOrBuyType(SellOrBuyType.BUY.getCode())
-//                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+//                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                                                                 .changeStockAmountGt(0L)
@@ -245,7 +245,7 @@
 //            case SELL ->
 //                    apiResponse.makeResponse(ResStatus.SUCCESS, ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                                                                 .sellOrBuyType(SellOrBuyType.SELL.getCode())
-//                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+//                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                                                                 .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                                                                 .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                                                                 .changeStockAmountLt(0L)
@@ -255,7 +255,7 @@
 //                    apiResponse.makeResponse(ResStatus.SUCCESS, Arrays.asList(
 //                            ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                             .sellOrBuyType(SellOrBuyType.BUY.getCode())
-//                                                                             .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+//                                                                             .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                             .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                             .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                             .changeStockAmountGt(0L)
@@ -263,7 +263,7 @@
 //                                                                             .build(),
 //                            ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
 //                                                                             .sellOrBuyType(SellOrBuyType.SELL.getCode())
-//                                                                             .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchCondition.builder()
+//                                                                             .top5StockDetailDTOList(execOwnershipDetailRepositoryCustom.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
 //                                                                                                                                                                                             .tradeDtGoe(tradeDtGoe)
 //                                                                                                                                                                                             .tradeDtLoe(tradeDtLoe)
 //                                                                                                                                                                                             .changeStockAmountLt(0L)

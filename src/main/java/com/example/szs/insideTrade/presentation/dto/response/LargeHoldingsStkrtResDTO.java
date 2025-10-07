@@ -1,4 +1,4 @@
-package com.example.szs.model.dto.largeHoldings;
+package com.example.szs.insideTrade.presentation.dto.response;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class LargeHoldingsStkrtDTO {
+public class LargeHoldingsStkrtResDTO {
     private Long seq;
     private String rceptNo;
     private String corpCode;

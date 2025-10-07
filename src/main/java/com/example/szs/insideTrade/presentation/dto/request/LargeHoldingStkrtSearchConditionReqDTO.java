@@ -1,4 +1,4 @@
-package com.example.szs.model.queryDSLSearch;
+package com.example.szs.insideTrade.presentation.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldNameConstants;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @FieldNameConstants
-public class LargeHoldingStkrtSearchCondition {
+public class LargeHoldingStkrtSearchConditionReqDTO {
     private String orderColumn;
     private Boolean isDescending;
     private String corpCode;

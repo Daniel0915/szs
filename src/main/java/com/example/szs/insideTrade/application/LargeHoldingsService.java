@@ -6,9 +6,13 @@ import com.example.szs.insideTrade.domain.LargeHoldings;
 import com.example.szs.insideTrade.domain.LargeHoldingsDetail;
 import com.example.szs.insideTrade.domain.LargeHoldingsDetailRepo;
 import com.example.szs.insideTrade.domain.LargeHoldingsDomainService;
+import com.example.szs.insideTrade.domain.LargeHoldingsStkrt;
+import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
 import com.example.szs.insideTrade.infrastructure.push.SsePush;
 import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
+import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
+import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
 import com.example.szs.insideTrade.presentation.dto.response.PageResDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
 import org.springframework.data.domain.Page;
@@ -20,6 +24,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +36,7 @@ public class LargeHoldingsService {
     private final SsePush ssePush;
     private final CorpInfoRepo corpInfoRepo;
     private final LargeHoldingsDetailRepo largeHoldingsDetailRepo;
+    private final LargeHoldingsStkrtRepo largeHoldingsStkrtRepo;
 
     @Scheduled(cron = "0 0 9 * * ?")
     public void insertData() throws Exception {
@@ -56,7 +62,7 @@ public class LargeHoldingsService {
 
         }
     }
-    // TODO : getSearchPageLargeHoldingsDetail 구현
+
     public PageResDTO getSearchPageLargeHoldingsDetail(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable) {
         Page<LargeHoldingsDetail> page = largeHoldingsDetailRepo.searchPage(condition, pageable);
 
@@ -65,6 +71,31 @@ public class LargeHoldingsService {
                          .totalElements(page.getTotalElements())
                          .totalPages(page.getTotalPages())
                          .build();
+    }
+
+    public List<LargeHoldingsStkrtResDTO> getLargeHoldingsStockRatio(LargeHoldingStkrtSearchConditionReqDTO condition) {
+        List<LargeHoldingsStkrt> findLargeHoldingsStkrtList = largeHoldingsStkrtRepo.getLargeHoldingsStockRatio(condition.toBuilder()
+                                                                                                                         .limit(1L)
+                                                                                                                         .build());
+
+        List<LargeHoldingsStkrt> filteredStkrtExcNullOrInit = findLargeHoldingsStkrtList.stream()
+                                                                                        .filter(dto -> dto.getStkrt() != null && dto.getStkrt() != 0.0F)
+                                                                                        .collect(Collectors.toList());
+
+
+        return filteredStkrtExcNullOrInit.stream()
+                                         .map(entity -> LargeHoldingsStkrtResDTO.builder()
+                                                                                .seq(entity.getSeq())
+                                                                                .rceptNo(entity.getRceptNo())
+                                                                                .corpCode(entity.getCorpCode())
+                                                                                .corpName(entity.getCorpName())
+                                                                                .largeHoldingsName(entity.getLargeHoldingsName())
+                                                                                .birthDateOrBizRegNum(entity.getBirthDateOrBizRegNum())
+                                                                                .totalStockAmount(entity.getTotalStockAmount())
+                                                                                .stkrt(entity.getStkrt())
+                                                                                .regDt(entity.getRegDt())
+                                                                                .build())
+                                         .collect(Collectors.toList());
     }
 
 }
