@@ -8,6 +8,7 @@ import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSea
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
 import com.example.szs.model.eNum.ResStatus;
+import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.service.stock.CorpInfoService;
 import com.example.szs.utils.error.ErrorMsgUtil;
@@ -37,6 +38,9 @@ public class StockController {
 
     private static final String CORP_CODE = "corpCode";
     private static final String EXEC_OWNERSHIP_NAME = "execOwnershipName";
+    private static final String TRADE_DT_GOE = "tradeDtGoe";
+    private static final String TRADE_DT_LOE = "tradeDtLoe";
+    private static final String SELL_OR_BUY_TYPE = "sellOrBuyType";
 
     @GetMapping("/search/large-holdings")
     public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable) {
@@ -151,6 +155,39 @@ public class StockController {
         }
     }
 
+    @GetMapping("/corp-info-all")
+    public ResponseEntity<?> getAllCorpInfoList() {
+        try {
+            return apiResponse.makeResponse(ResStatus.SUCCESS, corpInfoService.getAllCorpInfoDTOList());
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/trade-total")
+    public ResponseEntity<?> getTopStockTradeTotal(@RequestParam(required = false) String tradeDtGoe,
+                                                   @RequestParam(required = false) String tradeDtLoe,
+                                                   @RequestParam(required = false, defaultValue = "ALL") SellOrBuyType sellOrBuyType) {
+        if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
+            Map<String, Object> params = new HashMap<>() {{
+                put(TRADE_DT_GOE, tradeDtGoe);
+                put(TRADE_DT_LOE, tradeDtLoe);
+                put(SELL_OR_BUY_TYPE, sellOrBuyType);
+            }};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            // TODO : LargeHoldingsService 도 별도로 처리해야 하는지 확인
+            return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipService.getTopStockTradeTotal(tradeDtGoe, tradeDtLoe, sellOrBuyType));
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
 //    @GetMapping("/large-holdings-monthly-trade-cnt")
 //    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(@RequestParam(required = false) String corpCode) {
 //        if (!StringUtils.hasText(corpCode)) {
@@ -205,16 +242,6 @@ public class StockController {
 //        }
 //    }
 //
-    @GetMapping("/corp-info-all")
-    public ResponseEntity<?> getAllCorpInfoList() {
-        try {
-            List<CorpInfoResDTO> response = corpInfoService.getAllCorpInfoDTOList();
-            return apiResponse.makeResponse(ResStatus.SUCCESS, response);
-        } catch (Exception e) {
-            log.error("예상하지 못한 예외 에러 발생 : ", e);
-            return apiResponse.makeResponse(ResStatus.ERROR);
-        }
-    }
 //
 //
 //    @GetMapping("/trade-top-5")
@@ -241,25 +268,4 @@ public class StockController {
 //        }
 //    }
 //
-//    @GetMapping("/trade-total")
-//    public ResponseEntity<?> getTopStockTradeTotal(@RequestParam(required = false) String tradeDtGoe,
-//                                                   @RequestParam(required = false) String tradeDtLoe,
-//                                                   @RequestParam(required = false, defaultValue = "ALL") SellOrBuyType sellOrBuyType) {
-//        if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
-//            Map<String, Object> params = new HashMap<>() {{
-//                put(TRADE_DT_GOE, tradeDtGoe);
-//                put(TRADE_DT_LOE, tradeDtLoe);
-//                put(SELL_OR_BUY_TYPE, sellOrBuyType);
-//            }};
-//            log.error(ErrorMsgUtil.paramErrorMessage(params));
-//            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
-//        }
-//
-//        try {
-//            return largeHoldingsService.getTopStockTradeTotal(tradeDtGoe, tradeDtLoe, sellOrBuyType);
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
 }

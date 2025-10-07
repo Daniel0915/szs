@@ -1,5 +1,6 @@
 package com.example.szs.insideTrade.application;
 
+import com.example.szs.insideTrade.application.dto.ExecOwnershipDetailDTO;
 import com.example.szs.insideTrade.domain.CorpInfo;
 import com.example.szs.insideTrade.domain.CorpInfoRepo;
 import com.example.szs.insideTrade.domain.ExecOwnership;
@@ -10,9 +11,7 @@ import com.example.szs.insideTrade.domain.ExecOwnershipRepo;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.response.ExecOwnershipResDTO;
 import com.example.szs.model.dto.MessageDto;
-import com.example.szs.insideTrade.application.dto.ExecOwnershipDetailDTO;
 import com.example.szs.model.dto.page.PageDTO;
-import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.module.ApiResponse;
@@ -22,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -128,45 +126,39 @@ public class ExecOwnershipService {
         return Arrays.asList(sell, buy);
     }
 
-    public ResponseEntity<?> getTopStockTradeTotal(String tradeDtGoe, String tradeDtLoe, SellOrBuyType sellOrBuyType) {
+    public List<ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse>  getTopStockTradeTotal(String tradeDtGoe, String tradeDtLoe, SellOrBuyType sellOrBuyType) {
+        ExecOwnershipDetailSearchConditionReqDTO requestBuy = ExecOwnershipDetailSearchConditionReqDTO.builder()
+                                                                                                      .tradeDtGoe(tradeDtGoe)
+                                                                                                      .tradeDtLoe(tradeDtLoe)
+                                                                                                      .changeStockAmountGt(0L)
+                                                                                                      .build();
+        ExecOwnershipDetailSearchConditionReqDTO requestSell = ExecOwnershipDetailSearchConditionReqDTO.builder()
+                                                                                                       .tradeDtGoe(tradeDtGoe)
+                                                                                                       .tradeDtLoe(tradeDtLoe)
+                                                                                                       .changeStockAmountLt(0L)
+                                                                                                       .build();
         return switch (sellOrBuyType) {
             case BUY ->
-                    apiResponse.makeResponse(ResStatus.SUCCESS, ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
-                                                                                                                 .sellOrBuyType(SellOrBuyType.BUY.getCode())
-                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
-                                                                                                                                                                                                                           .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                                                           .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                                                           .changeStockAmountGt(0L)
-                                                                                                                                                                                                                           .build()))
-                                                                                                                 .build());
+                    List.of(ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
+                                                                             .sellOrBuyType(SellOrBuyType.BUY.getCode())
+                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(requestBuy))
+                                                                             .build());
             case SELL ->
-                    apiResponse.makeResponse(ResStatus.SUCCESS, ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
-                                                                                                                 .sellOrBuyType(SellOrBuyType.SELL.getCode())
-                                                                                                                 .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
-                                                                                                                                                                                                                           .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                                                           .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                                                           .changeStockAmountLt(0L)
-                                                                                                                                                                                                                           .build()))
-                                                                                                                 .build());
+                    List.of(ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
+                                                                             .sellOrBuyType(SellOrBuyType.SELL.getCode())
+                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(requestSell))
+                                                                             .build());
             case ALL ->
-                    apiResponse.makeResponse(ResStatus.SUCCESS, Arrays.asList(
+                    Arrays.asList(
                             ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                              .sellOrBuyType(SellOrBuyType.BUY.getCode())
-                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
-                                                                                                                                                                                       .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                       .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                       .changeStockAmountGt(0L)
-                                                                                                                                                                                       .build()))
+                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(requestBuy))
                                                                              .build(),
                             ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse.builder()
                                                                              .sellOrBuyType(SellOrBuyType.SELL.getCode())
-                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(ExecOwnershipDetailSearchConditionReqDTO.builder()
-                                                                                                                                                                                       .tradeDtGoe(tradeDtGoe)
-                                                                                                                                                                                       .tradeDtLoe(tradeDtLoe)
-                                                                                                                                                                                       .changeStockAmountLt(0L)
-                                                                                                                                                                                       .build()))
+                                                                             .top5StockDetailDTOList(execOwnershipDetailRepo.getTopStockDetail(requestSell))
                                                                              .build()
-                    ));
+            );
         };
     }
 
