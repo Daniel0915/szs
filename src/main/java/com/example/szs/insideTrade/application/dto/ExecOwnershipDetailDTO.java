@@ -1,7 +1,6 @@
-package com.example.szs.model.dto.execOwnership;
+package com.example.szs.insideTrade.application.dto;
 
 import com.example.szs.config.json.NullToEmptySerializer;
-import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;

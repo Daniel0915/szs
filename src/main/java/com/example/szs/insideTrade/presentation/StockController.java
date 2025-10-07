@@ -103,7 +103,25 @@ public class StockController {
             return apiResponse.makeResponse(ResStatus.ERROR);
         }
     }
-//
+
+    @GetMapping("/exec-ownership-monthly-trade-cnt")
+    public ResponseEntity<?> getExecOwnershipMonthlyTradeCnt(@RequestParam(required = false) String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
+            Map<String, Object> params = new HashMap<>() {{
+                put(CORP_CODE, corpCode);
+            }};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipService.getMonthlyTradeCnt(corpCode));
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
 //    @GetMapping("/large-holdings-monthly-trade-cnt")
 //    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(@RequestParam(required = false) String corpCode) {
 //        if (!StringUtils.hasText(corpCode)) {
@@ -120,21 +138,6 @@ public class StockController {
 //        }
 //    }
 //
-//    @GetMapping("/exec-ownership-monthly-trade-cnt")
-//    public ResponseEntity<?> getExecOwnershipMonthlyTradeCnt(@RequestParam(required = false) String corpCode) {
-//        if (!StringUtils.hasText(corpCode)) {
-//            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
-//            log.error(ErrorMsgUtil.paramErrorMessage(params));
-//            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
-//        }
-//
-//        try {
-//            return execOwnershipService.getMonthlyTradeCnt(corpCode);
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
 //
 //    @GetMapping("/large-holdings-top-5")
 //    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(@RequestParam(required = false) String corpCode) {

@@ -1,6 +1,6 @@
 package com.example.szs.insideTrade.domain;
 
-import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
+import com.example.szs.insideTrade.application.dto.ExecOwnershipDetailDTO;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

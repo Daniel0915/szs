@@ -5,7 +5,7 @@
 //import com.example.szs.insideTrade.presentation.dto.response.CorpInfoResDTO;
 //import com.example.szs.model.dto.execOwnership.EOResponseDTO;
 //import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
-//import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
+//import com.example.szs.insideTrade.application.dto.ExecOwnershipDetailDTO;
 //import com.example.szs.model.dto.page.PageDTO;
 //import com.example.szs.model.eNum.ResStatus;
 //import com.example.szs.model.eNum.redis.ChannelType;

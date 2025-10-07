@@ -10,8 +10,7 @@ import com.example.szs.insideTrade.domain.ExecOwnershipRepo;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.response.ExecOwnershipResDTO;
 import com.example.szs.model.dto.MessageDto;
-import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
-import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
+import com.example.szs.insideTrade.application.dto.ExecOwnershipDetailDTO;
 import com.example.szs.model.dto.page.PageDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.redis.ChannelType;
@@ -32,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -172,7 +170,7 @@ public class ExecOwnershipService {
         };
     }
 
-    public ResponseEntity<?> getMonthlyTradeCnt(String corpCode) {
+    public List<ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse> getMonthlyTradeCnt(String corpCode) {
         assert (corpCode != null) : "corpCode not null";
         // 매월 매도건수
         ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse sell = ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse.builder()
@@ -185,11 +183,6 @@ public class ExecOwnershipService {
                                                                                                                        .sellOrBuyType(SellOrBuyType.BUY.getCode())
                                                                                                                        .monthlyCountDTOList(execOwnershipDetailRepo.getMonthlyTradeCnt(corpCode, false))
                                                                                                                        .build();
-
-
-
-
-        List<ExecOwnershipDetailDTO.SellOrBuyMonthlyCountResponse> responses = Arrays.asList(sell, buy);
-        return apiResponse.makeResponse(ResStatus.SUCCESS, responses);
+        return Arrays.asList(sell, buy);
     }
 }

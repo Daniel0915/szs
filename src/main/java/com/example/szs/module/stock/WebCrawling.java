@@ -1,7 +1,7 @@
 package com.example.szs.module.stock;
 
 
-import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
+import com.example.szs.insideTrade.application.dto.ExecOwnershipDetailDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
 import com.example.szs.utils.money.NumberUtils;

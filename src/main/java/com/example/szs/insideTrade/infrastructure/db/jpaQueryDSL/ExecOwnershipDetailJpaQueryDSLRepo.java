@@ -4,7 +4,7 @@ import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
 import com.example.szs.insideTrade.domain.ExecOwnershipDetailRepo;
 import com.example.szs.insideTrade.domain.QExecOwnershipDetail;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
-import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
+import com.example.szs.insideTrade.application.dto.ExecOwnershipDetailDTO;
 import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 import com.example.szs.utils.batch.JdbcBatchUtil;
 import com.querydsl.core.BooleanBuilder;

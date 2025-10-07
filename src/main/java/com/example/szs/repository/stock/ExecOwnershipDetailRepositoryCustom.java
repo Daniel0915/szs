@@ -3,7 +3,7 @@
 //import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
 //import com.example.szs.domain.stock.QExecOwnershipDetailEntity;
 //import com.example.szs.insideTrade.domain.ExecOwnershipDetailRepository;
-//import com.example.szs.model.dto.execOwnership.ExecOwnershipDetailDTO;
+//import com.example.szs.insideTrade.application.dto.ExecOwnershipDetailDTO;
 //import com.example.szs.model.dto.largeHoldings.LargeHoldingsDetailDTO;
 //import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 //import com.example.szs.utils.jpa.EntityToDtoMapper;
