@@ -13,6 +13,5 @@ public interface LargeHoldingsDetailRepo {
     Page<LargeHoldingsDetail> searchPage(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable);
     List<LargeHoldingsDetailDTO.MonthlyCountDTO> getLargeHoldingsMonthlyTradeCnt(String corpCode, boolean isSell);
     List<LargeHoldingsDetail> getLargeHoldingsDetailListBy(LargeHoldingsDetailSearchConditionReqDTO condition);
-
-
+    List<LargeHoldingsDetailDTO.TopStockDetailDTO> getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO condition);
 }

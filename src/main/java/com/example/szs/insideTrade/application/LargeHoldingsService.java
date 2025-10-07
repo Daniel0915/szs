@@ -164,4 +164,28 @@ public class LargeHoldingsService {
                                                                                                             .isDescending(false)
                                                                                                             .build());
     }
+
+    public List<LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse> getTop5StockTrade(String tradeDtGoe, String tradeDtLoe) {
+        LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse buy = LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse.builder()
+                                                                                                                 .sellOrBuyType(SellOrBuyType.BUY.getCode())
+                                                                                                                 .top5StockDetailDTOList(largeHoldingsDetailRepo.getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO.builder()
+                                                                                                                                                                                                                                       .tradeDtGoe(tradeDtGoe)
+                                                                                                                                                                                                                                       .tradeDtLoe(tradeDtLoe)
+                                                                                                                                                                                                                                       .changeStockAmountGt(0L)
+                                                                                                                                                                                                                                       .limit(5L)
+                                                                                                                                                                                                                                       .build()))
+                                                                                                                 .build();
+
+        LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse sell = LargeHoldingsDetailDTO.SellOrBuyTop5StockResponse.builder()
+                                                                                                                  .sellOrBuyType(SellOrBuyType.SELL.getCode())
+                                                                                                                  .top5StockDetailDTOList(largeHoldingsDetailRepo.getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO.builder()
+                                                                                                                                                                                                                                        .tradeDtGoe(tradeDtGoe)
+                                                                                                                                                                                                                                        .tradeDtLoe(tradeDtLoe)
+                                                                                                                                                                                                                                        .changeStockAmountLt(0L)
+                                                                                                                                                                                                                                        .limit(5L)
+                                                                                                                                                                                                                                        .build()))
+                                                                                                                  .build();
+
+        return Arrays.asList(sell, buy);
+    }
 }

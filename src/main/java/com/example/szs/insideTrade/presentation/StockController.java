@@ -8,6 +8,7 @@ import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSea
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
 import com.example.szs.model.eNum.ResStatus;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
+import com.example.szs.model.eNum.stock.ShareDisclosure;
 import com.example.szs.module.ApiResponse;
 import com.example.szs.service.stock.CorpInfoService;
 import com.example.szs.utils.error.ErrorMsgUtil;
@@ -29,6 +30,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class StockController {
+    // TODO : controller 테스트 완료 후, 불필요 패키지 삭제 && 테스트 코드 작성
     private final LargeHoldingsService largeHoldingsService;
     private final ExecOwnershipService execOwnershipService;
     private final CorpInfoService corpInfoService;
@@ -238,28 +240,28 @@ public class StockController {
         }
     }
 
-//    @GetMapping("/trade-top-5")
-//    public ResponseEntity<?> getTop5StockTrade(@RequestParam(required = false) String tradeDtGoe, @RequestParam(required = false) String tradeDtLoe) {
-//        if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
-//            Map<String, Object> params = new HashMap<>() {{
-//                put(TRADE_DT_GOE, tradeDtGoe);
-//                put(TRADE_DT_LOE, tradeDtLoe);
-//            }};
-//            log.error(ErrorMsgUtil.paramErrorMessage(params));
-//            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
-//        }
-//
-//        try {
-//            Map<String, Object> result = new HashMap<>(){{
-//                put(ShareDisclosure.LARGE_HOLDINGS.getCode(), largeHoldingsService.getTop5StockTrade(tradeDtGoe, tradeDtLoe));
-//                put(ShareDisclosure.EXEC_OWNERSHIP.getCode(), execOwnershipService.getTop5StockTrade(tradeDtGoe, tradeDtLoe));
-//            }};
-//
-//            return apiResponse.makeResponse(ResStatus.SUCCESS, result);
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
-//
+    @GetMapping("/trade-top-5")
+    public ResponseEntity<?> getTop5StockTrade(@RequestParam(required = false) String tradeDtGoe, @RequestParam(required = false) String tradeDtLoe) {
+        if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
+            Map<String, Object> params = new HashMap<>() {{
+                put(TRADE_DT_GOE, tradeDtGoe);
+                put(TRADE_DT_LOE, tradeDtLoe);
+            }};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            Map<String, Object> result = new HashMap<>(){{
+                put(ShareDisclosure.LARGE_HOLDINGS.getCode(), largeHoldingsService.getTop5StockTrade(tradeDtGoe, tradeDtLoe));
+                put(ShareDisclosure.EXEC_OWNERSHIP.getCode(), execOwnershipService.getTop5StockTrade(tradeDtGoe, tradeDtLoe));
+            }};
+
+            return apiResponse.makeResponse(ResStatus.SUCCESS, result);
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
 }

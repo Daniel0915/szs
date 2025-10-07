@@ -10,9 +10,11 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -172,28 +174,29 @@ public class LargeHoldingsDetailJpaOrQueryDSLRepo implements LargeHoldingsDetail
                            .orderBy(dynamicOrder(condition))
                            .fetch();
     }
-//
-//    public List<LargeHoldingsDetailDTO.TopStockDetailDTO> getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO condition) {
-//        JPAQuery<LargeHoldingsDetailDTO.TopStockDetailDTO> query = queryFactory.select(Projections.constructor(LargeHoldingsDetailDTO.TopStockDetailDTO.class,
-//                                                                                       largeHoldingsDetail.corpCode.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpCode),
-//                                                                                       largeHoldingsDetail.corpName.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpName),
-//                                                                                       Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetail.changeStockAmount.sum()).as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.totalStockAmount)
-//                                                                               ))
-//                                                                               .from(largeHoldingsDetail)
-//                                                                               .where(
-//                                                                                       changeStockAmountLt(condition.getChangeStockAmountLt()),
-//                                                                                       changeStockAmountGt(condition.getChangeStockAmountGt()),
-//                                                                                       tradeDtBetween(condition.getTradeDtLoe(), condition.getTradeDtGoe())
-//                                                                               )
-//                                                                               .groupBy(largeHoldingsDetail.corpCode, largeHoldingsDetail.corpName)
-//                                                                               .orderBy(Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetail.changeStockAmount).sum().desc());
-//
-//
-//        if (condition.getLimit() != null && condition.getLimit() != 0) {
-//            query.limit(condition.getLimit());
-//        }
-//        return query.fetch();
-//    }
+
+    @Override
+    public List<LargeHoldingsDetailDTO.TopStockDetailDTO> getTopStockDetail(LargeHoldingsDetailSearchConditionReqDTO condition) {
+        JPAQuery<LargeHoldingsDetailDTO.TopStockDetailDTO> query = queryFactory.select(Projections.constructor(LargeHoldingsDetailDTO.TopStockDetailDTO.class,
+                                                                                       largeHoldingsDetail.corpCode.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpCode),
+                                                                                       largeHoldingsDetail.corpName.as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.corpName),
+                                                                                       Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetail.changeStockAmount.sum()).as(LargeHoldingsDetailDTO.TopStockDetailDTO.Fields.totalStockAmount)
+                                                                               ))
+                                                                               .from(largeHoldingsDetail)
+                                                                               .where(
+                                                                                       changeStockAmountLt(condition.getChangeStockAmountLt()),
+                                                                                       changeStockAmountGt(condition.getChangeStockAmountGt()),
+                                                                                       tradeDtBetween(condition.getTradeDtLoe(), condition.getTradeDtGoe())
+                                                                               )
+                                                                               .groupBy(largeHoldingsDetail.corpCode, largeHoldingsDetail.corpName)
+                                                                               .orderBy(Expressions.numberTemplate(Long.class, ABS_CODE, largeHoldingsDetail.changeStockAmount).sum().desc());
+
+
+        if (condition.getLimit() != null && condition.getLimit() != 0) {
+            query.limit(condition.getLimit());
+        }
+        return query.fetch();
+    }
 
     private BooleanExpression corpCodeEq(String corpCode) {
         return StringUtils.hasText(corpCode) ? largeHoldingsDetail.corpCode.eq(corpCode) : null;
