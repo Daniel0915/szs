@@ -100,8 +100,8 @@ public class ExecOwnershipService {
         return response;
     }
 
-    public ResponseEntity<?> getExecOwnershipTradeList(ExecOwnershipDetailSearchConditionReqDTO condition) {
-        return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipDetailRepo.getExecOwnershipDetailList(condition));
+    public List<ExecOwnershipDetail> getExecOwnershipTradeList(ExecOwnershipDetailSearchConditionReqDTO condition) {
+        return execOwnershipDetailRepo.getExecOwnershipDetailList(condition);
     }
 
     public List<ExecOwnershipDetailDTO.SellOrBuyTop5StockResponse> getTop5StockTrade(String tradeDtGoe, String tradeDtLoe) {

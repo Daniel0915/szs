@@ -2,6 +2,7 @@ package com.example.szs.insideTrade.presentation;
 
 import com.example.szs.insideTrade.application.ExecOwnershipService;
 import com.example.szs.insideTrade.application.LargeHoldingsService;
+import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
@@ -35,6 +36,7 @@ public class StockController {
     private final ApiResponse          apiResponse;
 
     private static final String CORP_CODE = "corpCode";
+    private static final String EXEC_OWNERSHIP_NAME = "execOwnershipName";
 
     @GetMapping("/search/large-holdings")
     public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable) {
@@ -122,6 +124,33 @@ public class StockController {
         }
     }
 
+    @GetMapping("/exec-ownership-trade-list")
+    public ResponseEntity<?> getExecOwnershipTradeList(@RequestParam(required = false) String corpCode,
+                                                       @RequestParam(required = false) String execOwnershipName) {
+        if (!StringUtils.hasText(corpCode) || !StringUtils.hasText(execOwnershipName)) {
+            Map<String, Object> params = new HashMap<>() {{
+                put(CORP_CODE, corpCode);
+                put(EXEC_OWNERSHIP_NAME, execOwnershipName);
+            }};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            ExecOwnershipDetailSearchConditionReqDTO request = ExecOwnershipDetailSearchConditionReqDTO.builder()
+                                                                                                       .corpCodeEq(corpCode)
+                                                                                                       .execOwnershipNameEq(execOwnershipName)
+                                                                                                       .orderColumn(ExecOwnershipDetail.Fields.tradeDt)
+                                                                                                       .isDescending(false)
+                                                                                                       .build();
+
+            return apiResponse.makeResponse(ResStatus.SUCCESS, execOwnershipService.getExecOwnershipTradeList(request));
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
 //    @GetMapping("/large-holdings-monthly-trade-cnt")
 //    public ResponseEntity<?> getLargeHoldingsMonthlyTradeCnt(@RequestParam(required = false) String corpCode) {
 //        if (!StringUtils.hasText(corpCode)) {
@@ -156,30 +185,6 @@ public class StockController {
 //    }
 //
 //
-//    @GetMapping("/exec-ownership-trade-list")
-//    public ResponseEntity<?> getExecOwnershipTradeList(@RequestParam(required = false) String corpCode,
-//                                                       @RequestParam(required = false) String execOwnershipName) {
-//        if (!StringUtils.hasText(corpCode) || !StringUtils.hasText(execOwnershipName)) {
-//            Map<String, Object> params = new HashMap<>() {{
-//                put(CORP_CODE, corpCode);
-//                put(EXEC_OWNERSHIP_NAME, execOwnershipName);
-//            }};
-//            log.error(ErrorMsgUtil.paramErrorMessage(params));
-//            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
-//        }
-//
-//        try {
-//            return execOwnershipService.getExecOwnershipTradeList(ExecOwnershipDetailSearchConditionReqDTO.builder()
-//                                                                                                    .corpCodeEq(corpCode)
-//                                                                                                    .execOwnershipNameEq(execOwnershipName)
-//                                                                                                    .orderColumn(ExecOwnershipDetail.Fields.tradeDt)
-//                                                                                                    .isDescending(false)
-//                                                                                                    .build());
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
 //
 //    @GetMapping("/large-holdings-trade-history")
 //    public ResponseEntity<?> getLargeHoldingsTradeHistory(@RequestParam(required = false) String corpCode, @RequestParam(required = false) String largeHoldingsName) {
