@@ -25,6 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,20 +86,23 @@ public class LargeHoldingsService {
                                                                                         .filter(dto -> dto.getStkrt() != null && dto.getStkrt() != 0.0F)
                                                                                         .collect(Collectors.toList());
 
+        List<LargeHoldingsStkrtResDTO> response = new ArrayList<>(filteredStkrtExcNullOrInit.size());
 
-        return filteredStkrtExcNullOrInit.stream()
-                                         .map(entity -> LargeHoldingsStkrtResDTO.builder()
-                                                                                .seq(entity.getSeq())
-                                                                                .rceptNo(entity.getRceptNo())
-                                                                                .corpCode(entity.getCorpCode())
-                                                                                .corpName(entity.getCorpName())
-                                                                                .largeHoldingsName(entity.getLargeHoldingsName())
-                                                                                .birthDateOrBizRegNum(entity.getBirthDateOrBizRegNum())
-                                                                                .totalStockAmount(entity.getTotalStockAmount())
-                                                                                .stkrt(entity.getStkrt())
-                                                                                .regDt(entity.getRegDt())
-                                                                                .build())
-                                         .collect(Collectors.toList());
+        for (LargeHoldingsStkrt largeHoldingsStkrt : filteredStkrtExcNullOrInit) {
+            response.add(LargeHoldingsStkrtResDTO.builder()
+                                                 .seq(largeHoldingsStkrt.getSeq())
+                                                 .rceptNo(largeHoldingsStkrt.getRceptNo())
+                                                 .corpCode(largeHoldingsStkrt.getCorpCode())
+                                                 .corpName(largeHoldingsStkrt.getCorpName())
+                                                 .largeHoldingsName(largeHoldingsStkrt.getLargeHoldingsName())
+                                                 .birthDateOrBizRegNum(largeHoldingsStkrt.getBirthDateOrBizRegNum())
+                                                 .totalStockAmount(largeHoldingsStkrt.getTotalStockAmount())
+                                                 .stkrt(largeHoldingsStkrt.getStkrt())
+                                                 .regDt(largeHoldingsStkrt.getRegDt())
+                                                 .build());
+        }
+
+        return response;
     }
 
     public List<LargeHoldingsDetailDTO.SellOrBuyMonthlyCountResponse> getLargeHoldingsMonthlyTradeCnt(String corpCode) {
@@ -117,5 +121,47 @@ public class LargeHoldingsService {
                                                                                                                        .build();
 
         return Arrays.asList(sell, buy);
+    }
+
+    public List<LargeHoldingsStkrtResDTO> getLargeHoldingsStockRatioTop5(String corpCode) {
+        List<LargeHoldingsStkrt> findLargeHoldingsStkrtList = largeHoldingsStkrtRepo.getLargeHoldingsStockRatio(LargeHoldingStkrtSearchConditionReqDTO.builder()
+                                                                                                                                                      .corpCode(corpCode)
+                                                                                                                                                      .limit(1L)
+                                                                                                                                                      .build());
+
+
+
+
+
+        List<LargeHoldingsStkrt> top5List = findLargeHoldingsStkrtList.size() > 5 ? findLargeHoldingsStkrtList.stream()
+                                                                                                              .limit(5)
+                                                                                                              .collect(Collectors.toList()) : findLargeHoldingsStkrtList;
+
+        List<LargeHoldingsStkrtResDTO> response = new ArrayList<>(top5List.size());
+
+        for (LargeHoldingsStkrt largeHoldingsStkrt : top5List) {
+            response.add(LargeHoldingsStkrtResDTO.builder()
+                                                 .seq(largeHoldingsStkrt.getSeq())
+                                                 .rceptNo(largeHoldingsStkrt.getRceptNo())
+                                                 .corpCode(largeHoldingsStkrt.getCorpCode())
+                                                 .corpName(largeHoldingsStkrt.getCorpName())
+                                                 .largeHoldingsName(largeHoldingsStkrt.getLargeHoldingsName())
+                                                 .birthDateOrBizRegNum(largeHoldingsStkrt.getBirthDateOrBizRegNum())
+                                                 .totalStockAmount(largeHoldingsStkrt.getTotalStockAmount())
+                                                 .stkrt(largeHoldingsStkrt.getStkrt())
+                                                 .regDt(largeHoldingsStkrt.getRegDt())
+                                                 .build());
+        }
+
+        return response;
+    }
+
+    public List<LargeHoldingsDetail> getLargeHoldingsTradeDtBy(String corpCode, String largeHoldingsName) {
+        return largeHoldingsDetailRepo.getLargeHoldingsDetailListBy(LargeHoldingsDetailSearchConditionReqDTO.builder()
+                                                                                                            .corpCodeEq(corpCode)
+                                                                                                            .largeHoldingsNameEq(largeHoldingsName)
+                                                                                                            .orderColumn(LargeHoldingsDetail.Fields.tradeDt)
+                                                                                                            .isDescending(false)
+                                                                                                            .build());
     }
 }

@@ -12,4 +12,7 @@ public interface LargeHoldingsDetailRepo {
     void insertNativeBatch(List<LargeHoldingsDetail> entities, int batchSize);
     Page<LargeHoldingsDetail> searchPage(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable);
     List<LargeHoldingsDetailDTO.MonthlyCountDTO> getLargeHoldingsMonthlyTradeCnt(String corpCode, boolean isSell);
+    List<LargeHoldingsDetail> getLargeHoldingsDetailListBy(LargeHoldingsDetailSearchConditionReqDTO condition);
+
+
 }

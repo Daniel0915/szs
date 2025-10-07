@@ -39,6 +39,7 @@ public class StockController {
     private static final String TRADE_DT_GOE = "tradeDtGoe";
     private static final String TRADE_DT_LOE = "tradeDtLoe";
     private static final String SELL_OR_BUY_TYPE = "sellOrBuyType";
+    private static final String LARGE_HOLDINGS_NAME = "largeHoldingsName";
 
     @GetMapping("/search/large-holdings")
     public ResponseEntity<?> searchLargeHoldingsDetail(LargeHoldingsDetailSearchConditionReqDTO condition, Pageable pageable) {
@@ -202,46 +203,41 @@ public class StockController {
         }
     }
 
-//
-//    @GetMapping("/large-holdings-top-5")
-//    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(@RequestParam(required = false) String corpCode) {
-//        if (!StringUtils.hasText(corpCode)) {
-//            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
-//            log.error(ErrorMsgUtil.paramErrorMessage(params));
-//            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
-//        }
-//
-//        try {
-//            return largeHoldingsService.getLargeHoldingsStockRatioTop5(corpCode);
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
-//
-//
-//
-//    @GetMapping("/large-holdings-trade-history")
-//    public ResponseEntity<?> getLargeHoldingsTradeHistory(@RequestParam(required = false) String corpCode, @RequestParam(required = false) String largeHoldingsName) {
-//        if (!StringUtils.hasText(corpCode)|| !StringUtils.hasText(largeHoldingsName)) {
-//            Map<String, Object> params = new HashMap<>() {{
-//                put(CORP_CODE, corpCode);
-//                put(LARGE_HOLDINGS_NAME, largeHoldingsName);
-//            }};
-//            log.error(ErrorMsgUtil.paramErrorMessage(params));
-//            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
-//        }
-//
-//        try {
-//            return largeHoldingsService.getLargeHoldingsTradeDtBy(corpCode, largeHoldingsName);
-//        } catch (Exception e) {
-//            log.error("예상하지 못한 예외 에러 발생 : ", e);
-//            return apiResponse.makeResponse(ResStatus.ERROR);
-//        }
-//    }
-//
-//
-//
+    @GetMapping("/large-holdings-top-5")
+    public ResponseEntity<?> getLargeHoldingsStockRatioTop5(@RequestParam(required = false) String corpCode) {
+        if (!StringUtils.hasText(corpCode)) {
+            Map<String, Object> params = new HashMap<>() {{put(CORP_CODE, corpCode);}};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return apiResponse.makeResponse(ResStatus.SUCCESS, largeHoldingsService.getLargeHoldingsStockRatioTop5(corpCode));
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
+    @GetMapping("/large-holdings-trade-history")
+    public ResponseEntity<?> getLargeHoldingsTradeHistory(@RequestParam(required = false) String corpCode, @RequestParam(required = false) String largeHoldingsName) {
+        if (!StringUtils.hasText(corpCode)|| !StringUtils.hasText(largeHoldingsName)) {
+            Map<String, Object> params = new HashMap<>() {{
+                put(CORP_CODE, corpCode);
+                put(LARGE_HOLDINGS_NAME, largeHoldingsName);
+            }};
+            log.error(ErrorMsgUtil.paramErrorMessage(params));
+            return apiResponse.makeResponse(ResStatus.PARAM_REQUIRE_ERROR);
+        }
+
+        try {
+            return apiResponse.makeResponse(ResStatus.SUCCESS, largeHoldingsService.getLargeHoldingsTradeDtBy(corpCode, largeHoldingsName));
+        } catch (Exception e) {
+            log.error("예상하지 못한 예외 에러 발생 : ", e);
+            return apiResponse.makeResponse(ResStatus.ERROR);
+        }
+    }
+
 //    @GetMapping("/trade-top-5")
 //    public ResponseEntity<?> getTop5StockTrade(@RequestParam(required = false) String tradeDtGoe, @RequestParam(required = false) String tradeDtLoe) {
 //        if (!StringUtils.hasText(tradeDtGoe)|| !StringUtils.hasText(tradeDtLoe)) {
