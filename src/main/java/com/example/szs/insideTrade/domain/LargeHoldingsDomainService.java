@@ -3,7 +3,6 @@ package com.example.szs.insideTrade.domain;
 import com.example.szs.insideTrade.infrastructure.client.Dart;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsInsiderTradeApiRes;
 import com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL.LargeHoldingsSearchCondition;
-import com.example.szs.common.utils.money.NumberUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -60,18 +59,7 @@ public class LargeHoldingsDomainService {
         }
 
         List<LargeHoldings> insertList = largeHoldingList.stream()
-                                                         .map(largeHolding -> LargeHoldings.create(
-                                                                 largeHolding.getRceptNo(),
-                                                                 largeHolding.getCorpCode(),
-                                                                 largeHolding.getCorpName(),
-                                                                 largeHolding.getRepror(),
-                                                                 NumberUtils.stringToLongConverter(largeHolding.getStkqy()),
-                                                                 NumberUtils.stringToLongConverter(largeHolding.getStkqyIrds()),
-                                                                 NumberUtils.stringToFloatConverter(largeHolding.getStkrt()),
-                                                                 NumberUtils.stringToFloatConverter(largeHolding.getStkrtIrds()),
-                                                                 largeHolding.getReportResn(),
-                                                                 largeHolding.getRceptDt()
-                                                         ))
+                                                         .map(LargeHoldings::create)
                                                          .collect(Collectors.toList());
 
         largeHoldingsRepo.insertNativeBatch(insertList, 500);

@@ -1,11 +1,14 @@
 package com.example.szs.insideTrade.domain;
 
+import com.example.szs.common.utils.money.NumberUtils;
 import com.example.szs.common.utils.time.TimeUtil;
+import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsInsiderTradeApiRes;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
@@ -50,6 +53,7 @@ public class LargeHoldings {
     @Column(name = "reg_dt")
     private String regDt;
 
+    @Builder
     private LargeHoldings(String rceptNo, String corpCode, String corpName, String repror, Long stkqy, Long stkqyIrds, Float stkrt, Float stkrtIrds, String reportResn, String rceptDt) {
         this.rceptNo = rceptNo;
         this.corpCode = corpCode;
@@ -64,8 +68,18 @@ public class LargeHoldings {
         this.regDt = TimeUtil.nowTime("yyyyMMddHHmmss");
     }
 
-    // TODO : 매개변수가 길어서, 차라리 메서드 명칭을 변경 && 매개변수를 객체로 변경
-    public static LargeHoldings create(String rceptNo, String corpCode, String corpName, String repror, Long stkqy, Long stkqyIrds, Float stkrt, Float stkrtIrds, String reportResn, String rceptDt) {
-        return new LargeHoldings(rceptNo, corpCode, corpName, repror, stkqy, stkqyIrds, stkrt, stkrtIrds, reportResn, rceptDt);
+    public static LargeHoldings create(LargeHoldingsInsiderTradeApiRes.LargeHolding largeHolding) {
+        return LargeHoldings.builder()
+                            .rceptNo(largeHolding.getRceptNo())
+                            .corpCode(largeHolding.getCorpCode())
+                            .corpName(largeHolding.getCorpName())
+                            .repror(largeHolding.getRepror())
+                            .stkqy(NumberUtils.stringToLongConverter(largeHolding.getStkqy()))
+                            .stkqyIrds(NumberUtils.stringToLongConverter(largeHolding.getStkqyIrds()))
+                            .stkrt(NumberUtils.stringToFloatConverter(largeHolding.getStkrt()))
+                            .stkrtIrds(NumberUtils.stringToFloatConverter(largeHolding.getStkrtIrds()))
+                            .reportResn(largeHolding.getReportResn())
+                            .rceptDt(largeHolding.getRceptDt())
+                            .build();
     }
 }
