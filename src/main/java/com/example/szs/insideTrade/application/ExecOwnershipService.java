@@ -8,9 +8,10 @@ import com.example.szs.insideTrade.domain.ExecOwnershipDetail;
 import com.example.szs.insideTrade.domain.ExecOwnershipDetailRepo;
 import com.example.szs.insideTrade.domain.ExecOwnershipDomainService;
 import com.example.szs.insideTrade.domain.ExecOwnershipRepo;
+import com.example.szs.insideTrade.infrastructure.push.SsePush;
+import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.response.ExecOwnershipResDTO;
-import com.example.szs.model.dto.MessageDto;
 import com.example.szs.insideTrade.presentation.dto.response.PageResDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
@@ -42,7 +43,7 @@ public class ExecOwnershipService {
     private final ExecOwnershipDetailRepo execOwnershipDetailRepo;
     private final ExecOwnershipRepo execOwnershipRepo;
 
-    private final PushService pushService;
+    private final SsePush ssePush;
     private final ApiResponse apiResponse;
 
     @Transactional
@@ -57,11 +58,11 @@ public class ExecOwnershipService {
             scrapingService.updateExecOwnershipsScrapingData(insertList);
 
             // 3. 저장된 데이터는 고객들에게 PUSH 전송 [내부 푸시 전송]
-            pushService.sendMessage(MessageDto.builder()
-                                              .message(corpInfo.getCorpName())
-                                              .corpCode(corpInfo.getCorpCode())
-                                              .channelType(ChannelType.STOCK_CHANGE_EXECOWNERSHIP)
-                                              .build());
+            ssePush.sendMessage(MessageDTO.builder()
+                                          .message(corpInfo.getCorpName())
+                                          .corpCode(corpInfo.getCorpCode())
+                                          .channelType(ChannelType.STOCK_CHANGE_EXECOWNERSHIP)
+                                          .build());
         }
     }
 

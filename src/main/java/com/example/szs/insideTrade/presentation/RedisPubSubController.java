@@ -1,9 +1,9 @@
-package com.example.szs.controller;
+package com.example.szs.insideTrade.presentation;
 
-import com.example.szs.model.dto.MessageDto;
+import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
-import com.example.szs.module.redis.RedisPublisher;
-import com.example.szs.module.redis.RedisSubscribeListener;
+import com.example.szs.insideTrade.infrastructure.redis.RedisPublisher;
+import com.example.szs.insideTrade.infrastructure.redis.RedisSubscribeListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -23,7 +23,7 @@ public class RedisPubSubController {
     private final RedisSubscribeListener redisSubscribeListener;
 
     @PostMapping("/send")
-    public void sendMessage(@RequestParam ChannelType channelType, @RequestBody MessageDto message) {
+    public void sendMessage(@RequestParam ChannelType channelType, @RequestBody MessageDTO message) {
         log.info("Redis Pub MSG Channel = {}", channelType);
     }
 
@@ -33,12 +33,12 @@ public class RedisPubSubController {
     }
 
     @GetMapping("/get-message")
-    public DeferredResult<MessageDto> getDeferredMessages(@RequestParam Long userId) {
+    public DeferredResult<MessageDTO> getDeferredMessages(@RequestParam Long userId) {
         return redisSubscribeListener.getDeferredMessages(userId);
     }
 
     @GetMapping(value = "/ge-flux-message", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<MessageDto>> getUserFluxMessages(@RequestParam Long userId) {
+    public Flux<ServerSentEvent<MessageDTO>> getUserFluxMessages(@RequestParam Long userId) {
         return redisSubscribeListener.getFluxMessage(userId).delayElements(Duration.ofMillis(5000));
     }
 }

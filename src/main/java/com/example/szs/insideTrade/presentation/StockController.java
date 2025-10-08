@@ -30,7 +30,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class StockController {
-    // TODO : controller 테스트 완료 후, 불필요 패키지 삭제 && 테스트 코드 작성
     private final LargeHoldingsService largeHoldingsService;
     private final ExecOwnershipService execOwnershipService;
     private final CorpInfoService corpInfoService;

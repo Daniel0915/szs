@@ -1,6 +1,6 @@
-package com.example.szs.module.redis;
+package com.example.szs.insideTrade.infrastructure.redis;
 
-import com.example.szs.model.dto.MessageDto;
+import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +23,13 @@ public class RedisPublisher {
     private final RedisSubscribeListener redisSubscribeListener;
     private final RedisTemplate<String, Object> template;
 
-    private ConcurrentHashMap<ChannelType, ChannelTopic> topicCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<ChannelType, ChannelTopic> topicCache = new ConcurrentHashMap<>();
 
     /**
      * Channel 별 Message 전송
-     * @param
+     * @param message
      */
-    public void pubMsgChannel(MessageDto message) {
+    public void pubMsgChannel(MessageDTO message) {
         //1. 요청한 Channel 을 구독.
         ChannelTopic topic = topicCache.computeIfAbsent(message.getChannelType(), key -> {
             ChannelTopic newTopic = new ChannelTopic(key.name());
@@ -53,7 +53,7 @@ public class RedisPublisher {
     /**
      * Object publish
      */
-    private void publish(ChannelTopic topic, MessageDto dto) {
+    private void publish(ChannelTopic topic, MessageDTO dto) {
         template.convertAndSend(topic.getTopic(), dto);
     }
 

@@ -1,4 +1,4 @@
-package com.example.szs.service.user;
+package com.example.szs.insideTrade.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

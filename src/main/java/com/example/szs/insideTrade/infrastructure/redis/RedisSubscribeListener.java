@@ -1,8 +1,8 @@
-package com.example.szs.module.redis;
+package com.example.szs.insideTrade.infrastructure.redis;
 
 import com.example.szs.insideTrade.domain.UserPushSubs;
 import com.example.szs.insideTrade.domain.UserPushSubsRepo;
-import com.example.szs.model.dto.MessageDto;
+import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.UserPushSubsSearchCondition;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,8 +31,8 @@ public class RedisSubscribeListener implements MessageListener {
     private final ObjectMapper                  objectMapper;
     private final UserPushSubsRepo              userPushSubsRepo;
 
-    private final ConcurrentHashMap<Long, LinkedBlockingQueue<MessageDto>> userMessageQueues = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Long, DeferredResult<MessageDto>> userDeferredResults = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, LinkedBlockingQueue<MessageDTO>> userMessageQueues = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, DeferredResult<MessageDTO>> userDeferredResults = new ConcurrentHashMap<>();
 
     // TODO : 회사 코드와 동일하게 사용
     // TODO : 현재 사용 안함
@@ -42,21 +42,21 @@ public class RedisSubscribeListener implements MessageListener {
             String publishMessage = template.getStringSerializer()
                                             .deserialize(message.getBody());
 
-            MessageDto messageDto = objectMapper.readValue(publishMessage, MessageDto.class);
+            MessageDTO MessageDTO = objectMapper.readValue(publishMessage, MessageDTO.class);
 
             // 1. 특정 채널에 구독한 회원 DB 조회
             List<UserPushSubs> userPushSubsList = userPushSubsRepo.getUserPushSubsListBy(UserPushSubsSearchCondition.builder()
-                                                                                                                    .channelType(messageDto.getChannelType())
+                                                                                                                    .channelType(MessageDTO.getChannelType())
                                                                                                                     .build());
             // 2. add message
             for (UserPushSubs userPushSubs : userPushSubsList) {
 
-                ChannelType publishChannelType = messageDto.getChannelType();
+                ChannelType publishChannelType = MessageDTO.getChannelType();
                 ChannelType userSubChannelType = ChannelType.findChannelTypeOrNull(userPushSubs.getChannelType());
 
                 if (publishChannelType == userSubChannelType) {
                     Long userId = userPushSubs.getUserId();
-                    addMessage(userId, messageDto);
+                    addMessage(userId, MessageDTO);
                 }
             }
         } catch (JsonProcessingException e) {
@@ -64,15 +64,15 @@ public class RedisSubscribeListener implements MessageListener {
         }
     }
 
-    private void addMessage(Long userId, MessageDto messageDto) {
+    private void addMessage(Long userId, MessageDTO MessageDTO) {
         // 큐가 없으면 초기화하여 삽입
-        userMessageQueues.computeIfAbsent(userId, key -> new LinkedBlockingQueue<>()).add(messageDto);
+        userMessageQueues.computeIfAbsent(userId, key -> new LinkedBlockingQueue<>()).add(MessageDTO);
 
         // DeferredResult 가 있으면 큐에서 메시지를 전달
-        DeferredResult<MessageDto> deferredResult = userDeferredResults.get(userId);
+        DeferredResult<MessageDTO> deferredResult = userDeferredResults.get(userId);
 
         if (deferredResult != null) {
-            MessageDto message = userMessageQueues.get(userId).poll(); // 큐에서 첫 번째 메시지 가져오기
+            MessageDTO message = userMessageQueues.get(userId).poll(); // 큐에서 첫 번째 메시지 가져오기
             if (message != null) { // 메시지가 있으면 응답
                 deferredResult.setResult(message);
                 userDeferredResults.remove(userId); // 응답 후 deferredResult 삭제
@@ -80,11 +80,11 @@ public class RedisSubscribeListener implements MessageListener {
         }
     }
 
-    public DeferredResult<MessageDto> getDeferredMessages(Long userId) {
+    public DeferredResult<MessageDTO> getDeferredMessages(Long userId) {
         final long timeoutInMillis = 30000; // 30초
 
         // 타임아웃 설정된 DeferredResult 객체 생성
-        DeferredResult<MessageDto> deferredResult = new DeferredResult<>(timeoutInMillis);
+        DeferredResult<MessageDTO> deferredResult = new DeferredResult<>(timeoutInMillis);
 
         // 타임아웃 시 처리할 콜백 설정
         deferredResult.onTimeout(() -> {
@@ -96,9 +96,9 @@ public class RedisSubscribeListener implements MessageListener {
         userDeferredResults.put(userId, deferredResult);
 
         // 메시지가 준비되었을 때 처리하기 위한 큐
-        LinkedBlockingQueue<MessageDto> queue = userMessageQueues.get(userId);
+        LinkedBlockingQueue<MessageDTO> queue = userMessageQueues.get(userId);
         if (queue != null && !queue.isEmpty()) {
-            MessageDto message = queue.poll(); // 이미 대기 중인 메시지가 있으면 즉시 처리
+            MessageDTO message = queue.poll(); // 이미 대기 중인 메시지가 있으면 즉시 처리
             if (message != null) {
                 deferredResult.setResult(message);
                 userDeferredResults.remove(userId); // 응답 후 DeferredResult 삭제
@@ -108,10 +108,10 @@ public class RedisSubscribeListener implements MessageListener {
         return deferredResult;
     }
 
-    public Flux<ServerSentEvent<MessageDto>> getFluxMessage(Long userId) {
+    public Flux<ServerSentEvent<MessageDTO>> getFluxMessage(Long userId) {
         return Flux.create(sink -> {
             // 메시지 큐에서 데이터를 Flux 로 스트림 전송
-            LinkedBlockingQueue<MessageDto> queue = userMessageQueues.get(userId);
+            LinkedBlockingQueue<MessageDTO> queue = userMessageQueues.get(userId);
 
             // 메세지가 없으면 스트림 종료
             if (CollectionUtils.isEmpty(queue)) {
@@ -121,8 +121,8 @@ public class RedisSubscribeListener implements MessageListener {
 
             // 메세지를 Flux 스트림에 추가
             while (!queue.isEmpty()) {
-                MessageDto messageDto = queue.poll();
-                ServerSentEvent<MessageDto> event = ServerSentEvent.builder(messageDto)
+                MessageDTO MessageDTO = queue.poll();
+                ServerSentEvent<MessageDTO> event = ServerSentEvent.builder(MessageDTO)
                                                                    .build();
 
                 sink.next(event);
