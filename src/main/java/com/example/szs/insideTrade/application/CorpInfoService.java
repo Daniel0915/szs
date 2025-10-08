@@ -19,6 +19,7 @@ public class CorpInfoService {
     private final CorpInfoRepo corpInfoRepo;
 
     // TODO : 캐싱 처리
+    // TODO : 테스트 코드
     public List<CorpInfoResDTO> getAllCorpInfoDTOList() {
         List<CorpInfo> corpInfoList = corpInfoRepo.findAll();
         List<CorpInfoResDTO> response = new ArrayList<>(corpInfoList.size());

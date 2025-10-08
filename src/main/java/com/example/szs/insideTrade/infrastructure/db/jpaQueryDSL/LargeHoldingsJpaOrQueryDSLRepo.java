@@ -49,10 +49,6 @@ public class LargeHoldingsJpaOrQueryDSLRepo implements LargeHoldingsRepo {
 
     @Override
     public void insertNativeBatch(List<LargeHoldings> largeHoldings, int batchSize) throws Exception {
-        // TODO : 테스트 코드
-        log.info("jdbcTemplate 메모리 위치 확인, jdbcTemplate : {}", jdbcTemplate);
-        // TODO : 테스트 코드
-
         String sql = """
                 INSERT INTO large_holdings
                     (rcept_no, corp_code, corp_name, repror, stkqy, stkqy_irds, stkrt, stkrt_irds, report_resn, rcept_dt, reg_dt)
