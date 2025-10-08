@@ -3,7 +3,7 @@ package com.example.szs.insideTrade.domain;
 import com.example.szs.insideTrade.infrastructure.client.Dart;
 import com.example.szs.insideTrade.infrastructure.client.dto.LargeHoldingsInsiderTradeApiRes;
 import com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL.LargeHoldingsSearchCondition;
-import com.example.szs.utils.money.NumberUtils;
+import com.example.szs.common.utils.money.NumberUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

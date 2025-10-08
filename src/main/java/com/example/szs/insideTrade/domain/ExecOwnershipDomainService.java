@@ -3,7 +3,7 @@ package com.example.szs.insideTrade.domain;
 import com.example.szs.insideTrade.infrastructure.client.Dart;
 import com.example.szs.insideTrade.infrastructure.client.dto.ExecOwnershipInsiderTradeApiRes;
 import com.example.szs.insideTrade.application.dto.ExecOwnershipDTO;
-import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
+import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipSearchCondition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

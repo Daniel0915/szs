@@ -6,7 +6,7 @@ import com.example.szs.insideTrade.domain.QExecOwnershipDetail;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.application.dto.ExecOwnershipDetailDTO;
 import com.example.szs.insideTrade.application.dto.LargeHoldingsDetailDTO;
-import com.example.szs.utils.batch.JdbcBatchUtil;
+import com.example.szs.common.utils.batch.JdbcBatchUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;

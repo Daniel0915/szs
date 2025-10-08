@@ -1,7 +1,7 @@
 package com.example.szs.insideTrade.infrastructure.redis;
 
 import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
-import com.example.szs.model.eNum.redis.ChannelType;
+import com.example.szs.common.eNum.redis.ChannelType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

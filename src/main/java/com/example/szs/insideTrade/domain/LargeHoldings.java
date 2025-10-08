@@ -1,6 +1,6 @@
 package com.example.szs.insideTrade.domain;
 
-import com.example.szs.utils.time.TimeUtil;
+import com.example.szs.common.utils.time.TimeUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

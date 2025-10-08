@@ -15,8 +15,8 @@ import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSea
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
 import com.example.szs.insideTrade.presentation.dto.response.PageResDTO;
-import com.example.szs.model.eNum.redis.ChannelType;
-import com.example.szs.model.eNum.stock.SellOrBuyType;
+import com.example.szs.common.eNum.redis.ChannelType;
+import com.example.szs.common.eNum.stock.SellOrBuyType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;

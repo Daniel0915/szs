@@ -1,6 +1,6 @@
 package com.example.szs.insideTrade.infrastructure.client.dto;
 
-import com.example.szs.config.json.NullToEmptySerializer;
+import com.example.szs.common.config.json.NullToEmptySerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

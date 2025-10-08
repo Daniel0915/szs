@@ -1,7 +1,7 @@
 package com.example.szs.insideTrade.presentation;
 
 import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
-import com.example.szs.model.eNum.redis.ChannelType;
+import com.example.szs.common.eNum.redis.ChannelType;
 import com.example.szs.insideTrade.infrastructure.redis.RedisPublisher;
 import com.example.szs.insideTrade.infrastructure.redis.RedisSubscribeListener;
 import lombok.RequiredArgsConstructor;

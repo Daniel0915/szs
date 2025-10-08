@@ -2,8 +2,8 @@ package com.example.szs.insideTrade.presentation;
 
 import com.example.szs.insideTrade.infrastructure.push.SsePush;
 import com.example.szs.insideTrade.infrastructure.push.dto.MessageDTO;
-import com.example.szs.model.eNum.ResStatus;
-import com.example.szs.module.ApiResponse;
+import com.example.szs.common.api.ResStatus;
+import com.example.szs.common.api.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

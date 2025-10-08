@@ -4,9 +4,7 @@ import com.example.szs.insideTrade.domain.LargeHoldingsStkrt;
 import com.example.szs.insideTrade.domain.LargeHoldingsStkrtRepo;
 import com.example.szs.insideTrade.domain.QLargeHoldingsStkrt;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingStkrtSearchConditionReqDTO;
-import com.example.szs.insideTrade.presentation.dto.response.LargeHoldingsStkrtResDTO;
-import com.example.szs.utils.batch.JdbcBatchUtil;
-import com.example.szs.utils.jpa.EntityToDtoMapper;
+import com.example.szs.common.utils.batch.JdbcBatchUtil;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.example.szs.insideTrade.domain.QLargeHoldingsStkrt.largeHoldingsStkrt;
 import static org.springframework.util.StringUtils.hasText;

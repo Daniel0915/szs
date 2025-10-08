@@ -3,7 +3,7 @@ package com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL;
 import com.example.szs.insideTrade.domain.LargeHoldings;
 import com.example.szs.insideTrade.domain.LargeHoldingsRepo;
 import com.example.szs.insideTrade.domain.QLargeHoldings;
-import com.example.szs.utils.batch.JdbcBatchUtil;
+import com.example.szs.common.utils.batch.JdbcBatchUtil;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;

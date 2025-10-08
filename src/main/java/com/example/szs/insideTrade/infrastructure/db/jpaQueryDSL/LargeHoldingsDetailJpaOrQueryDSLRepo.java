@@ -5,7 +5,7 @@ import com.example.szs.insideTrade.domain.LargeHoldingsDetail;
 import com.example.szs.insideTrade.domain.LargeHoldingsDetailRepo;
 import com.example.szs.insideTrade.domain.QLargeHoldingsDetail;
 import com.example.szs.insideTrade.presentation.dto.request.LargeHoldingsDetailSearchConditionReqDTO;
-import com.example.szs.utils.batch.JdbcBatchUtil;
+import com.example.szs.common.utils.batch.JdbcBatchUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;

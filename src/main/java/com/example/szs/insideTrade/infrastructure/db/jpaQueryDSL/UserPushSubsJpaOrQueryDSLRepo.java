@@ -2,8 +2,8 @@ package com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL;
 
 import com.example.szs.insideTrade.domain.UserPushSubs;
 import com.example.szs.insideTrade.domain.UserPushSubsRepo;
-import com.example.szs.model.eNum.redis.ChannelType;
-import com.example.szs.model.queryDSLSearch.UserPushSubsSearchCondition;
+import com.example.szs.common.eNum.redis.ChannelType;
+import com.example.szs.insideTrade.presentation.dto.request.UserPushSubsSearchCondition;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
