@@ -1,4 +1,4 @@
-package com.example.szs.model.dto.execOwnership;
+package com.example.szs.insideTrade.application.dto;
 
 
 import lombok.AllArgsConstructor;

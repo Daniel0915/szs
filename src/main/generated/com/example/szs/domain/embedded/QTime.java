@@ -2,6 +2,7 @@ package com.example.szs.domain.embedded;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
+import com.example.szs.insideTrade.domain.embedded.Time;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;

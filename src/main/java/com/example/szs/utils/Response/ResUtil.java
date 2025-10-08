@@ -1,8 +1,6 @@
 package com.example.szs.utils.Response;
 
-import com.example.szs.exception.CustomException;
 import com.example.szs.model.eNum.ResStatus;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;

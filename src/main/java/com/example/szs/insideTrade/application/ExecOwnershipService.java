@@ -11,7 +11,7 @@ import com.example.szs.insideTrade.domain.ExecOwnershipRepo;
 import com.example.szs.insideTrade.presentation.dto.request.ExecOwnershipDetailSearchConditionReqDTO;
 import com.example.szs.insideTrade.presentation.dto.response.ExecOwnershipResDTO;
 import com.example.szs.model.dto.MessageDto;
-import com.example.szs.model.dto.page.PageDTO;
+import com.example.szs.insideTrade.presentation.dto.response.PageResDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.module.ApiResponse;
@@ -65,13 +65,13 @@ public class ExecOwnershipService {
         }
     }
 
-    public PageDTO getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchConditionReqDTO condition, Pageable pageable) {
+    public PageResDTO getSearchPageExecOwnershipDetail(ExecOwnershipDetailSearchConditionReqDTO condition, Pageable pageable) {
         Page<ExecOwnershipDetail> page = execOwnershipDetailRepo.searchPage(condition, pageable);
-        return PageDTO.builder()
-                      .content(page.getContent())
-                      .totalElements(page.getTotalElements())
-                      .totalPages(page.getTotalPages())
-                      .build();
+        return PageResDTO.builder()
+                         .content(page.getContent())
+                         .totalElements(page.getTotalElements())
+                         .totalPages(page.getTotalPages())
+                         .build();
     }
 
     public List<ExecOwnershipResDTO> getStockCntTop5(String corpCode) {

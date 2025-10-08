@@ -3,7 +3,7 @@ package com.example.szs.insideTrade.infrastructure.db.jpaQueryDSL;
 import com.example.szs.insideTrade.domain.ExecOwnership;
 import com.example.szs.insideTrade.domain.ExecOwnershipRepo;
 import com.example.szs.insideTrade.domain.QExecOwnership;
-import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
+import com.example.szs.insideTrade.application.dto.ExecOwnershipDTO;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 import com.example.szs.utils.batch.JdbcBatchUtil;
 import com.example.szs.utils.jpa.EntityToDtoMapper;

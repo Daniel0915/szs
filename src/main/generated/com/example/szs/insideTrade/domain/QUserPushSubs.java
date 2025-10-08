@@ -1,4 +1,4 @@
-package com.example.szs.domain.subscribe;
+package com.example.szs.insideTrade.domain;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QUserPushSubs extends EntityPathBase<UserPushSubs> {
 
-    private static final long serialVersionUID = 682543315L;
+    private static final long serialVersionUID = -1888170039L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -28,7 +28,7 @@ public class QUserPushSubs extends EntityPathBase<UserPushSubs> {
 
     public final com.example.szs.domain.embedded.QTime time;
 
-    public final com.example.szs.domain.user.QUserInfo userInfo;
+    public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
     public QUserPushSubs(String variable) {
         this(UserPushSubs.class, forVariable(variable), INITS);
@@ -49,7 +49,6 @@ public class QUserPushSubs extends EntityPathBase<UserPushSubs> {
     public QUserPushSubs(Class<? extends UserPushSubs> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.time = inits.isInitialized("time") ? new com.example.szs.domain.embedded.QTime(forProperty("time")) : null;
-        this.userInfo = inits.isInitialized("userInfo") ? new com.example.szs.domain.user.QUserInfo(forProperty("userInfo"), inits.get("userInfo")) : null;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.example.szs.insideTrade.domain;
 
-import com.example.szs.model.dto.execOwnership.ExecOwnershipDTO;
+import com.example.szs.insideTrade.application.dto.ExecOwnershipDTO;
 import com.example.szs.model.queryDSLSearch.ExecOwnershipSearchCondition;
 
 import java.util.List;

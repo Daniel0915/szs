@@ -1,10 +1,10 @@
 package com.example.szs.module.redis;
 
-import com.example.szs.domain.subscribe.UserPushSubs;
+import com.example.szs.insideTrade.domain.UserPushSubs;
+import com.example.szs.insideTrade.domain.UserPushSubsRepo;
 import com.example.szs.model.dto.MessageDto;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.queryDSLSearch.UserPushSubsSearchCondition;
-import com.example.szs.repository.subscribe.UserPushSubsRepositoryCustom;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +28,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class RedisSubscribeListener implements MessageListener {
     // 유저별
     private final RedisTemplate<String, Object> template;
-    private final ObjectMapper objectMapper;
-    private final UserPushSubsRepositoryCustom userPushSubsRepositoryCustom;
+    private final ObjectMapper                  objectMapper;
+    private final UserPushSubsRepo              userPushSubsRepo;
 
     private final ConcurrentHashMap<Long, LinkedBlockingQueue<MessageDto>> userMessageQueues = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, DeferredResult<MessageDto>> userDeferredResults = new ConcurrentHashMap<>();
 
-
+    // TODO : 회사 코드와 동일하게 사용
     // TODO : 현재 사용 안함
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -45,9 +45,9 @@ public class RedisSubscribeListener implements MessageListener {
             MessageDto messageDto = objectMapper.readValue(publishMessage, MessageDto.class);
 
             // 1. 특정 채널에 구독한 회원 DB 조회
-            List<UserPushSubs> userPushSubsList = userPushSubsRepositoryCustom.getUserPushSubsListBy(UserPushSubsSearchCondition.builder()
-                                                                                                                                .channelType(messageDto.getChannelType())
-                                                                                                                                .build());
+            List<UserPushSubs> userPushSubsList = userPushSubsRepo.getUserPushSubsListBy(UserPushSubsSearchCondition.builder()
+                                                                                                                    .channelType(messageDto.getChannelType())
+                                                                                                                    .build());
             // 2. add message
             for (UserPushSubs userPushSubs : userPushSubsList) {
 
@@ -55,7 +55,7 @@ public class RedisSubscribeListener implements MessageListener {
                 ChannelType userSubChannelType = ChannelType.findChannelTypeOrNull(userPushSubs.getChannelType());
 
                 if (publishChannelType == userSubChannelType) {
-                    Long userId = userPushSubs.getUserInfo().getUserId();
+                    Long userId = userPushSubs.getUserId();
                     addMessage(userId, messageDto);
                 }
             }
