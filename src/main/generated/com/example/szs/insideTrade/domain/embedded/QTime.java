@@ -1,8 +1,7 @@
-package com.example.szs.domain.embedded;
+package com.example.szs.insideTrade.domain.embedded;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
-import com.example.szs.insideTrade.domain.embedded.Time;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;
@@ -16,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEmbeddableSerializer")
 public class QTime extends BeanPath<Time> {
 
-    private static final long serialVersionUID = 1149634746L;
+    private static final long serialVersionUID = -1264279648L;
 
     public static final QTime time = new QTime("time");
 

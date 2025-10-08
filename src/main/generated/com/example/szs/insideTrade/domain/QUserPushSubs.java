@@ -26,7 +26,7 @@ public class QUserPushSubs extends EntityPathBase<UserPushSubs> {
 
     public final NumberPath<Long> seq = createNumber("seq", Long.class);
 
-    public final com.example.szs.domain.embedded.QTime time;
+    public final com.example.szs.insideTrade.domain.embedded.QTime time;
 
     public final NumberPath<Long> userId = createNumber("userId", Long.class);
 
@@ -48,7 +48,7 @@ public class QUserPushSubs extends EntityPathBase<UserPushSubs> {
 
     public QUserPushSubs(Class<? extends UserPushSubs> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.time = inits.isInitialized("time") ? new com.example.szs.domain.embedded.QTime(forProperty("time")) : null;
+        this.time = inits.isInitialized("time") ? new com.example.szs.insideTrade.domain.embedded.QTime(forProperty("time")) : null;
     }
 
 }

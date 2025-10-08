@@ -16,7 +16,6 @@ import com.example.szs.insideTrade.presentation.dto.response.PageResDTO;
 import com.example.szs.model.eNum.redis.ChannelType;
 import com.example.szs.model.eNum.stock.SellOrBuyType;
 import com.example.szs.module.ApiResponse;
-import com.example.szs.service.stock.PushService;
 import com.example.szs.utils.jpa.EntityToDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
